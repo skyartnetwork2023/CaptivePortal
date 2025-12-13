@@ -49,6 +49,8 @@ var PORTAL_ADS = [
 ];
 
 var experienceLayersBootstrapped = false;
+var supabaseConfig = (typeof window !== "undefined" && window.__SUPABASE_CONFIG__) || {};
+var supabaseClient = null;
 
 var Ajax = {
     post: function (url, data, fn) {
@@ -125,6 +127,21 @@ var errorHintMap = {
 
 var isCommited;
 var formAuthController = useFormAuthController()
+
+function setElementDisplay(id, displayStyle) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.style.display = displayStyle;
+  }
+}
+
+function showElementBlock(id) {
+  setElementDisplay(id, "block");
+}
+
+function hideElementBlock(id) {
+  setElementDisplay(id, "none");
+}
 
 function getQueryStringKey (key) {
     return getQueryStringAsObject()[key];
@@ -204,23 +221,24 @@ Ajax.post(
             countryCode   : !!data.sms && data.sms.countryCode || 1
         };
         function pageConfigParse(){
-            if (res.errorCode !== 0){
-                document.getElementById("oper-hint").style.display = "block";
-                document.getElementById("oper-hint").innerHTML = errorHintMap[res.errorCode];
-            }
-            document.getElementById("hotspot-section").style.display = "none";
-            document.getElementById("input-voucher").style.display = "none";
-            document.getElementById("input-user").style.display = "none";
-            document.getElementById("input-password").style.display = "none";
-            document.getElementById("input-simple").style.display = "none";
-            document.getElementById("input-phone-num").style.display = "none";
-            document.getElementById("input-verify-code").style.display = "none";
+          var operHint = document.getElementById("oper-hint");
+          if (res.errorCode !== 0 && operHint){
+            operHint.style.display = "block";
+            operHint.innerHTML = errorHintMap[res.errorCode];
+          }
+          hideElementBlock("hotspot-section");
+          hideElementBlock("input-voucher");
+          hideElementBlock("input-user");
+          hideElementBlock("input-password");
+          hideElementBlock("input-simple");
+          hideElementBlock("input-phone-num");
+          hideElementBlock("input-verify-code");
             switch (globalConfig.authType){
                 case NO_AUTH:
                     window.authType = 0;
                     break;
                 case SIMPLE_PASSWORD:
-                    document.getElementById("input-simple").style.display = "block";
+              showElementBlock("input-simple");
                     window.authType = 1;
                     break;
                 case EXTERNAL_RADIUS:
@@ -242,6 +260,7 @@ Ajax.post(
                     window.authType = globalConfig.hotspotTypes[0];
                     break;
             }
+                enforceVoucherOnlyMode();
         }
 
         function handleSubmit(){
@@ -313,53 +332,72 @@ Ajax.post(
             }
         }
         function hotspotChang (type) {
+          hideElementBlock("input-voucher");
+          hideElementBlock("input-user");
+          hideElementBlock("input-password");
+          hideElementBlock("input-phone-num");
+          hideElementBlock("input-verify-code");
+          showElementBlock("button-login");
 
-            document.getElementById("input-voucher").style.display = "none";
-            document.getElementById("input-user").style.display = "none";
-            document.getElementById("input-password").style.display = "none";
-            document.getElementById("input-phone-num").style.display = "none";
-            document.getElementById("input-verify-code").style.display = "none";
-            document.getElementById("button-login").style.display = "block";
-            window.authType = Number(type);
-            switch (Number(type)) {
-                case VOUCHER_ACCESS_TYPE:
-                    document.getElementById("input-voucher").style.display = "block";
-                    setNormalButton()
-                    break;
-                case LOCAL_USER_ACCESS_TYPE:
-                case EXTERNAL_RADIUS:
-                case RADIUS_ACCESS_TYPE:
-                case EXTERNAL_LDAP:
-                    document.getElementById("input-user").style.display = "block";
-                    document.getElementById("input-password").style.display = "block";
-                    setNormalButton()
-                    break;
-                case SMS_ACCESS_TYPE:
-                    document.getElementById("input-phone-num").style.display = "block";
-                    document.getElementById("input-verify-code").style.display = "block";
-                    setNormalButton()
-                    break;
-                case FORM_AUTH_ACCESS_TYPE:
-                    formAuthController.init(globalConfig)
-                    break
-            }
+          window.authType = Number(type);
+          if (window.authType !== VOUCHER_ACCESS_TYPE) {
+            window.authType = VOUCHER_ACCESS_TYPE;
+          }
+
+          showElementBlock("input-voucher");
+          setNormalButton();
+        }
+
+        function enforceVoucherOnlyMode() {
+          hideElementBlock("hotspot-section");
+          hideElementBlock("input-user");
+          hideElementBlock("input-password");
+          hideElementBlock("input-simple");
+          hideElementBlock("input-phone-num");
+          hideElementBlock("input-verify-code");
+          showElementBlock("input-voucher");
+          showElementBlock("button-login");
+
+          window.authType = VOUCHER_ACCESS_TYPE;
+          globalConfig.authType = VOUCHER_ACCESS_TYPE;
+          globalConfig.hotspotTypes = [VOUCHER_ACCESS_TYPE];
+
+          var hotspotSelector = document.getElementById("hotspot-selector");
+          if (hotspotSelector) {
+            hotspotSelector.innerHTML = '<option value="' + VOUCHER_ACCESS_TYPE + '">' + hotspotMap[VOUCHER_ACCESS_TYPE] + '</option>';
+          }
+
+          if (!globalConfig.buttonText || globalConfig.buttonText.toLowerCase() === 'log in') {
+            globalConfig.buttonText = 'Redeem Voucher';
+          }
+          setNormalButton();
         }
         globalConfig.countryCode = "+" + parseInt(globalConfig.countryCode, 10);
-        document.getElementById("country-code").value = parseInt(globalConfig.countryCode, 10);
-        document.getElementById("hotspot-selector").addEventListener("change", function () {
-            var obj = document.getElementById("hotspot-selector");
-            var opt = obj.options[obj.selectedIndex];
-            hotspotChang(opt.value);
-        });
-        document.getElementById("button-login").addEventListener("click", function () {
+        var countryCodeInput = document.getElementById("country-code");
+        if (countryCodeInput) {
+            countryCodeInput.value = parseInt(globalConfig.countryCode, 10);
+        }
+        var hotspotSelector = document.getElementById("hotspot-selector");
+        if (hotspotSelector) {
+            hotspotSelector.addEventListener("change", function () {
+                var opt = hotspotSelector.options[hotspotSelector.selectedIndex];
+                hotspotChang(opt.value);
+            });
+        }
+        var loginButton = document.getElementById("button-login");
+        if (loginButton) {
+            loginButton.addEventListener("click", function () {
           if(window.authType === FORM_AUTH_ACCESS_TYPE) {
             formAuthController.showFormAuth(globalConfig);
           } else {
             handleSubmit();
           }
         });
+        }
         $("#form-auth-submit").on("click", function () {formAuthController.submitFormAuth(handleSubmit)});
-        document.getElementById("get-code").addEventListener("click", function(e){
+        var smsCodeButton = document.getElementById("get-code");
+        if (smsCodeButton) {
+          smsCodeButton.addEventListener("click", function(e){
             e.preventDefault();
             var phoneNum = document.getElementById("phone-number").value;
             function sendSmsAuthCode () {
@@ -384,7 +422,8 @@ Ajax.post(
             }
             sendSmsAuthCode();
             document.getElementById("oper-hint").innerHTML = "Sending Authorization Code...";
-        });
+          });
+          }
         pageConfigParse();
     }
 );
@@ -1019,9 +1058,19 @@ function setNormalButton() {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", enhanceExperienceLayers);
+  document.addEventListener("DOMContentLoaded", bootstrapExperienceLayers);
 } else {
-  enhanceExperienceLayers();
+  bootstrapExperienceLayers();
+}
+
+function bootstrapExperienceLayers() {
+  hydrateAssetsFromSupabase()
+    .catch(function (err) {
+      console.warn("Supabase asset hydration issue", err);
+    })
+    .finally(function () {
+      enhanceExperienceLayers();
+    });
 }
 
 function enhanceExperienceLayers() {
@@ -1207,4 +1256,137 @@ function formatBackgroundSource(source) {
 
 function padWithZero(value) {
   return value < 10 ? "0" + value : String(value);
+}
+
+function hydrateAssetsFromSupabase() {
+  var client = initSupabaseClient();
+  if (!client) {
+    return Promise.resolve();
+  }
+  var tasks = [
+    fetchSupabaseBackgrounds(client),
+    fetchSupabaseAudio(client)
+  ];
+  return Promise.allSettled(tasks).then(function (results) {
+    results.forEach(function (result) {
+      if (result.status === "rejected") {
+        console.warn("Failed to load Supabase asset", result.reason);
+      }
+    });
+  });
+}
+
+function initSupabaseClient() {
+  if (supabaseClient !== null) {
+    return supabaseClient;
+  }
+  if (!supabaseConfig || !supabaseConfig.url || !supabaseConfig.anonKey) {
+    supabaseClient = null;
+    return null;
+  }
+  if (typeof window === "undefined") {
+    return null;
+  }
+  var supabaseLib = window.supabase || window.Supabase;
+  if (!supabaseLib || typeof supabaseLib.createClient !== "function") {
+    return null;
+  }
+  supabaseClient = supabaseLib.createClient(supabaseConfig.url, supabaseConfig.anonKey);
+  return supabaseClient;
+}
+
+function fetchSupabaseBackgrounds(client) {
+  if (!supabaseConfig.assetBucket) {
+    return Promise.resolve();
+  }
+  var prefix = normalizeStoragePath(supabaseConfig.backgroundPrefix || "");
+  var listPath = prefix || undefined;
+  return client.storage
+    .from(supabaseConfig.assetBucket)
+    .list(listPath, {
+      limit: supabaseConfig.backgroundLimit || 10,
+      sortBy: { column: "name", order: "asc" }
+    })
+    .then(function (result) {
+      if (result.error) {
+        throw result.error;
+      }
+      if (!result.data || !result.data.length) {
+        return;
+      }
+      var slides = result.data
+        .filter(function (entry) {
+          if (!entry || !entry.name) {
+            return false;
+          }
+          if (entry.metadata && entry.metadata.mimetype === "inode/directory") {
+            return false;
+          }
+          return true;
+        })
+        .map(function (entry) {
+          var objectPath = buildStoragePath(prefix, entry.name);
+          var publicUrl = client.storage.from(supabaseConfig.assetBucket).getPublicUrl(objectPath);
+          var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
+          return {
+            source: resolvedUrl || objectPath,
+            caption: formatAssetCaption(entry.name)
+          };
+        })
+        .filter(function (slide) { return !!slide.source; });
+      if (slides.length) {
+        BACKGROUND_SLIDES = slides;
+      }
+    });
+}
+
+function fetchSupabaseAudio(client) {
+  if (!supabaseConfig.assetBucket || !supabaseConfig.audioObjectPath) {
+    return Promise.resolve();
+  }
+  var audioEl = document.getElementById("portal-audio");
+  if (!audioEl) {
+    return Promise.resolve();
+  }
+  var objectPath = normalizeStoragePath(supabaseConfig.audioObjectPath);
+  var publicResponse = client.storage.from(supabaseConfig.assetBucket).getPublicUrl(objectPath);
+  var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
+  if (publicUrl) {
+    audioEl.innerHTML = "";
+    audioEl.src = publicUrl;
+    var title = supabaseConfig.audioTitle || formatAssetCaption(objectPath);
+    audioEl.setAttribute("data-track-title", title);
+    audioEl.load();
+  }
+  return Promise.resolve();
+}
+
+function normalizeStoragePath(path) {
+  if (!path) {
+    return "";
+  }
+  return path.toString().replace(/^\/+/, "").replace(/\/+$/, "").replace(/\\/g, "/");
+}
+
+function buildStoragePath(prefix, name) {
+  var normalizedPrefix = normalizeStoragePath(prefix);
+  var normalizedName = normalizeStoragePath(name);
+  if (normalizedPrefix && normalizedName) {
+    return normalizedPrefix + "/" + normalizedName;
+  }
+  return normalizedPrefix || normalizedName;
+}
+
+function formatAssetCaption(filename) {
+  if (!filename) {
+    return "Supabase Scene";
+  }
+  var sanitized = filename.toString().split("/").pop();
+  var base = sanitized.replace(/\.[^.]+$/, "");
+  base = base.replace(/[-_]+/g, " ");
+  base = base.trim();
+  if (!base) {
+    return "Supabase Scene";
+  }
+  return base.replace(/\b\w/g, function (char) { return char.toUpperCase(); });
 }

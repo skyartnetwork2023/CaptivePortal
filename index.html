@@ -38,15 +38,15 @@
 
         <main class="grid-layout">
             <section class="experience-panel" aria-label="Portal highlights">
-                <p class="eyebrow">Vercel-edge hosted</p>
-                <h1>Immersive welcome layer for Omada guests</h1>
+                <p class="eyebrow">Voucher-first onboarding</p>
+                <h1>Issue, redeem, and measure Omada vouchers</h1>
                 <p class="lede">
-                    Blend branded storytelling, sponsor placements, and a frictionless Omada authentication flow.
-                    Background scenes glide softly while audio cues nudge guests through the journey.
+                    Present a single, distraction-free voucher input backed by Supabase-hosted media.
+                    Scenes and audio loop in from storage while Omada handles the AAA handshake.
                 </p>
                 <ul class="feature-list">
-                    <li><span>Secured Omni-auth: voucher, SMS, LDAP, form auth.</span></li>
-                    <li><span>Edge caching via Vercel for low-latency splash screens.</span></li>
+                    <li><span>Voucher-only flow that maps directly to Omada codes.</span></li>
+                    <li><span>Supabase storage supplies audio loops and rotating hero scenes.</span></li>
                     <li><span>Modular ad rail for sponsor campaigns or venue promos.</span></li>
                 </ul>
                 <div class="stats">
@@ -72,7 +72,7 @@
                     <h2>Authenticate to get online</h2>
                     <p id="oper-hint" class="status-hint" role="status"></p>
                 </div>
-                <div id="hotspot-section" class="control-group">
+                <div id="hotspot-section" class="control-group legacy-auth" aria-hidden="true">
                     <label for="hotspot-selector" class="label">Choose method</label>
                     <select id="hotspot-selector" class="input control"></select>
                 </div>
@@ -81,19 +81,19 @@
                         <label for="voucherCode" class="label">Voucher code</label>
                         <input id="voucherCode" class="input control" name="voucherCode" type="text" placeholder="ABC-123-456" />
                     </div>
-                    <div id="input-user" class="control-group">
+                    <div id="input-user" class="control-group legacy-auth" aria-hidden="true">
                         <label for="username" class="label">Username</label>
                         <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" />
                     </div>
-                    <div id="input-password" class="control-group">
+                    <div id="input-password" class="control-group legacy-auth" aria-hidden="true">
                         <label for="password" class="label">Password</label>
                         <input id="password" class="input control" name="password" type="password" placeholder="••••••••" />
                     </div>
-                    <div id="input-simple" class="control-group">
+                    <div id="input-simple" class="control-group legacy-auth" aria-hidden="true">
                         <label for="simplePassword" class="label">Shared passphrase</label>
                         <input id="simplePassword" class="input control" name="simplePassword" type="password" placeholder="Venue pass" />
                     </div>
-                    <div id="input-phone-num" class="control-group">
+                    <div id="input-phone-num" class="control-group legacy-auth" aria-hidden="true">
                         <label class="label" for="phone-number">Phone number</label>
                         <div class="sms-input">
                             <span class="add">+</span>
@@ -101,7 +101,7 @@
                             <input id="phone-number" class="input" name="phone-number" type="text" placeholder="712 345 678" />
                         </div>
                     </div>
-                    <div id="input-verify-code" class="control-group sms-code">
+                    <div id="input-verify-code" class="control-group sms-code legacy-auth" aria-hidden="true">
                         <label class="label" for="verify-code">Verification code</label>
                         <div class="code-input">
                             <input id="verify-code" class="input" name="verify-code" type="text" placeholder="123456" />
@@ -114,7 +114,7 @@
                 <div id="button-area">
                     <button id="button-login" class="button control">Log In</button>
                 </div>
-                <p class="meta help-text">Survey-based form auth launches a guided modal before network access.</p>
+                <p class="meta help-text">All guests redeem vouchers provisioned via Omada Controller or API.</p>
             </section>
 
             <aside class="ads-panel" aria-label="Sponsor rotation">
@@ -150,9 +150,19 @@
     </audio>
 
     <script src="jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
     <script>
         // Define the Omada controller base when hosting the portal outside the controller network.
         window.__OMADA_PORTAL_BASE__ = window.__OMADA_PORTAL_BASE__ || '';
+        // Configure Supabase project + bucket used for background slides and audio.
+        window.__SUPABASE_CONFIG__ = window.__SUPABASE_CONFIG__ || {
+            url: '',
+            anonKey: '',
+            assetBucket: 'portal-media',
+            backgroundPrefix: 'backgrounds',
+            audioObjectPath: 'audio/skyart-lounge.mp3',
+            audioTitle: 'Skyart Lounge Loop'
+        };
     </script>
     <script src="index.js"></script>
 </body>

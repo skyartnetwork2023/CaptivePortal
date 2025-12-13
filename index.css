@@ -339,6 +339,10 @@ body.portal {
   text-align: center;
 }
 
+.legacy-auth {
+  display: none !important;
+}
+
 .ads-panel {
   padding: 2.5rem;
   border-radius: var(--radius-lg);
