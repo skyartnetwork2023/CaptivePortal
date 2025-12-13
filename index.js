@@ -12,6 +12,44 @@ var VOUCHER_ACCESS_TYPE = 3,
 
 var MAX_INPUT_LEN = 2000;
 
+// Scenes for the animated hero background; swap the sources to match venue imagery.
+var BACKGROUND_SLIDES = [
+  { source: "background.png", caption: "Sunrise lobby" },
+  { source: "linear-gradient(120deg,#031625,#0b3b5b,#0f768d)", caption: "Harbor atrium" },
+  { source: "linear-gradient(130deg,#1c0f33,#421563,#6f2dbd)", caption: "Evening lounge" },
+  { source: "linear-gradient(150deg,#041c32,#04293a,#064663)", caption: "City skyline" }
+];
+
+// Rotating sponsor/ad placements rendered in the right rail.
+var PORTAL_ADS = [
+  {
+    eyebrow: "Digital signage",
+    title: "Promote venue campaigns instantly",
+    body: "Trigger sponsor or F&B creatives while guests authenticate.",
+    cta: "Open dashboard",
+    link: "https://skyartnetwork.com/",
+    background: "linear-gradient(135deg,#0f2027,#203a43,#2c5364)"
+  },
+  {
+    eyebrow: "Omada Cloud",
+    title: "Layer surveys before access",
+    body: "Launch form-auth stories with branded questions and instant rewards.",
+    cta: "See playbook",
+    link: "https://www.tp-link.com/omada/",
+    background: "linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d)"
+  },
+  {
+    eyebrow: "Partner highlight",
+    title: "Monetize your captive portal rail",
+    body: "Sell rotating placements to local partners with impression analytics.",
+    cta: "Book a slot",
+    link: "mailto:hello@skyartnetwork.com",
+    background: "linear-gradient(135deg,#090979,#00d4ff)"
+  }
+];
+
+var experienceLayersBootstrapped = false;
+
 var Ajax = {
     post: function (url, data, fn) {
         var xhr = new XMLHttpRequest();
@@ -36,6 +74,7 @@ var radioId = !!getQueryStringKey("radioId")? Number(getQueryStringKey("radioId"
 var vid = !!getQueryStringKey("vid")? Number(getQueryStringKey("vid")) : undefined;
 var originUrl = getQueryStringKey("originUrl");
 var previewSite = getQueryStringKey("previewSite");
+var portalApiBase = (typeof window !== "undefined" && (window.__OMADA_PORTAL_BASE__ || getQueryStringKey("apiBase") || getQueryStringKey("controllerUrl"))) || "";
 
 var hotspotMap = {
     3: "Voucher Access",
@@ -128,8 +167,18 @@ function getQueryStringAsObject () {
     }
     return r;
 }
+function withPortalBase(path) {
+  if (!portalApiBase) {
+    return path;
+  }
+  if (/^https?:/i.test(path)) {
+    return path;
+  }
+  var sanitizedBase = portalApiBase.replace(/\/$/, "");
+  return sanitizedBase + path;
+}
 Ajax.post(
-    '/portal/getPortalPageSetting',
+  withPortalBase('/portal/getPortalPageSetting'),
     JSON.stringify({
         "clientMac": clientMac,
         "apMac": apMac,
@@ -142,7 +191,7 @@ Ajax.post(
     function (res) {
         res = JSON.parse(res);
         data = res.result;
-        submitUrl           = "/portal/auth";
+        submitUrl           = withPortalBase("/portal/auth");
         var landingUrl  = data.landingUrl;
         isCommited          = false;
         globalConfig = {
@@ -239,9 +288,9 @@ Ajax.post(
                 submitData['vid'] = vid;
                 if(window.authType == 2 || window.authType == 8 || window.authType === 15){
                     if(window.authType === 15) {
-                      submitUrl = '/portal/ldap/auth';
+                          submitUrl = withPortalBase('/portal/ldap/auth');
                     } else {
-                      submitUrl = "/portal/radius/auth";
+                          submitUrl = withPortalBase("/portal/radius/auth");
                     }
                     submitData['authType'] = window.authType;
                 } else {
@@ -314,7 +363,7 @@ Ajax.post(
             e.preventDefault();
             var phoneNum = document.getElementById("phone-number").value;
             function sendSmsAuthCode () {
-                Ajax.post("/portal/sendSmsAuthCode",
+                Ajax.post(withPortalBase("/portal/sendSmsAuthCode"),
                     JSON.stringify({
                         clientMac: clientMac,
                         apMac: apMac,
@@ -967,4 +1016,195 @@ function escapeHtml(string) {
 
 function setNormalButton() {
     $("#button-login").html(globalConfig.buttonText);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", enhanceExperienceLayers);
+} else {
+  enhanceExperienceLayers();
+}
+
+function enhanceExperienceLayers() {
+  if (experienceLayersBootstrapped) {
+    return;
+  }
+  experienceLayersBootstrapped = true;
+  initBackgroundCarousel();
+  initAudioController();
+  initAdRail();
+}
+
+function initBackgroundCarousel() {
+  var slideNodes = Array.prototype.slice.call(document.querySelectorAll(".gallery-slide"));
+  if (!slideNodes.length || !BACKGROUND_SLIDES.length) {
+    return;
+  }
+
+  var sceneIndex = 0;
+  var slotIndex = 0;
+
+  function renderNextScene() {
+    var slideEl = slideNodes[slotIndex % slideNodes.length];
+    var scene = BACKGROUND_SLIDES[sceneIndex % BACKGROUND_SLIDES.length];
+    var backgroundValue = formatBackgroundSource(scene.source);
+
+    slideEl.style.backgroundImage = backgroundValue;
+    slideEl.dataset.sceneIndex = sceneIndex;
+
+    slideNodes.forEach(function (node) { node.classList.remove("active"); });
+    slideEl.classList.add("active");
+
+    updateSceneIndicator(sceneIndex, scene.caption || "Connected venue");
+
+    slotIndex = (slotIndex + 1) % slideNodes.length;
+    sceneIndex = (sceneIndex + 1) % BACKGROUND_SLIDES.length;
+  }
+
+  function updateSceneIndicator(index, caption) {
+    var labelEl = document.getElementById("slide-label");
+    var captionEl = document.getElementById("slide-caption");
+    var totalScenes = BACKGROUND_SLIDES.length;
+    if (labelEl) {
+      var sceneNumber = (index % totalScenes) + 1;
+      labelEl.textContent = sceneNumber < 10 ? "Scene 0" + sceneNumber : "Scene " + sceneNumber;
+    }
+    if (captionEl) {
+      captionEl.textContent = caption;
+    }
+  }
+
+  renderNextScene();
+  setInterval(renderNextScene, 11000);
+}
+
+function initAudioController() {
+  var audioEl = document.getElementById("portal-audio");
+  var toggleBtn = document.getElementById("audio-toggle");
+  var stateLabel = document.getElementById("audio-state");
+  var trackTitle = document.getElementById("track-title");
+
+  if (!audioEl || !toggleBtn) {
+    return;
+  }
+
+  var declaredTitle = audioEl.getAttribute("data-track-title");
+  if (trackTitle && declaredTitle) {
+    trackTitle.textContent = declaredTitle;
+  }
+
+  function syncState(isPlaying) {
+    if (stateLabel) {
+      stateLabel.textContent = isPlaying ? "Playing" : "Muted";
+    }
+    toggleBtn.setAttribute("aria-pressed", isPlaying);
+  }
+
+  toggleBtn.addEventListener("click", function () {
+    if (audioEl.paused) {
+      var attempt = audioEl.play();
+      if (attempt && attempt.then) {
+        attempt.then(function () {
+          syncState(true);
+        }).catch(function () {
+          syncState(false);
+        });
+      } else {
+        syncState(true);
+      }
+    } else {
+      audioEl.pause();
+      syncState(false);
+    }
+  });
+
+  audioEl.addEventListener("play", function () { syncState(true); });
+  audioEl.addEventListener("pause", function () { syncState(false); });
+}
+
+function initAdRail() {
+  var track = document.getElementById("ads-track");
+  var indicator = document.getElementById("ad-indicator");
+
+  if (!track || !PORTAL_ADS.length) {
+    return;
+  }
+
+  track.innerHTML = "";
+  PORTAL_ADS.forEach(function (ad) {
+    track.appendChild(buildAdCard(ad));
+  });
+
+  var index = 0;
+
+  function renderPosition() {
+    track.style.transform = "translateX(-" + (index * 100) + "%)";
+    if (indicator) {
+      indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
+    }
+  }
+
+  renderPosition();
+  setInterval(function () {
+    index = (index + 1) % PORTAL_ADS.length;
+    renderPosition();
+  }, 9000);
+}
+
+function buildAdCard(ad) {
+  var card = document.createElement("article");
+  card.className = "ad-card";
+  card.style.backgroundImage = formatBackgroundSource(ad.background || ad.image);
+
+  var content = document.createElement("div");
+  content.className = "ad-content";
+
+  var eyebrow = document.createElement("p");
+  eyebrow.className = "ad-eyebrow";
+  eyebrow.textContent = ad.eyebrow || "Featured";
+
+  var title = document.createElement("h3");
+  title.className = "ad-title";
+  title.textContent = ad.title || "";
+
+  var body = document.createElement("p");
+  body.className = "ad-body";
+  body.textContent = ad.body || "";
+
+  content.appendChild(eyebrow);
+  content.appendChild(title);
+  content.appendChild(body);
+
+  var ctaWrapper = document.createElement("div");
+  ctaWrapper.className = "ad-cta";
+  if (ad.cta) {
+    if (ad.link) {
+      var linkEl = document.createElement("a");
+      linkEl.href = ad.link;
+      linkEl.target = "_blank";
+      linkEl.rel = "noopener noreferrer";
+      linkEl.textContent = ad.cta;
+      ctaWrapper.appendChild(linkEl);
+    } else {
+      ctaWrapper.textContent = ad.cta;
+    }
+  }
+
+  card.appendChild(content);
+  card.appendChild(ctaWrapper);
+  return card;
+}
+
+function formatBackgroundSource(source) {
+  if (!source) {
+    return "linear-gradient(135deg,#0f0c29,#302b63,#24243e)";
+  }
+  var trimmed = source.trim();
+  if (trimmed.indexOf("gradient") > -1 || trimmed.indexOf("url(") === 0) {
+    return trimmed;
+  }
+  return "url('" + trimmed + "')";
+}
+
+function padWithZero(value) {
+  return value < 10 ? "0" + value : String(value);
 }

@@ -1,43 +1,132 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<link rel="stylesheet" href="index.css" type="text/css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Omada Captive Portal | Skyart Network</title>
+    <link rel="stylesheet" href="index.css" type="text/css" />
+</head>
 <body class="portal">
-    <div class="logo-img">
-        <img class="logo" src="portalLogo_picture@2x.png">
+    <div class="background-gallery" aria-hidden="true">
+        <div class="gallery-slide active" data-slide="0" style="background-image: url('background.png');"></div>
+        <div class="gallery-slide" data-slide="1"></div>
+        <div class="gallery-slide" data-slide="2"></div>
+        <div class="gallery-vignette"></div>
     </div>
 
-    <div class="oper-section-outer">
-        <div class="oper-section-inner">
-            <span id="oper-hint" style="color: red"></span>
-            <div id="hotspot-section">
-                <select id="hotspot-selector" class="oper-section-item"></select>
+    <div class="page-shell">
+        <header class="top-bar">
+            <div class="brand-mark">
+                <img class="logo" src="portalLogo_picture@2x.png" alt="Skyart captive portal logo" />
+                <div class="brand-copy">
+                    <p class="eyebrow">TP-Link Omada Captive Portal</p>
+                    <p class="headline">Skyart Network Presence Wi-Fi</p>
+                </div>
             </div>
-            <form id="login-form">
-                <div id="input-voucher">
-                    <input id="voucherCode" class="oper-section-item input" name="voucherCode" type="text" placeholder="Voucher Code"/>
+            <div class="media-controls" aria-label="Soundscape controls">
+                <button id="audio-toggle" class="ghost-button" type="button">
+                    <span class="icon-sound"></span>
+                    <span id="audio-state">Muted</span>
+                </button>
+                <div class="now-playing">
+                    <span class="label">Now playing</span>
+                    <span id="track-title">Waveform Echoes</span>
                 </div>
-                <div id="input-user">
-                    <input id="username" class="oper-section-item input" name="username" type="text" placeholder="Username"/>
-                </div>
-                <div id="input-password" class="user-input">
-                    <input id="password" class="oper-section-item input" name="password" type="password"  placeholder="Password"/>
-                </div>
-                <div id="input-simple">
-                    <input id="simplePassword" class="password oper-section-item" name="simplePassword" type="password" placeholder="Password"/>
-                </div>
-                <div id="input-phone-num">
-                    <span class="add">+</span><input id="country-code" class="input"><input id="phone-number" class="input" name="phone-number" type="text" placeholder="Phone Number"/>
-                </div>
-                <div id="input-verify-code">
-                    <input id="verify-code" class="input" name="verify-code" type="text" placeholder="Verification Code"/><button id="get-code" class="button">Get Code</button>
-                </div>
-                <input name="clientMac" id="cMac" style="display:none"/>
-                <input name="radiusSvrIp" id="radiusServerIp" style="display:none"/>
-            </form>
-            <div id="button-area">
-                <button id="button-login" class="button oper-section-item">Log In</button>
             </div>
-        </div>
+        </header>
+
+        <main class="grid-layout">
+            <section class="experience-panel" aria-label="Portal highlights">
+                <p class="eyebrow">Vercel-edge hosted</p>
+                <h1>Immersive welcome layer for Omada guests</h1>
+                <p class="lede">
+                    Blend branded storytelling, sponsor placements, and a frictionless Omada authentication flow.
+                    Background scenes glide softly while audio cues nudge guests through the journey.
+                </p>
+                <ul class="feature-list">
+                    <li><span>Secured Omni-auth: voucher, SMS, LDAP, form auth.</span></li>
+                    <li><span>Edge caching via Vercel for low-latency splash screens.</span></li>
+                    <li><span>Modular ad rail for sponsor campaigns or venue promos.</span></li>
+                </ul>
+                <div class="stats">
+                    <div>
+                        <p class="stat">45s</p>
+                        <p class="meta">Average session lift</p>
+                    </div>
+                    <div>
+                        <p class="stat">+63%</p>
+                        <p class="meta">Opt-in survey rate</p>
+                    </div>
+                </div>
+                <div class="slide-indicator" role="status">
+                    <span id="slide-label">Scene 01</span>
+                    <span class="divider"></span>
+                    <span id="slide-caption">Sunrise lobby</span>
+                </div>
+            </section>
+
+            <section class="login-card" aria-label="Connect to Wi-Fi">
+                <div class="card-header">
+                    <p class="eyebrow">Connect now</p>
+                    <h2>Authenticate to get online</h2>
+                    <p id="oper-hint" class="status-hint" role="status"></p>
+                </div>
+                <div id="hotspot-section" class="control-group">
+                    <label for="hotspot-selector" class="label">Choose method</label>
+                    <select id="hotspot-selector" class="input control"></select>
+                </div>
+                <form id="login-form">
+                    <div id="input-voucher" class="control-group">
+                        <label for="voucherCode" class="label">Voucher code</label>
+                        <input id="voucherCode" class="input control" name="voucherCode" type="text" placeholder="ABC-123-456" />
+                    </div>
+                    <div id="input-user" class="control-group">
+                        <label for="username" class="label">Username</label>
+                        <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" />
+                    </div>
+                    <div id="input-password" class="control-group">
+                        <label for="password" class="label">Password</label>
+                        <input id="password" class="input control" name="password" type="password" placeholder="••••••••" />
+                    </div>
+                    <div id="input-simple" class="control-group">
+                        <label for="simplePassword" class="label">Shared passphrase</label>
+                        <input id="simplePassword" class="input control" name="simplePassword" type="password" placeholder="Venue pass" />
+                    </div>
+                    <div id="input-phone-num" class="control-group">
+                        <label class="label" for="phone-number">Phone number</label>
+                        <div class="sms-input">
+                            <span class="add">+</span>
+                            <input id="country-code" class="input country" type="text" aria-label="Country code" />
+                            <input id="phone-number" class="input" name="phone-number" type="text" placeholder="712 345 678" />
+                        </div>
+                    </div>
+                    <div id="input-verify-code" class="control-group sms-code">
+                        <label class="label" for="verify-code">Verification code</label>
+                        <div class="code-input">
+                            <input id="verify-code" class="input" name="verify-code" type="text" placeholder="123456" />
+                            <button id="get-code" class="ghost-button" type="button">Get code</button>
+                        </div>
+                    </div>
+                    <input name="clientMac" id="cMac" type="hidden" />
+                    <input name="radiusSvrIp" id="radiusServerIp" type="hidden" />
+                </form>
+                <div id="button-area">
+                    <button id="button-login" class="button control">Log In</button>
+                </div>
+                <p class="meta help-text">Survey-based form auth launches a guided modal before network access.</p>
+            </section>
+
+            <aside class="ads-panel" aria-label="Sponsor rotation">
+                <div class="ads-frame">
+                    <div class="ad-track" id="ads-track"></div>
+                </div>
+                <div class="ads-meta">
+                    <span class="eyebrow">Live campaigns</span>
+                    <div class="ad-indicator" id="ad-indicator">01 / 03</div>
+                </div>
+            </aside>
+        </main>
     </div>
 
     <div id="form-auth-msg">
@@ -56,8 +145,17 @@
       </div>
     </div>
 
+    <audio id="portal-audio" loop preload="auto" data-track-title="Skyart Lounge Loop">
+        <source src="media/skyart-lounge.mp3" type="audio/mpeg" />
+    </audio>
+
     <script src="jquery.min.js"></script>
+    <script>
+        // Define the Omada controller base when hosting the portal outside the controller network.
+        window.__OMADA_PORTAL_BASE__ = window.__OMADA_PORTAL_BASE__ || '';
+    </script>
+    <script src="index.js"></script>
 </body>
-<script src="index.js"></script>
+</html>
 
 
