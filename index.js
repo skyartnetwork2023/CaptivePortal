@@ -1346,6 +1346,7 @@ function fetchSupabaseBackgrounds(client) {
         sortBy: { column: "name", order: "asc" }
       })
       .then(function (result) {
+        console.log('[Supabase Debug] Raw image list result:', result);
         if (result.error) {
           console.error('[Supabase Debug] Error listing images:', result.error);
           throw result.error;
@@ -1408,6 +1409,7 @@ function fetchSupabaseAudio(client) {
       sortBy: { column: "name", order: "asc" }
     })
     .then(function(result) {
+      console.log('[Supabase Debug] Raw audio list result:', result);
       if (result.error) {
         console.error('[Supabase Debug] Error listing audios:', result.error);
         return;
