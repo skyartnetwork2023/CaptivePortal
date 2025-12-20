@@ -152,6 +152,22 @@
         };
     </script>
     <script src="index.js"></script>
+                <script>
+                    function matchAdPanelHeight() {
+                        if (window.innerWidth <= 600) {
+                            var login = document.querySelector('.login-card');
+                            var ads = document.querySelector('.ads-panel');
+                            if (login && ads) {
+                                ads.style.height = login.offsetHeight + 'px';
+                            }
+                        } else {
+                            var ads = document.querySelector('.ads-panel');
+                            if (ads) ads.style.height = '';
+                        }
+                    }
+                    window.addEventListener('DOMContentLoaded', matchAdPanelHeight);
+                    window.addEventListener('resize', matchAdPanelHeight);
+                </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 var overlay = document.getElementById('audio-overlay');
