@@ -1,3 +1,4 @@
+https://www.instagram.com/skyart_tech?igsh=bW5peHJxMnk3bHJl
 # CaptivePortal
 
 An Omada-compatible captive portal microsite that layers immersive visuals, sponsor slides, ambient audio, and a **voucher-only** authentication workflow. The layout is optimized for static hosting (Vercel, Azure Static Web Apps, S3 + CloudFront, etc.) while still talking to the Omada controller APIs.
@@ -85,4 +86,5 @@ The modal survey flow is still handled entirely by the stock controller API. Any
 - **CORS errors:** confirm `window.__OMADA_PORTAL_BASE__` points to the controller using HTTPS and that the controller trusts the portal domain. Older firmware may need a reverse proxy that injects permissive CORS headers.
 - **Assets not loading before login:** add every external host (Vercel domain, Supabase asset domain, Google Fonts) to Omada’s walled garden.
 - **Supabase assets missing:** double-check the bucket policy is public, the `url`/`anonKey` pair is correct, and the referenced folder/object names exist.
+
 - **Voucher rejection:** confirm the Omada site profile enables Voucher auth and that the code entered is still valid; every other method has been intentionally disabled in the UI.
