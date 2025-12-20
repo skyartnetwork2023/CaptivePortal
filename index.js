@@ -1548,6 +1548,54 @@ function debugSupabaseListing() {
         close.style.float = 'right';
         close.addEventListener('click', function() { modal.remove(); });
         modal.appendChild(close);
+        // Controls: allow setting image/audio prefixes and refreshing listings
+        var controls = document.createElement('div');
+        controls.style.display = 'flex';
+        controls.style.gap = '8px';
+        controls.style.marginBottom = '8px';
+
+        var imgLabel = document.createElement('label');
+        imgLabel.textContent = 'Image prefix:';
+        imgLabel.style.fontSize = '12px';
+        imgLabel.style.alignSelf = 'center';
+        var imgInput = document.createElement('input');
+        imgInput.type = 'text';
+        imgInput.value = supabaseConfig.imagePrefix || '';
+        imgInput.style.flex = '1';
+
+        var audLabel = document.createElement('label');
+        audLabel.textContent = 'Audio prefix:';
+        audLabel.style.fontSize = '12px';
+        audLabel.style.alignSelf = 'center';
+        var audInput = document.createElement('input');
+        audInput.type = 'text';
+        audInput.value = supabaseConfig.audioPrefix || '';
+        audInput.style.flex = '1';
+
+        var refreshBtn = document.createElement('button');
+        refreshBtn.textContent = 'Refresh Assets';
+        refreshBtn.style.flex = '0 0 auto';
+        refreshBtn.addEventListener('click', function () {
+          // Update config and re-run hydration
+          supabaseConfig.imagePrefix = imgInput.value || '';
+          supabaseConfig.audioPrefix = audInput.value || '';
+          console.log('[Supabase Debug] Updated prefixes, rehydrating assets', supabaseConfig.imagePrefix, supabaseConfig.audioPrefix);
+          hydrateAssetsFromSupabase().then(function() {
+            // After hydrate, refresh modal listing
+            debugSupabaseListing();
+          }).catch(function(err){
+            console.error('[Supabase Debug] hydrate failed', err);
+          });
+        });
+
+        // Append controls into modal
+        controls.appendChild(imgLabel);
+        controls.appendChild(imgInput);
+        controls.appendChild(audLabel);
+        controls.appendChild(audInput);
+        controls.appendChild(refreshBtn);
+        modal.appendChild(controls);
+
         var title = document.createElement('div');
         title.textContent = 'Supabase Storage Debug — ' + bucket + (listArg ? '/' + listArg : ' (root)');
         title.style.fontWeight = '600';
