@@ -1395,31 +1395,44 @@ function fetchSupabaseBackgrounds(client) {
 
 function fetchSupabaseAudio(client) {
     console.log('[Supabase Debug] fetchSupabaseAudio config:', supabaseConfig);
-  if (!supabaseConfig.audioBucket || !supabaseConfig.audioObjectPath) {
+  if (!supabaseConfig.audioObjectPath) {
     return Promise.resolve();
   }
   var audioEl = document.getElementById("portal-audio");
   if (!audioEl) {
     return Promise.resolve();
   }
-  var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
-  var objectPath = buildStoragePath(prefix, supabaseConfig.audioObjectPath);
-  console.log('[Supabase Debug] Fetching audio at:', objectPath, 'from bucket:', supabaseConfig.audioBucket);
-  var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
-  var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
-  if (!publicUrl) {
-    console.error('[Supabase Debug] No public URL for audio:', objectPath, publicResponse);
+  var audioPath = supabaseConfig.audioObjectPath;
+  var publicUrl = null;
+  // If a full URL is provided, use it directly
+  if (/^https?:\/\//i.test(audioPath)) {
+    publicUrl = audioPath;
+    console.log('[Supabase Debug] Using direct audio URL:', publicUrl);
   } else {
-    console.log('[Supabase Debug] Audio public URL:', publicUrl);
+    // Otherwise, fetch public URL from Supabase storage (requires audioBucket)
+    if (!supabaseConfig.audioBucket) {
+      console.warn('[Supabase Debug] audioBucket not set; cannot fetch audio object:', audioPath);
+      return Promise.resolve();
+    }
+    var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
+    var objectPath = buildStoragePath(prefix, audioPath);
+    console.log('[Supabase Debug] Fetching audio at:', objectPath, 'from bucket:', supabaseConfig.audioBucket);
+    var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
+    publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
+    if (!publicUrl) {
+      console.error('[Supabase Debug] No public URL for audio:', objectPath, publicResponse);
+    } else {
+      console.log('[Supabase Debug] Audio public URL:', publicUrl);
+    }
   }
   if (publicUrl) {
     audioEl.innerHTML = "";
     audioEl.src = publicUrl;
-    var title = supabaseConfig.audioTitle || formatAssetCaption(objectPath);
+    var title = supabaseConfig.audioTitle || formatAssetCaption(audioPath);
     audioEl.setAttribute("data-track-title", title);
     audioEl.load();
   }
-  return Promise.resolve();
+  return Promise.resolve(publicUrl);
 }
 
 function normalizeStoragePath(path) {

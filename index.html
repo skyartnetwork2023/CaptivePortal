@@ -54,7 +54,7 @@
                     </div>
                     <div id="input-user" class="control-group legacy-auth" aria-hidden="true">
                         <label for="username" class="label">Username</label>
-                        <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" />
+                        <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" autocomplete="username" />
                     </div>
                     <div id="input-password" class="control-group legacy-auth" aria-hidden="true">
                         <label for="password" class="label">Password</label>
@@ -141,7 +141,7 @@
             imagePrefix: '',            // Folder in image bucket ('' for root)
             audioBucket: 'audios',      // Bucket for audio
             audioPrefix: '',            // Folder in audio bucket ('' for root)
-            audioObjectPath: 'skyart-lounge.mp3', // Audio file name in audios/
+            audioObjectPath: 'https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/audios/Omah%20lay%20%20-%20I%20never%20forget.%20appreciation%20verse.mp3', // Direct public URL to audio
             audioTitle: 'Skyart Lounge Loop'
         };
     </script>
