@@ -1127,6 +1127,9 @@ function initAudioController() {
     return;
   }
 
+  // Auto-play the first track on page load
+  playTrack(0);
+
   var declaredTitle = audioEl.getAttribute("data-track-title");
   if (trackTitle && declaredTitle) {
     trackTitle.textContent = declaredTitle;
