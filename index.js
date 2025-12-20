@@ -1401,11 +1401,28 @@ function fetchSupabaseBackgrounds(client) {
       var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
       return {
         source: resolvedUrl || file.objectPath,
-        caption: formatAssetCaption(file.name)
+        caption: formatAssetCaption(file.name),
+        name: file.name
       };
     }).filter(function(slide) { return !!slide.source; });
     if (slides.length) {
       BACKGROUND_SLIDES = slides;
+      // Set main background from first image named 'background'
+      var bg = slides.find(function(slide) {
+        return slide.name && slide.name.toLowerCase().startsWith('background');
+      });
+      var bgUrl = bg ? bg.source : null;
+      var bgEl = document.querySelector('.background-static');
+      if (bgEl) {
+        if (bgUrl) {
+          bgEl.style.backgroundImage = "url('" + bgUrl + "')";
+          bgEl.style.backgroundSize = 'cover';
+          bgEl.style.backgroundPosition = 'center';
+        } else {
+          bgEl.style.backgroundImage = 'none';
+          bgEl.style.background = '#030711';
+        }
+      }
     }
   });
 }
