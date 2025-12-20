@@ -1330,6 +1330,7 @@ function initSupabaseClient() {
 }
 
 function fetchSupabaseBackgrounds(client) {
+    console.log('[Supabase Debug] fetchSupabaseBackgrounds config:', supabaseConfig);
   if (!supabaseConfig.imageBucket) {
     return Promise.resolve();
   }
@@ -1337,6 +1338,14 @@ function fetchSupabaseBackgrounds(client) {
   var listPath = prefix || undefined;
   // Helper to recursively list all images in a folder
   function listAllImages(folder) {
+      console.log('[Supabase Debug] Listing images in folder:', folder);
+            if (result.error) {
+              console.error('[Supabase Debug] Error listing images:', result.error);
+            }
+            if (!result.data || !result.data.length) {
+              console.warn('[Supabase Debug] No images found in folder:', folder);
+            }
+      console.log('[Supabase Debug] Found image:', file.objectPath);
     return client.storage
       .from(supabaseConfig.imageBucket)
       .list(folder, {
@@ -1380,6 +1389,7 @@ function fetchSupabaseBackgrounds(client) {
 }
 
 function fetchSupabaseAudio(client) {
+    console.log('[Supabase Debug] fetchSupabaseAudio config:', supabaseConfig);
   if (!supabaseConfig.audioBucket || !supabaseConfig.audioObjectPath) {
     return Promise.resolve();
   }
@@ -1389,8 +1399,14 @@ function fetchSupabaseAudio(client) {
   }
   var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
   var objectPath = buildStoragePath(prefix, supabaseConfig.audioObjectPath);
+  console.log('[Supabase Debug] Fetching audio at:', objectPath, 'from bucket:', supabaseConfig.audioBucket);
   var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
   var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
+  if (!publicUrl) {
+    console.error('[Supabase Debug] No public URL for audio:', objectPath, publicResponse);
+  } else {
+    console.log('[Supabase Debug] Audio public URL:', publicUrl);
+  }
   if (publicUrl) {
     audioEl.innerHTML = "";
     audioEl.src = publicUrl;
