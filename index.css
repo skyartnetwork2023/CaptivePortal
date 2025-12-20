@@ -373,11 +373,18 @@ body.portal {
   overflow: hidden;
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 360px;
-  height: 240px;
+  width: 100%;
+  height: 340px;
   min-height: unset;
   margin: 0 auto;
   position: relative;
+  background: transparent;
+}
+
+.expanded-campaign {
+  width: 100%;
+  height: 340px;
+  max-width: 600px;
 }
 
 .ad-track {
@@ -389,18 +396,17 @@ body.portal {
 }
 
 .ad-card {
-  width: 360px;
-  height: 240px;
+  width: 100%;
+  height: 340px;
   flex: 0 0 100%;
   margin: 0;
-  padding: 2rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 1.5rem;
+  justify-content: flex-end;
   background-size: cover;
   background-position: center;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
