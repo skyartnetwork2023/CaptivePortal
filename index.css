@@ -287,7 +287,7 @@ body {
   background: var(--border-soft);
 }
 
-..login-card {
+.login-card {
   padding: 1.2rem 1.2rem 1.5rem 1.2rem;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -430,7 +430,8 @@ body {
   display: flex;
   width: 100%;
   height: 100%;
-    overflow-x: hidden;
+  overflow-x: hidden;
+}
 .ad-card {
   width: 100%;
   height: 420px;
