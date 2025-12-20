@@ -1,28 +1,45 @@
-// Mobile tab switching for voucher/campaign blocks
-document.addEventListener('DOMContentLoaded', function() {
-  var tabVoucher = document.getElementById('tab-voucher');
-  var tabCampaign = document.getElementById('tab-campaign');
-  var voucherBlock = document.querySelector('.login-card');
-  var campaignBlock = document.querySelector('.ads-panel');
+// Mobile navigation for paged blocks
+function setupMobilePaging() {
+  if (window.innerWidth > 700) {
+    document.querySelector('.login-card').style.display = '';
+    document.querySelector('.ads-panel').style.display = '';
+    return;
+  }
+  var voucher = document.querySelector('.login-card');
+  var campaign = document.querySelector('.ads-panel');
+  var navVoucher = document.getElementById('mobile-nav-voucher');
+  var navCampaign = document.getElementById('mobile-nav-campaign');
+  if (!voucher || !campaign || !navVoucher || !navCampaign) return;
   function showVoucher() {
-    tabVoucher.classList.add('active');
-    tabCampaign.classList.remove('active');
-    voucherBlock.style.display = 'block';
-    campaignBlock.style.display = 'none';
+    voucher.style.display = 'block';
+    campaign.style.display = 'none';
+    navVoucher.style.display = 'none';
+    navCampaign.style.display = 'block';
+    navCampaign.textContent = 'View Campaigns';
   }
   function showCampaign() {
-    tabVoucher.classList.remove('active');
-    tabCampaign.classList.add('active');
-    voucherBlock.style.display = 'none';
-    campaignBlock.style.display = 'block';
+    voucher.style.display = 'none';
+    campaign.style.display = 'block';
+    navVoucher.style.display = 'block';
+    navVoucher.textContent = 'Back to Voucher';
+    navCampaign.style.display = 'none';
   }
-  if (tabVoucher && tabCampaign && voucherBlock && campaignBlock) {
-    tabVoucher.addEventListener('click', showVoucher);
-    tabCampaign.addEventListener('click', showCampaign);
-    // Default to voucher tab
-    showVoucher();
-  }
-});
+  navCampaign.addEventListener('click', showCampaign);
+  navVoucher.addEventListener('click', showVoucher);
+  showVoucher();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() {
+    enableAudioAfterUserGesture();
+    bootstrapExperienceLayers();
+    setupMobilePaging();
+  });
+} else {
+  enableAudioAfterUserGesture();
+  bootstrapExperienceLayers();
+  setupMobilePaging();
+}
 var NO_AUTH = 0,
     SIMPLE_PASSWORD = 1,
     EXTERNAL_RADIUS = 2,
@@ -1055,29 +1072,21 @@ function enableAudioAfterUserGesture() {
   var overlay = document.getElementById('audio-overlay');
   var btn = document.getElementById('audio-overlay-btn');
   if (!overlay || !btn) return;
-
-  var audioEl = document.getElementById('portal-audio');
-  function hideOverlay() {
-    overlay.style.display = 'none';
-    btn.removeEventListener('click', hideOverlay);
-    document.removeEventListener('keydown', hideOverlay);
-    document.removeEventListener('mousedown', hideOverlay);
-    document.removeEventListener('touchstart', hideOverlay);
-  }
-  // Always hide overlay after first gesture, regardless of audio state
-  btn.addEventListener('click', hideOverlay);
-  document.addEventListener('keydown', hideOverlay, { once: true });
-  document.addEventListener('mousedown', hideOverlay, { once: true });
-  document.addEventListener('touchstart', hideOverlay, { once: true });
-  // Try to enable audio on gesture, but don't block UI if it fails
   function enableAudio() {
+    var audioEl = document.getElementById('portal-audio');
     if (audioEl) {
       audioEl.muted = false;
       var playPromise = audioEl.play();
       if (playPromise && playPromise.catch) playPromise.catch(function(){});
     }
+    overlay.style.display = 'none';
+    btn.removeEventListener('click', enableAudio);
+    document.removeEventListener('keydown', enableAudio);
+    document.removeEventListener('mousedown', enableAudio);
+    document.removeEventListener('touchstart', enableAudio);
   }
   btn.addEventListener('click', enableAudio);
+  // Also allow any user gesture to enable
   document.addEventListener('keydown', enableAudio, { once: true });
   document.addEventListener('mousedown', enableAudio, { once: true });
   document.addEventListener('touchstart', enableAudio, { once: true });
