@@ -1390,8 +1390,8 @@ function fetchSupabaseBackgrounds(client) {
 }
 
 function fetchSupabaseAudio(client) {
-    console.log('[Supabase Debug] fetchSupabaseAudio config:', supabaseConfig);
-  if (!supabaseConfig.audioBucket || !supabaseConfig.audioObjectPath) {
+  console.log('[Supabase Debug] fetchSupabaseAudio config:', supabaseConfig);
+  if (!supabaseConfig.audioBucket) {
     return Promise.resolve();
   }
   var audioEl = document.getElementById("portal-audio");
@@ -1399,23 +1399,47 @@ function fetchSupabaseAudio(client) {
     return Promise.resolve();
   }
   var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
-  var objectPath = buildStoragePath(prefix, supabaseConfig.audioObjectPath);
-  console.log('[Supabase Debug] Fetching audio at:', objectPath, 'from bucket:', supabaseConfig.audioBucket);
-  var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
-  var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
-  if (!publicUrl) {
-    console.error('[Supabase Debug] No public URL for audio:', objectPath, publicResponse);
-  } else {
-    console.log('[Supabase Debug] Audio public URL:', publicUrl);
-  }
-  if (publicUrl) {
-    audioEl.innerHTML = "";
-    audioEl.src = publicUrl;
-    var title = supabaseConfig.audioTitle || formatAssetCaption(objectPath);
-    audioEl.setAttribute("data-track-title", title);
-    audioEl.load();
-  }
-  return Promise.resolve();
+  var listPath = prefix || undefined;
+  // List all audio files in the bucket/folder
+  return client.storage
+    .from(supabaseConfig.audioBucket)
+    .list(listPath, {
+      limit: 100,
+      sortBy: { column: "name", order: "asc" }
+    })
+    .then(function(result) {
+      if (result.error) {
+        console.error('[Supabase Debug] Error listing audios:', result.error);
+        return;
+      }
+      if (!result.data || !result.data.length) {
+        console.warn('[Supabase Debug] No audio files found in folder:', listPath);
+        return;
+      }
+      var audioFiles = result.data.filter(function(entry) {
+        if (!entry || !entry.name) return false;
+        if (entry.metadata && entry.metadata.mimetype === "inode/directory") return false;
+        // Accept common audio file extensions
+        return /\.(mp3|m4a|aac|ogg|wav)$/i.test(entry.name);
+      }).map(function(entry) {
+        var objectPath = buildStoragePath(prefix, entry.name);
+        var publicUrl = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
+        var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
+        return {
+          src: resolvedUrl || objectPath,
+          title: formatAssetCaption(entry.name)
+        };
+      });
+      if (audioFiles.length) {
+        window.BACKGROUND_AUDIO_TRACKS = audioFiles;
+        // Start with the first track
+        audioEl.src = audioFiles[0].src;
+        audioEl.setAttribute('data-track-title', audioFiles[0].title);
+        var trackTitle = document.getElementById('track-title');
+        if (trackTitle) trackTitle.textContent = audioFiles[0].title;
+        audioEl.load();
+      }
+    });
 }
 
 function normalizeStoragePath(path) {
