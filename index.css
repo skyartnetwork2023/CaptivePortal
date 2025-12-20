@@ -96,7 +96,7 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  background-image: url('background.png');
+  background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
