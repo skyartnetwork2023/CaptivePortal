@@ -145,23 +145,17 @@
       </div>
     </div>
 
-    <audio id="portal-audio" loop preload="auto" data-track-title="Skyart Lounge Loop">
-        <source src="media/skyart-lounge.mp3" type="audio/mpeg" />
-    </audio>
-
     <script src="jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
     <script>
         // Define the Omada controller base when hosting the portal outside the controller network.
         window.__OMADA_PORTAL_BASE__ = window.__OMADA_PORTAL_BASE__ || '';
-        // Configure Supabase project + bucket used for background slides and audio.
+        // Configure Supabase project + bucket used for background slides only (no audio).
         window.__SUPABASE_CONFIG__ = window.__SUPABASE_CONFIG__ || {
             url: '',
             anonKey: '',
             assetBucket: 'portal-media',
-            backgroundPrefix: 'backgrounds',
-            audioObjectPath: 'audio/skyart-lounge.mp3',
-            audioTitle: 'Skyart Lounge Loop'
+            backgroundPrefix: 'backgrounds'
         };
     </script>
     <script src="index.js"></script>
