@@ -1338,14 +1338,7 @@ function fetchSupabaseBackgrounds(client) {
   var listPath = prefix || undefined;
   // Helper to recursively list all images in a folder
   function listAllImages(folder) {
-      console.log('[Supabase Debug] Listing images in folder:', folder);
-            if (result.error) {
-              console.error('[Supabase Debug] Error listing images:', result.error);
-            }
-            if (!result.data || !result.data.length) {
-              console.warn('[Supabase Debug] No images found in folder:', folder);
-            }
-      console.log('[Supabase Debug] Found image:', file.objectPath);
+    console.log('[Supabase Debug] Listing images in folder:', folder);
     return client.storage
       .from(supabaseConfig.imageBucket)
       .list(folder, {
@@ -1353,18 +1346,26 @@ function fetchSupabaseBackgrounds(client) {
         sortBy: { column: "name", order: "asc" }
       })
       .then(function (result) {
-        if (result.error) throw result.error;
-        if (!result.data || !result.data.length) return [];
+        if (result.error) {
+          console.error('[Supabase Debug] Error listing images:', result.error);
+          throw result.error;
+        }
+        if (!result.data || !result.data.length) {
+          console.warn('[Supabase Debug] No images found in folder:', folder);
+          return [];
+        }
         var files = [];
         var subfolders = [];
         result.data.forEach(function(entry) {
           if (entry.metadata && entry.metadata.mimetype === "inode/directory") {
             subfolders.push(buildStoragePath(folder, entry.name));
           } else if (entry.name) {
-            files.push({
+            var fileObj = {
               objectPath: buildStoragePath(folder, entry.name),
               name: entry.name
-            });
+            };
+            files.push(fileObj);
+            console.log('[Supabase Debug] Found image:', fileObj.objectPath);
           }
         });
         // Recursively list subfolders
