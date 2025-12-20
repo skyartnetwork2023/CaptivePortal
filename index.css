@@ -359,7 +359,10 @@ body.portal {
   overflow: hidden;
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  min-height: 360px;
+  width: 360px;
+  height: 240px;
+  min-height: unset;
+  margin: 0 auto;
   position: relative;
 }
 
@@ -368,11 +371,14 @@ body.portal {
   width: 100%;
   height: 100%;
   transition: transform 0.8s cubic-bezier(0.22, 0.68, 0, 1);
+  will-change: transform;
 }
 
 .ad-card {
   width: 360px;
   height: 240px;
+  flex: 0 0 100%;
+  margin: 0;
   padding: 2rem;
   display: flex;
   flex-direction: column;
