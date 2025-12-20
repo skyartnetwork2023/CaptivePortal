@@ -1055,6 +1055,22 @@ function enableAudioAfterUserGesture() {
   var overlay = document.getElementById('audio-overlay');
   var btn = document.getElementById('audio-overlay-btn');
   if (!overlay || !btn) return;
+
+  // If audio is already playing or unmuted, hide overlay immediately
+  var audioEl = document.getElementById('portal-audio');
+  if (audioEl && !audioEl.muted && !audioEl.paused) {
+    overlay.style.display = 'none';
+    return;
+  }
+
+  function hideOverlay() {
+    overlay.style.display = 'none';
+    btn.removeEventListener('click', enableAudio);
+    document.removeEventListener('keydown', enableAudio);
+    document.removeEventListener('mousedown', enableAudio);
+    document.removeEventListener('touchstart', enableAudio);
+  }
+
   function enableAudio() {
     var audioEl = document.getElementById('portal-audio');
     if (audioEl) {
@@ -1062,17 +1078,19 @@ function enableAudioAfterUserGesture() {
       var playPromise = audioEl.play();
       if (playPromise && playPromise.catch) playPromise.catch(function(){});
     }
-    overlay.style.display = 'none';
-    btn.removeEventListener('click', enableAudio);
-    document.removeEventListener('keydown', enableAudio);
-    document.removeEventListener('mousedown', enableAudio);
-    document.removeEventListener('touchstart', enableAudio);
+    hideOverlay();
   }
   btn.addEventListener('click', enableAudio);
   // Also allow any user gesture to enable
   document.addEventListener('keydown', enableAudio, { once: true });
   document.addEventListener('mousedown', enableAudio, { once: true });
   document.addEventListener('touchstart', enableAudio, { once: true });
+
+  // Always hide overlay after first gesture, even if play fails
+  btn.addEventListener('click', hideOverlay);
+  document.addEventListener('keydown', hideOverlay, { once: true });
+  document.addEventListener('mousedown', hideOverlay, { once: true });
+  document.addEventListener('touchstart', hideOverlay, { once: true });
 }
 
 if (document.readyState === "loading") {
