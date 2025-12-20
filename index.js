@@ -1208,7 +1208,7 @@ function initAdRail() {
   var autoRotate = setInterval(function () {
     index = (index + 1) % PORTAL_ADS.length;
     renderPosition();
-  }, 9000);
+  }, 3000);
 
   var prevBtn = document.getElementById("ad-prev");
   var nextBtn = document.getElementById("ad-next");
@@ -1227,7 +1227,7 @@ function initAdRail() {
     autoRotate = setInterval(function () {
       index = (index + 1) % PORTAL_ADS.length;
       renderPosition();
-    }, 9000);
+    }, 3000);
   }
   if (prevBtn) prevBtn.addEventListener("click", goToPrev);
   if (nextBtn) nextBtn.addEventListener("click", goToNext);

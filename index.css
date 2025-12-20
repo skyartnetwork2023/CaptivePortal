@@ -32,13 +32,13 @@ body.portal {
   background: var(--bg-dark);
   overflow-x: hidden;
 }
-}
 
 .background-gallery {
   position: fixed;
   inset: 0;
   overflow: hidden;
   z-index: 0;
+  background-attachment: fixed;
 }
 
 .gallery-slide {
@@ -46,6 +46,7 @@ body.portal {
   inset: 0;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   opacity: 0;
   transform: scale(1.1);
   transition: opacity 1.4s ease, transform 6s ease;
