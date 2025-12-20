@@ -1307,43 +1307,48 @@ function fetchSupabaseBackgrounds(client) {
   }
   var prefix = normalizeStoragePath(supabaseConfig.imagePrefix || "");
   var listPath = prefix || undefined;
-  return client.storage
-    .from(supabaseConfig.imageBucket)
-    .list(listPath, {
-      limit: supabaseConfig.backgroundLimit || 10,
-      sortBy: { column: "name", order: "asc" }
-    })
-    .then(function (result) {
-      if (result.error) {
-        throw result.error;
-      }
-      if (!result.data || !result.data.length) {
-        return;
-      }
-      var slides = result.data
-        .filter(function (entry) {
-          if (!entry || !entry.name) {
-            return false;
-          }
+  // Helper to recursively list all images in a folder
+  function listAllImages(folder) {
+    return client.storage
+      .from(supabaseConfig.imageBucket)
+      .list(folder, {
+        limit: 1000,
+        sortBy: { column: "name", order: "asc" }
+      })
+      .then(function (result) {
+        if (result.error) throw result.error;
+        if (!result.data || !result.data.length) return [];
+        var files = [];
+        var subfolders = [];
+        result.data.forEach(function(entry) {
           if (entry.metadata && entry.metadata.mimetype === "inode/directory") {
-            return false;
+            subfolders.push(buildStoragePath(folder, entry.name));
+          } else if (entry.name) {
+            files.push({
+              objectPath: buildStoragePath(folder, entry.name),
+              name: entry.name
+            });
           }
-          return true;
-        })
-        .map(function (entry) {
-          var objectPath = buildStoragePath(prefix, entry.name);
-          var publicUrl = client.storage.from(supabaseConfig.imageBucket).getPublicUrl(objectPath);
-          var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
-          return {
-            source: resolvedUrl || objectPath,
-            caption: formatAssetCaption(entry.name)
-          };
-        })
-        .filter(function (slide) { return !!slide.source; });
-      if (slides.length) {
-        BACKGROUND_SLIDES = slides;
-      }
-    });
+        });
+        // Recursively list subfolders
+        return Promise.all(subfolders.map(listAllImages)).then(function(nested) {
+          return files.concat(...nested);
+        });
+      });
+  }
+  return listAllImages(listPath || "").then(function(allFiles) {
+    var slides = allFiles.map(function(file) {
+      var publicUrl = client.storage.from(supabaseConfig.imageBucket).getPublicUrl(file.objectPath);
+      var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
+      return {
+        source: resolvedUrl || file.objectPath,
+        caption: formatAssetCaption(file.name)
+      };
+    }).filter(function(slide) { return !!slide.source; });
+    if (slides.length) {
+      BACKGROUND_SLIDES = slides;
+    }
+  });
 }
 
 function fetchSupabaseAudio(client) {
