@@ -1460,6 +1460,121 @@ function fetchSupabaseAudio(client) {
   return Promise.resolve(publicUrl);
 }
 
+// Debug helper: show listing and thumbnails for the image bucket
+function debugSupabaseListing() {
+  try {
+    var client = initSupabaseClient();
+    if (!client) {
+      console.warn('[Supabase Debug] Supabase client not initialized');
+      return;
+    }
+    var bucket = supabaseConfig.imageBucket;
+    if (!bucket) {
+      console.warn('[Supabase Debug] imageBucket not set in config');
+      return;
+    }
+    var prefix = normalizeStoragePath(supabaseConfig.imagePrefix || '');
+    var listArg = prefix || undefined;
+    console.log('[Supabase Debug] (manual) listing', bucket, 'prefix:', listArg === undefined ? '<root>' : listArg);
+    client.storage.from(bucket).list(listArg, { limit: 1000 }).then(function(res) {
+      if (res.error) {
+        console.error('[Supabase Debug] storage.list error', res.error);
+        return;
+      }
+      var entries = res.data || [];
+      console.log('[Supabase Debug] manual list length:', entries.length, entries);
+      // Build or reuse modal
+      var modal = document.getElementById('supabase-debug-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'supabase-debug-modal';
+        modal.style.position = 'fixed';
+        modal.style.right = '16px';
+        modal.style.bottom = '16px';
+        modal.style.width = '360px';
+        modal.style.maxHeight = '70vh';
+        modal.style.overflow = 'auto';
+        modal.style.background = 'rgba(0,0,0,0.8)';
+        modal.style.color = '#fff';
+        modal.style.borderRadius = '8px';
+        modal.style.padding = '12px';
+        modal.style.zIndex = 9999;
+        var close = document.createElement('button');
+        close.textContent = 'Close';
+        close.style.float = 'right';
+        close.addEventListener('click', function() { modal.remove(); });
+        modal.appendChild(close);
+        var title = document.createElement('div');
+        title.textContent = 'Supabase Storage Debug — ' + bucket + (listArg ? '/' + listArg : ' (root)');
+        title.style.fontWeight = '600';
+        title.style.marginBottom = '8px';
+        modal.appendChild(title);
+        var listContainer = document.createElement('div');
+        listContainer.id = 'supabase-debug-list';
+        modal.appendChild(listContainer);
+        document.body.appendChild(modal);
+      }
+      var listContainer = document.getElementById('supabase-debug-list');
+      listContainer.innerHTML = '';
+      if (!entries.length) {
+        listContainer.textContent = 'No files returned from storage.list()';
+        return;
+      }
+      entries.forEach(function(entry) {
+        var row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.marginBottom = '8px';
+        var name = document.createElement('div');
+        name.textContent = entry.name;
+        name.style.flex = '1';
+        row.appendChild(name);
+        if (!(entry.metadata && entry.metadata.mimetype === 'inode/directory')) {
+          var objectPath = buildStoragePath(listArg || '', entry.name);
+          var publicResponse = client.storage.from(bucket).getPublicUrl(objectPath);
+          var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
+          if (publicUrl) {
+            var thumb = document.createElement('img');
+            thumb.src = publicUrl;
+            thumb.style.width = '72px';
+            thumb.style.height = '48px';
+            thumb.style.objectFit = 'cover';
+            thumb.style.marginLeft = '8px';
+            row.appendChild(thumb);
+          } else {
+            var note = document.createElement('span');
+            note.textContent = ' (no public URL)';
+            note.style.marginLeft = '8px';
+            row.appendChild(note);
+            console.warn('[Supabase Debug] no public url for', objectPath, publicResponse);
+          }
+        } else {
+          var folderTag = document.createElement('span');
+          folderTag.textContent = ' (folder)';
+          folderTag.style.marginLeft = '8px';
+          row.appendChild(folderTag);
+        }
+        listContainer.appendChild(row);
+      });
+    }).catch(function(err){
+      console.error('[Supabase Debug] list failed', err);
+    });
+  } catch (e) {
+    console.error('[Supabase Debug] unexpected', e);
+  }
+}
+
+// Wire debug button when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('storage-debug');
+    if (btn) btn.addEventListener('click', debugSupabaseListing);
+  });
+} else {
+  var btn = document.getElementById('storage-debug');
+  if (btn) btn.addEventListener('click', debugSupabaseListing);
+}
+
 function normalizeStoragePath(path) {
   if (!path) {
     return "";
