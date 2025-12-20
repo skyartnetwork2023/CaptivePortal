@@ -1115,6 +1115,29 @@ function initAudioController() {
   var toggleBtn = document.getElementById("audio-toggle");
   var stateLabel = document.getElementById("audio-state");
   var trackTitle = document.getElementById("track-title");
+  var nextBtn = document.getElementById("audio-next");
+
+  // Support for multiple audio tracks
+  var audioTracks = window.BACKGROUND_AUDIO_TRACKS || [];
+  var currentTrack = 0;
+  if (!Array.isArray(audioTracks) || audioTracks.length === 0) {
+    // fallback to single audio
+    audioTracks = [{
+      src: audioEl.querySelector('source') ? audioEl.querySelector('source').src : audioEl.src,
+      title: audioEl.getAttribute('data-track-title') || 'Skyart Lounge Loop'
+    }];
+  }
+
+  function playTrack(idx) {
+    if (idx < 0 || idx >= audioTracks.length) return;
+    currentTrack = idx;
+    audioEl.src = audioTracks[idx].src;
+    audioEl.setAttribute('data-track-title', audioTracks[idx].title);
+    if (trackTitle) trackTitle.textContent = audioTracks[idx].title;
+    audioEl.load();
+    audioEl.play().catch(function(){});
+    syncState(true);
+  }
 
   if (!audioEl || !toggleBtn) {
     return;
@@ -1149,6 +1172,11 @@ function initAudioController() {
       syncState(false);
     }
   });
+  if (nextBtn) {
+    nextBtn.addEventListener("click", function () {
+      playTrack((currentTrack + 1) % audioTracks.length);
+    });
+  }
 
   audioEl.addEventListener("play", function () { syncState(true); });
   audioEl.addEventListener("pause", function () { syncState(false); });

@@ -29,6 +29,9 @@
                     <span class="icon-sound"></span>
                     <span id="audio-state">Muted</span>
                 </button>
+                <button id="audio-next" class="ghost-button" type="button" aria-label="Next track" style="margin-left:8px;">
+                    <span class="icon-next">&#9654;&#9654;</span>
+                </button>
                 <div class="now-playing">
                     <span class="label">Now playing</span>
                     <span id="track-title">Waveform Echoes</span>
@@ -87,11 +90,11 @@
                     </div>
                     <div id="input-password" class="control-group legacy-auth" aria-hidden="true">
                         <label for="password" class="label">Password</label>
-                        <input id="password" class="input control" name="password" type="password" placeholder="••••••••" />
+                        <input id="password" class="input control" name="password" type="password" placeholder="••••••••" autocomplete="new-password" />
                     </div>
                     <div id="input-simple" class="control-group legacy-auth" aria-hidden="true">
                         <label for="simplePassword" class="label">Shared passphrase</label>
-                        <input id="simplePassword" class="input control" name="simplePassword" type="password" placeholder="Venue pass" />
+                        <input id="simplePassword" class="input control" name="simplePassword" type="password" placeholder="Venue pass" autocomplete="new-password" />
                     </div>
                     <div id="input-phone-num" class="control-group legacy-auth" aria-hidden="true">
                         <label class="label" for="phone-number">Phone number</label>
