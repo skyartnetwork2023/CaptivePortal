@@ -1414,6 +1414,22 @@ function fetchSupabaseBackgrounds(client) {
 
     if (slides.length) {
       BACKGROUND_SLIDES = slides;
+      // Update campaigns to mirror background slides
+      try {
+        PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
+          return {
+            eyebrow: "Scene " + (idx + 1),
+            title: slide.caption || "Portal Scene",
+            body: "Enjoy our rotating venue scenes.",
+            cta: "",
+            link: "#",
+            background: slide.source
+          };
+        });
+        console.log('[Supabase Debug] PORTAL_ADS updated from BACKGROUND_SLIDES, count:', PORTAL_ADS.length);
+      } catch (e) {
+        console.warn('[Supabase Debug] failed to update PORTAL_ADS', e);
+      }
     }
   });
 }
