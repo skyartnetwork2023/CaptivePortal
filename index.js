@@ -1296,13 +1296,13 @@ function initSupabaseClient() {
 }
 
 function fetchSupabaseBackgrounds(client) {
-  if (!supabaseConfig.assetBucket) {
+  if (!supabaseConfig.imageBucket) {
     return Promise.resolve();
   }
-  var prefix = normalizeStoragePath(supabaseConfig.backgroundPrefix || "");
+  var prefix = normalizeStoragePath(supabaseConfig.imagePrefix || "");
   var listPath = prefix || undefined;
   return client.storage
-    .from(supabaseConfig.assetBucket)
+    .from(supabaseConfig.imageBucket)
     .list(listPath, {
       limit: supabaseConfig.backgroundLimit || 10,
       sortBy: { column: "name", order: "asc" }
@@ -1326,7 +1326,7 @@ function fetchSupabaseBackgrounds(client) {
         })
         .map(function (entry) {
           var objectPath = buildStoragePath(prefix, entry.name);
-          var publicUrl = client.storage.from(supabaseConfig.assetBucket).getPublicUrl(objectPath);
+          var publicUrl = client.storage.from(supabaseConfig.imageBucket).getPublicUrl(objectPath);
           var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
           return {
             source: resolvedUrl || objectPath,
@@ -1341,15 +1341,16 @@ function fetchSupabaseBackgrounds(client) {
 }
 
 function fetchSupabaseAudio(client) {
-  if (!supabaseConfig.assetBucket || !supabaseConfig.audioObjectPath) {
+  if (!supabaseConfig.audioBucket || !supabaseConfig.audioObjectPath) {
     return Promise.resolve();
   }
   var audioEl = document.getElementById("portal-audio");
   if (!audioEl) {
     return Promise.resolve();
   }
-  var objectPath = normalizeStoragePath(supabaseConfig.audioObjectPath);
-  var publicResponse = client.storage.from(supabaseConfig.assetBucket).getPublicUrl(objectPath);
+  var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
+  var objectPath = buildStoragePath(prefix, supabaseConfig.audioObjectPath);
+  var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
   var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
   if (publicUrl) {
     audioEl.innerHTML = "";

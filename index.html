@@ -158,9 +158,11 @@
         window.__SUPABASE_CONFIG__ = window.__SUPABASE_CONFIG__ || {
             url: '',
             anonKey: '',
-            assetBucket: 'portal-media',
-            backgroundPrefix: 'backgrounds',
-            audioObjectPath: 'media/skyart-lounge.mp3',
+            imageBucket: 'backgrounds', // Bucket for images
+            imagePrefix: '',            // Folder in image bucket ('' for root)
+            audioBucket: 'audios',      // Bucket for audio
+            audioPrefix: '',            // Folder in audio bucket ('' for root)
+            audioObjectPath: 'skyart-lounge.mp3', // Audio file name in audios/
             audioTitle: 'Skyart Lounge Loop'
         };
     </script>
