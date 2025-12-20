@@ -1378,14 +1378,25 @@ function fetchSupabaseBackgrounds(client) {
       });
   }
   return listAllImages(listPath).then(function(allFiles) {
-    var slides = allFiles.map(function(file) {
-      var publicUrl = client.storage.from(supabaseConfig.imageBucket).getPublicUrl(file.objectPath);
-      var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
-      return {
-        source: resolvedUrl || file.objectPath,
-        caption: formatAssetCaption(file.name)
-      };
-    }).filter(function(slide) { return !!slide.source; });
+    // Only include files with image/* mimetype if available
+    var slides = allFiles
+      .filter(function(file) {
+        // If metadata is present, check mimetype
+        if (file.metadata && file.metadata.mimetype) {
+          return file.metadata.mimetype.startsWith('image/');
+        }
+        // If no metadata, fallback to extension check
+        return /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(file.name);
+      })
+      .map(function(file) {
+        var publicUrl = client.storage.from(supabaseConfig.imageBucket).getPublicUrl(file.objectPath);
+        var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
+        return {
+          source: resolvedUrl || file.objectPath,
+          caption: formatAssetCaption(file.name)
+        };
+      })
+      .filter(function(slide) { return !!slide.source; });
     if (slides.length) {
       BACKGROUND_SLIDES = slides;
     }
