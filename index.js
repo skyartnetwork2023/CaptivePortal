@@ -33,7 +33,15 @@ var PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
 });
 
 var experienceLayersBootstrapped = false;
-var supabaseConfig = (typeof window !== "undefined" && window.__SUPABASE_CONFIG__) || {};
+// Supabase configuration for public asset access
+var supabaseConfig = {
+  url: 'https://bcuupjvxpjaelpmcldnh.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjdXVwanZ4cGphZWxwbWNsZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM4NzQ4OTEsImV4cCI6MjA3OTQ1MDg5MX0.-NOUQYpJwoPE8vuY3Jq3BP9Xt7sCEl-yTIl3y1Ox7QI',
+  imageBucket: 'backgrounds',
+  imagePrefix: 'portal-assets', // or '' for root
+  audioBucket: 'audios',
+  audioPrefix: 'portal-audio'   // or '' for root
+};
 var supabaseClient = null;
 
 var Ajax = {
