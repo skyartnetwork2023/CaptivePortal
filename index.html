@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="index.css" type="text/css" />
 </head>
 <body class="portal">
-    <div class="background-static" aria-hidden="true"></div>
+    <div class="background-static" aria-hidden="true" style="background-image: url('background.png'); position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; background-size:cover; background-position:center;"></div>
 
     <div class="page-shell">
         <header class="top-bar">
@@ -54,7 +54,7 @@
                     </div>
                     <div id="input-user" class="control-group legacy-auth" aria-hidden="true">
                         <label for="username" class="label">Username</label>
-                        <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" autocomplete="username" />
+                        <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" />
                     </div>
                     <div id="input-password" class="control-group legacy-auth" aria-hidden="true">
                         <label for="password" class="label">Password</label>
@@ -86,6 +86,16 @@
                     <button id="button-login" class="button control">Gusa kuingia [Log In]</button>
                 </div>
                 <p class="meta help-text">Vocha za internet utazipata dukani 1.Agatha Shayo 2.Ashura Lyamba</p>
+            <div class="social-banner" style="margin-top:24px; padding:16px; background:rgba(0,0,0,0.5); border-radius:12px; text-align:center; color:#fff;">
+                <div style="font-weight:bold; margin-bottom:8px;">Join &amp; Follow Us:</div>
+                <a href="https://chat.whatsapp.com/your-group-link" target="_blank" style="color:#25d366; margin:0 8px; text-decoration:none; font-weight:500;">WhatsApp Group</a>
+                <a href="https://whatsapp.com/channel/your-channel-link" target="_blank" style="color:#25d366; margin:0 8px; text-decoration:none; font-weight:500;">WhatsApp Channel</a>
+                <a href="https://instagram.com/skyartfm" target="_blank" style="color:#e1306c; margin:0 8px; text-decoration:none; font-weight:500;">Instagram</a>
+                <span style="color:#fff; margin:0 8px; font-weight:500;">Phone: <a href="tel:+255123456789" style="color:#fff; text-decoration:underline;">+255 123 456 789</a></span>
+                <span style="color:#fff; margin:0 8px; font-weight:500;">Email: <a href="mailto:Skyartnetwork@gmail.com" style="color:#fff; text-decoration:underline;">Skyartnetwork@gmail.com</a></span>
+                <a href="https://facebook.com/skyartfm" target="_blank" style="color:#1877f3; margin:0 8px; text-decoration:none; font-weight:500;">Facebook</a>
+                <a href="https://twitter.com/skyartfm" target="_blank" style="color:#1da1f2; margin:0 8px; text-decoration:none; font-weight:500;">X (Twitter)</a>
+            </div>
             </section>
 
             <aside class="ads-panel" aria-label="Sponsor rotation">
@@ -139,11 +149,9 @@
             anonKey: 'sb_publishable_-U9QwYC4h11W2ITt7NHyQg_XVnkfu8d',
             imageBucket: 'backgrounds', // Bucket for images
             imagePrefix: '',            // Folder in image bucket ('' for root)
-            // Direct image URLs to include in slides (full public URLs)
-            imageUrls: [],
             audioBucket: 'audios',      // Bucket for audio
             audioPrefix: '',            // Folder in audio bucket ('' for root)
-            audioObjectPath: 'https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/audios/Omah%20lay%20%20-%20I%20never%20forget.%20appreciation%20verse.mp3', // Direct public URL to audio
+            audioObjectPath: 'skyart-lounge.mp3', // Audio file name in audios/
             audioTitle: 'Skyart Lounge Loop'
         };
     </script>
