@@ -8,20 +8,15 @@
     <link rel="stylesheet" href="index.css" type="text/css" />
 </head>
 <body class="portal">
-    <div class="background-gallery" aria-hidden="true">
-        <div class="gallery-slide active" data-slide="0" style="background-image: url('background.png');"></div>
-        <div class="gallery-slide" data-slide="1"></div>
-        <div class="gallery-slide" data-slide="2"></div>
-        <div class="gallery-vignette"></div>
-    </div>
+    <div class="background-static" aria-hidden="true" style="background-image: url('background.png'); position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; background-size:cover; background-position:center;"></div>
 
     <div class="page-shell">
         <header class="top-bar">
             <div class="brand-mark">
-                <img class="logo" src="portalLogo_picture@2x.png" alt="Skyart captive portal logo" />
+                <img class="logo" src="portalLogo_picture@2x.png" alt="SkyartFM logo" />
                 <div class="brand-copy">
-                    <p class="eyebrow">TP-Link Omada Captive Portal</p>
-                    <p class="headline">Skyart Network Presence Wi-Fi</p>
+                    <p class="eyebrow">SkyartFM Audio Lounge</p>
+                    <p class="headline">SkyartFM Wi-Fi Portal</p>
                 </div>
             </div>
             <div class="media-controls" aria-label="Soundscape controls">
@@ -40,34 +35,7 @@
         </header>
 
         <main class="grid-layout">
-            <section class="experience-panel" aria-label="Portal highlights">
-                <p class="eyebrow">Voucher-first onboarding</p>
-                <h1>Issue, redeem, and measure Omada vouchers</h1>
-                <p class="lede">
-                    Present a single, distraction-free voucher input backed by Supabase-hosted media.
-                    Scenes and audio loop in from storage while Omada handles the AAA handshake.
-                </p>
-                <ul class="feature-list">
-                    <li><span>Voucher-only flow that maps directly to Omada codes.</span></li>
-                    <li><span>Supabase storage supplies audio loops and rotating hero scenes.</span></li>
-                    <li><span>Modular ad rail for sponsor campaigns or venue promos.</span></li>
-                </ul>
-                <div class="stats">
-                    <div>
-                        <p class="stat">45s</p>
-                        <p class="meta">Average session lift</p>
-                    </div>
-                    <div>
-                        <p class="stat">+63%</p>
-                        <p class="meta">Opt-in survey rate</p>
-                    </div>
-                </div>
-                <div class="slide-indicator" role="status">
-                    <span id="slide-label">Scene 01</span>
-                    <span class="divider"></span>
-                    <span id="slide-caption">Sunrise lobby</span>
-                </div>
-            </section>
+            <!-- Experience panel removed for minimal interface -->
 
             <section class="login-card" aria-label="Connect to Wi-Fi">
                 <div class="card-header">
