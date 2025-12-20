@@ -1419,45 +1419,89 @@ function fetchSupabaseBackgrounds(client) {
 }
 
 function fetchSupabaseAudio(client) {
-    console.log('[Supabase Debug] fetchSupabaseAudio config:', supabaseConfig);
-  if (!supabaseConfig.audioObjectPath) {
-    return Promise.resolve();
-  }
+  console.log('[Supabase Debug] fetchSupabaseAudio config:', supabaseConfig);
   var audioEl = document.getElementById("portal-audio");
   if (!audioEl) {
     return Promise.resolve();
   }
+
   var audioPath = supabaseConfig.audioObjectPath;
-  var publicUrl = null;
-  // If a full URL is provided, use it directly
-  if (/^https?:\/\//i.test(audioPath)) {
-    publicUrl = audioPath;
-    console.log('[Supabase Debug] Using direct audio URL:', publicUrl);
-  } else {
-    // Otherwise, fetch public URL from Supabase storage (requires audioBucket)
-    if (!supabaseConfig.audioBucket) {
-      console.warn('[Supabase Debug] audioBucket not set; cannot fetch audio object:', audioPath);
-      return Promise.resolve();
-    }
+  var playlist = [];
+
+  // Helper to add a track
+  function addTrack(src, title) {
+    if (!src) return;
+    playlist.push({ src: src, title: title || formatAssetCaption(src) });
+    console.log('[Supabase Debug] queued audio track:', src);
+  }
+
+  // If a full URL is provided in audioObjectPath, add it first
+  if (audioPath && /^https?:\/\//i.test(audioPath)) {
+    addTrack(audioPath, supabaseConfig.audioTitle || formatAssetCaption(audioPath));
+  }
+
+  // If audioBucket is set, try to list all audio files in the prefix
+  if (supabaseConfig.audioBucket) {
     var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
-    var objectPath = buildStoragePath(prefix, audioPath);
-    console.log('[Supabase Debug] Fetching audio at:', objectPath, 'from bucket:', supabaseConfig.audioBucket);
-    var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
-    publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
-    if (!publicUrl) {
-      console.error('[Supabase Debug] No public URL for audio:', objectPath, publicResponse);
-    } else {
-      console.log('[Supabase Debug] Audio public URL:', publicUrl);
-    }
+    var listArg = prefix || undefined;
+    console.log('[Supabase Debug] listing audio bucket:', supabaseConfig.audioBucket, 'prefix:', listArg === undefined ? '<root>' : listArg);
+    return client.storage.from(supabaseConfig.audioBucket).list(listArg, { limit: 1000 }).then(function (result) {
+      if (result.error) {
+        console.error('[Supabase Debug] audio list error:', result.error);
+        // if we already have at least one direct track, use it
+        if (playlist.length) {
+          window.BACKGROUND_AUDIO_TRACKS = playlist;
+          return playlist;
+        }
+        return [];
+      }
+      var entries = result.data || [];
+      entries.forEach(function (entry) {
+        if (entry && entry.name && !(entry.metadata && entry.metadata.mimetype === 'inode/directory')) {
+          var objectPath = buildStoragePath(listArg || "", entry.name);
+          var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
+          var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
+          if (publicUrl) {
+            addTrack(publicUrl, formatAssetCaption(entry.name));
+          } else {
+            console.warn('[Supabase Debug] audio item has no public URL:', objectPath);
+          }
+        }
+      });
+      // Deduplicate tracks by src
+      var seen = {};
+      playlist = playlist.filter(function (t) {
+        if (seen[t.src]) return false;
+        seen[t.src] = true;
+        return true;
+      });
+      if (playlist.length) {
+        window.BACKGROUND_AUDIO_TRACKS = playlist;
+        // set first track to audio element if none set
+        audioEl.src = playlist[0].src;
+        audioEl.setAttribute('data-track-title', playlist[0].title);
+        if (document.readyState !== 'loading') audioEl.load();
+      }
+      return playlist;
+    }).catch(function (err) {
+      console.error('[Supabase Debug] failed to list audio bucket', err);
+      if (playlist.length) {
+        window.BACKGROUND_AUDIO_TRACKS = playlist;
+        return playlist;
+      }
+      return [];
+    });
   }
-  if (publicUrl) {
-    audioEl.innerHTML = "";
-    audioEl.src = publicUrl;
-    var title = supabaseConfig.audioTitle || formatAssetCaption(audioPath);
-    audioEl.setAttribute("data-track-title", title);
+
+  // If no audioBucket and we added a direct URL, set it
+  if (playlist.length) {
+    window.BACKGROUND_AUDIO_TRACKS = playlist;
+    audioEl.src = playlist[0].src;
+    audioEl.setAttribute('data-track-title', playlist[0].title);
     audioEl.load();
+    return Promise.resolve(playlist);
   }
-  return Promise.resolve(publicUrl);
+  return Promise.resolve([]);
 }
 
 // Debug helper: show listing and thumbnails for the image bucket
