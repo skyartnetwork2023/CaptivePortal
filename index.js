@@ -1672,15 +1672,17 @@ function debugSupabaseListing() {
   }
 }
 
-// Wire debug button when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('storage-debug');
-    if (btn) btn.addEventListener('click', debugSupabaseListing);
+
+// Always hydrate assets from Supabase on page load (no debug button needed)
+function autoHydrateSupabaseAssets() {
+  hydrateAssetsFromSupabase().then(function() {
+    console.log('[Supabase] Assets hydrated on page load.');
   });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', autoHydrateSupabaseAssets);
 } else {
-  var btn = document.getElementById('storage-debug');
-  if (btn) btn.addEventListener('click', debugSupabaseListing);
+  autoHydrateSupabaseAssets();
 }
 
 function normalizeStoragePath(path) {
