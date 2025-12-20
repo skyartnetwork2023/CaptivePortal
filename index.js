@@ -1185,23 +1185,45 @@ function initAudioController() {
 function initAdRail() {
   var track = document.getElementById("ads-track");
   var indicator = document.getElementById("ad-indicator");
-
   if (!track || !PORTAL_ADS.length) {
     return;
   }
-
   track.innerHTML = "";
   PORTAL_ADS.forEach(function (ad) {
     track.appendChild(buildAdCard(ad));
   });
-
   var index = 0;
+
+  // Caption block setup
+  var adCaptionBlock = document.getElementById('ad-caption-block');
+  if (!adCaptionBlock) {
+    var adsPanel = document.querySelector('.ads-panel');
+    if (adsPanel) {
+      adCaptionBlock = document.createElement('div');
+      adCaptionBlock.id = 'ad-caption-block';
+      adCaptionBlock.className = 'ad-caption-block';
+      adCaptionBlock.style.textAlign = 'center';
+      adCaptionBlock.style.margin = '1.2rem 0 0.5rem 0';
+      adCaptionBlock.style.fontSize = '1.1rem';
+      adCaptionBlock.style.fontWeight = '500';
+      adCaptionBlock.style.color = '#fff';
+      adsPanel.insertBefore(adCaptionBlock, adsPanel.querySelector('.ads-meta'));
+    }
+  }
+  function updateAdCaption(idx) {
+    var cards = track.children;
+    if (!adCaptionBlock || !cards.length) return;
+    var card = cards[idx] || cards[0];
+    var caption = card.dataset.caption || '';
+    adCaptionBlock.textContent = caption;
+  }
 
   function renderPosition() {
     track.style.transform = "translateX(-" + (index * 100) + "%)";
     if (indicator) {
       indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
     }
+    updateAdCaption(index);
   }
 
   renderPosition();
@@ -1245,38 +1267,6 @@ function buildAdCard(ad) {
   return card;
 }
 
-// After rendering the ad-track, render the caption below the slider
-var adCaptionBlock = document.getElementById('ad-caption-block');
-if (!adCaptionBlock) {
-  var adsPanel = document.querySelector('.ads-panel');
-  if (adsPanel) {
-    adCaptionBlock = document.createElement('div');
-    adCaptionBlock.id = 'ad-caption-block';
-    adCaptionBlock.className = 'ad-caption-block';
-    adCaptionBlock.style.textAlign = 'center';
-    adCaptionBlock.style.margin = '1.2rem 0 0.5rem 0';
-    adCaptionBlock.style.fontSize = '1.1rem';
-    adCaptionBlock.style.fontWeight = '500';
-    adCaptionBlock.style.color = '#fff';
-    adsPanel.insertBefore(adCaptionBlock, adsPanel.querySelector('.ads-meta'));
-  }
-}
-
-function updateAdCaption(index) {
-  var track = document.getElementById('ads-track');
-  var captionBlock = document.getElementById('ad-caption-block');
-  if (!track || !captionBlock) return;
-  var cards = track.children;
-  if (!cards.length) return;
-  var card = cards[index] || cards[0];
-  var caption = card.dataset.caption || '';
-  captionBlock.textContent = caption;
-}
-
-// Patch slider logic to update caption on change
-// (This code should be called after renderPosition or slide change)
-// Example: updateAdCaption(index);
-}
 
 function formatBackgroundSource(source) {
   if (!source) {
