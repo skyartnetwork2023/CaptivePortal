@@ -1335,13 +1335,15 @@ function fetchSupabaseBackgrounds(client) {
     return Promise.resolve();
   }
   var prefix = normalizeStoragePath(supabaseConfig.imagePrefix || "");
-  var listPath = prefix || undefined;
+  var listPath = typeof prefix === "string" ? prefix : "";
   // Helper to recursively list all images in a folder
   function listAllImages(folder) {
-    console.log('[Supabase Debug] Listing images in folder:', folder);
+    // Always pass a string to .list(), never undefined
+    var folderPath = typeof folder === "string" ? folder : "";
+    console.log('[Supabase Debug] Listing images in folder:', folderPath);
     return client.storage
       .from(supabaseConfig.imageBucket)
-      .list(folder, {
+      .list(folderPath, {
         limit: 1000,
         sortBy: { column: "name", order: "asc" }
       })
@@ -1352,17 +1354,17 @@ function fetchSupabaseBackgrounds(client) {
           throw result.error;
         }
         if (!result.data || !result.data.length) {
-          console.warn('[Supabase Debug] No images found in folder:', folder);
+          console.warn('[Supabase Debug] No images found in folder:', folderPath);
           return [];
         }
         var files = [];
         var subfolders = [];
         result.data.forEach(function(entry) {
           if (entry.metadata && entry.metadata.mimetype === "inode/directory") {
-            subfolders.push(buildStoragePath(folder, entry.name));
+            subfolders.push(buildStoragePath(folderPath, entry.name));
           } else if (entry.name) {
             var fileObj = {
-              objectPath: buildStoragePath(folder, entry.name),
+              objectPath: buildStoragePath(folderPath, entry.name),
               name: entry.name
             };
             files.push(fileObj);
@@ -1375,7 +1377,7 @@ function fetchSupabaseBackgrounds(client) {
         });
       });
   }
-  return listAllImages(listPath || "").then(function(allFiles) {
+  return listAllImages(listPath).then(function(allFiles) {
     var slides = allFiles.map(function(file) {
       var publicUrl = client.storage.from(supabaseConfig.imageBucket).getPublicUrl(file.objectPath);
       var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
@@ -1400,8 +1402,8 @@ function fetchSupabaseAudio(client) {
     return Promise.resolve();
   }
   var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
-  var listPath = prefix || undefined;
-  // List all audio files in the bucket/folder
+  var listPath = typeof prefix === "string" ? prefix : "";
+  // Always pass a string to .list(), never undefined
   return client.storage
     .from(supabaseConfig.audioBucket)
     .list(listPath, {
