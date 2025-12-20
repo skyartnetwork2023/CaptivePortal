@@ -39,9 +39,14 @@
         </header>
 
         <main class="grid-layout">
-            <!-- Experience panel removed for minimal interface -->
+                        <!-- Experience panel removed for minimal interface -->
 
-            <section class="login-card" aria-label="Connect to Wi-Fi">
+                        <div class="mobile-tabs">
+                            <button id="tab-voucher" class="tab-btn active">Voucher</button>
+                            <button id="tab-campaign" class="tab-btn">Campaign</button>
+                        </div>
+
+                        <section class="login-card" aria-label="Connect to Wi-Fi" style="display:block;">
                 <div class="card-header">
                     <p class="eyebrow">Jiunge Sasa</p>
                     <h2>Jaza vocha ako kupata Internet  </h2>
@@ -102,7 +107,7 @@
             </div>
             </section>
 
-            <aside class="ads-panel" aria-label="Sponsor rotation">
+            <aside class="ads-panel" aria-label="Sponsor rotation" style="display:none;">
                 <div class="ads-frame expanded-campaign">
                     <button id="ad-prev" class="ad-nav" aria-label="Previous campaign">&#8592;</button>
                     <div class="ad-track" id="ads-track"></div>

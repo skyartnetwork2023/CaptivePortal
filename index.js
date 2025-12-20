@@ -1,3 +1,28 @@
+// Mobile tab switching for voucher/campaign blocks
+document.addEventListener('DOMContentLoaded', function() {
+  var tabVoucher = document.getElementById('tab-voucher');
+  var tabCampaign = document.getElementById('tab-campaign');
+  var voucherBlock = document.querySelector('.login-card');
+  var campaignBlock = document.querySelector('.ads-panel');
+  function showVoucher() {
+    tabVoucher.classList.add('active');
+    tabCampaign.classList.remove('active');
+    voucherBlock.style.display = 'block';
+    campaignBlock.style.display = 'none';
+  }
+  function showCampaign() {
+    tabVoucher.classList.remove('active');
+    tabCampaign.classList.add('active');
+    voucherBlock.style.display = 'none';
+    campaignBlock.style.display = 'block';
+  }
+  if (tabVoucher && tabCampaign && voucherBlock && campaignBlock) {
+    tabVoucher.addEventListener('click', showVoucher);
+    tabCampaign.addEventListener('click', showCampaign);
+    // Default to voucher tab
+    showVoucher();
+  }
+});
 var NO_AUTH = 0,
     SIMPLE_PASSWORD = 1,
     EXTERNAL_RADIUS = 2,
