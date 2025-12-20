@@ -21,32 +21,16 @@ var BACKGROUND_SLIDES = [
 ];
 
 // Rotating sponsor/ad placements rendered in the right rail.
-var PORTAL_ADS = [
-  {
-    eyebrow: "Digital signage",
-    title: "Promote venue campaigns instantly",
-    body: "Trigger sponsor or F&B creatives while guests authenticate.",
-    cta: "Open dashboard",
-    link: "https://skyartnetwork.com/",
-    background: "linear-gradient(135deg,#0f2027,#203a43,#2c5364)"
-  },
-  {
-    eyebrow: "Omada Cloud",
-    title: "Layer surveys before access",
-    body: "Launch form-auth stories with branded questions and instant rewards.",
-    cta: "See playbook",
-    link: "https://www.tp-link.com/omada/",
-    background: "linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d)"
-  },
-  {
-    eyebrow: "Partner highlight",
-    title: "Monetize your captive portal rail",
-    body: "Sell rotating placements to local partners with impression analytics.",
-    cta: "Book a slot",
-    link: "mailto:hello@skyartnetwork.com",
-    background: "linear-gradient(135deg,#090979,#00d4ff)"
-  }
-];
+var PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
+  return {
+    eyebrow: "Scene " + (idx + 1),
+    title: slide.caption || "Portal Scene",
+    body: "Enjoy our rotating venue scenes.",
+    cta: "",
+    link: "#",
+    background: slide.source
+  };
+});
 
 var experienceLayersBootstrapped = false;
 var supabaseConfig = (typeof window !== "undefined" && window.__SUPABASE_CONFIG__) || {};
