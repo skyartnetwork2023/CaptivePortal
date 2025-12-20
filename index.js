@@ -1177,10 +1177,32 @@ function initAdRail() {
   }
 
   renderPosition();
-  setInterval(function () {
+  var autoRotate = setInterval(function () {
     index = (index + 1) % PORTAL_ADS.length;
     renderPosition();
   }, 9000);
+
+  var prevBtn = document.getElementById("ad-prev");
+  var nextBtn = document.getElementById("ad-next");
+  function goToPrev() {
+    index = (index - 1 + PORTAL_ADS.length) % PORTAL_ADS.length;
+    renderPosition();
+    resetAutoRotate();
+  }
+  function goToNext() {
+    index = (index + 1) % PORTAL_ADS.length;
+    renderPosition();
+    resetAutoRotate();
+  }
+  function resetAutoRotate() {
+    clearInterval(autoRotate);
+    autoRotate = setInterval(function () {
+      index = (index + 1) % PORTAL_ADS.length;
+      renderPosition();
+    }, 9000);
+  }
+  if (prevBtn) prevBtn.addEventListener("click", goToPrev);
+  if (nextBtn) nextBtn.addEventListener("click", goToNext);
 }
 
 function buildAdCard(ad) {
