@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="index.css" type="text/css" />
 </head>
 <body class="portal">
+            <div id="audio-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; background:rgba(0,0,0,0.82); display:flex; align-items:center; justify-content:center; color:#fff; font-size:2rem; font-weight:700; cursor:pointer;">
+                <span>Click to enable sound</span>
+            </div>
     <div class="background-static" aria-hidden="true" style="background-image: url('background.png'); position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; background-size:cover; background-position:center;"></div>
 
     <div class="page-shell">
@@ -149,6 +152,22 @@
         };
     </script>
     <script src="index.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var overlay = document.getElementById('audio-overlay');
+                var audio = document.getElementById('portal-audio');
+                if (overlay && audio) {
+                    overlay.addEventListener('click', function() {
+                        overlay.style.display = 'none';
+                        audio.muted = false;
+                        var playPromise = audio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(function(){});
+                        }
+                    });
+                }
+            });
+        </script>
 </body>
 </html>
 
