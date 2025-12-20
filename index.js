@@ -12,25 +12,9 @@ var VOUCHER_ACCESS_TYPE = 3,
 
 var MAX_INPUT_LEN = 2000;
 
-// Scenes for the animated hero background; swap the sources to match venue imagery.
-var BACKGROUND_SLIDES = [
-  { source: "background.png", caption: "Sunrise lobby" },
-  { source: "linear-gradient(120deg,#031625,#0b3b5b,#0f768d)", caption: "Harbor atrium" },
-  { source: "linear-gradient(130deg,#1c0f33,#421563,#6f2dbd)", caption: "Evening lounge" },
-  { source: "linear-gradient(150deg,#041c32,#04293a,#064663)", caption: "City skyline" }
-];
-
-// Rotating sponsor/ad placements rendered in the right rail.
-var PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
-  return {
-    eyebrow: "Scene " + (idx + 1),
-    title: slide.caption || "Portal Scene",
-    body: "Enjoy our rotating venue scenes.",
-    cta: "",
-    link: "#",
-    background: slide.source
-  };
-});
+// Scenes and ads will be hydrated from Supabase
+var BACKGROUND_SLIDES = [];
+var PORTAL_ADS = [];
 
 var experienceLayersBootstrapped = false;
 var supabaseConfig = (typeof window !== "undefined" && window.__SUPABASE_CONFIG__) || {};
@@ -1064,7 +1048,7 @@ function enhanceExperienceLayers() {
   experienceLayersBootstrapped = true;
   initBackgroundCarousel();
   initAudioController();
-  initAdRail();
+  // initAdRail(); // Now called after hydration
 }
 
 function initBackgroundCarousel() {
@@ -1298,6 +1282,19 @@ function hydrateAssetsFromSupabase() {
         console.warn("Failed to load Supabase asset", result.reason);
       }
     });
+    // After hydration, rebuild PORTAL_ADS from BACKGROUND_SLIDES
+    PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
+      return {
+        eyebrow: "Scene " + (idx + 1),
+        title: slide.caption || "Portal Scene",
+        body: "Enjoy our rotating venue scenes.",
+        cta: "",
+        link: "#",
+        background: slide.source
+      };
+    });
+    // Re-initialize the ad rail with hydrated images
+    initAdRail();
   });
 }
 
