@@ -1387,6 +1387,31 @@ function fetchSupabaseBackgrounds(client) {
         caption: formatAssetCaption(file.name)
       };
     }).filter(function(slide) { return !!slide.source; });
+
+    // Include any direct image URLs configured
+    if (supabaseConfig.imageUrls && Array.isArray(supabaseConfig.imageUrls)) {
+      supabaseConfig.imageUrls.forEach(function(url) {
+        if (url) {
+          slides.push({ source: url, caption: formatAssetCaption(url) });
+          console.log('[Supabase Debug] Added direct image URL to slides:', url);
+        }
+      });
+    }
+    // Also support a single imageObjectPath if it's a full URL
+    if (supabaseConfig.imageObjectPath && /^https?:\/\//i.test(supabaseConfig.imageObjectPath)) {
+      slides.push({ source: supabaseConfig.imageObjectPath, caption: formatAssetCaption(supabaseConfig.imageObjectPath) });
+      console.log('[Supabase Debug] Added imageObjectPath (direct URL) to slides:', supabaseConfig.imageObjectPath);
+    }
+
+    // Deduplicate by source
+    var seen = {};
+    slides = slides.filter(function(s) {
+      if (!s || !s.source) return false;
+      if (seen[s.source]) return false;
+      seen[s.source] = true;
+      return true;
+    });
+
     if (slides.length) {
       BACKGROUND_SLIDES = slides;
     }
