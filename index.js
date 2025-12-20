@@ -1208,7 +1208,7 @@ function initAdRail() {
   var autoRotate = setInterval(function () {
     index = (index + 1) % PORTAL_ADS.length;
     renderPosition();
-  }, 3000);
+  }, 9000);
 
   var prevBtn = document.getElementById("ad-prev");
   var nextBtn = document.getElementById("ad-next");
@@ -1227,7 +1227,7 @@ function initAdRail() {
     autoRotate = setInterval(function () {
       index = (index + 1) % PORTAL_ADS.length;
       renderPosition();
-    }, 3000);
+    }, 9000);
   }
   if (prevBtn) prevBtn.addEventListener("click", goToPrev);
   if (nextBtn) nextBtn.addEventListener("click", goToNext);
@@ -1238,43 +1238,44 @@ function buildAdCard(ad) {
   card.className = "ad-card";
   card.style.backgroundImage = formatBackgroundSource(ad.background || ad.image);
 
-  var content = document.createElement("div");
-  content.className = "ad-content";
+  // Only the image is shown in the card now
 
-  var eyebrow = document.createElement("p");
-  eyebrow.className = "ad-eyebrow";
-  eyebrow.textContent = ad.eyebrow || "Featured";
-
-  var title = document.createElement("h3");
-  title.className = "ad-title";
-  title.textContent = ad.title || "";
-
-  var body = document.createElement("p");
-  body.className = "ad-body";
-  body.textContent = ad.body || "";
-
-  content.appendChild(eyebrow);
-  content.appendChild(title);
-  content.appendChild(body);
-
-  var ctaWrapper = document.createElement("div");
-  ctaWrapper.className = "ad-cta";
-  if (ad.cta) {
-    if (ad.link) {
-      var linkEl = document.createElement("a");
-      linkEl.href = ad.link;
-      linkEl.target = "_blank";
-      linkEl.rel = "noopener noreferrer";
-      linkEl.textContent = ad.cta;
-      ctaWrapper.appendChild(linkEl);
-    } else {
-      ctaWrapper.textContent = ad.cta;
-    }
-  }
-
-  card.appendChild(content);
-  card.appendChild(ctaWrapper);
+  // Add a caption block below the image (outside the card)
+  card.dataset.caption = ad.title || ad.caption || "";
   return card;
+}
+
+// After rendering the ad-track, render the caption below the slider
+var adCaptionBlock = document.getElementById('ad-caption-block');
+if (!adCaptionBlock) {
+  var adsPanel = document.querySelector('.ads-panel');
+  if (adsPanel) {
+    adCaptionBlock = document.createElement('div');
+    adCaptionBlock.id = 'ad-caption-block';
+    adCaptionBlock.className = 'ad-caption-block';
+    adCaptionBlock.style.textAlign = 'center';
+    adCaptionBlock.style.margin = '1.2rem 0 0.5rem 0';
+    adCaptionBlock.style.fontSize = '1.1rem';
+    adCaptionBlock.style.fontWeight = '500';
+    adCaptionBlock.style.color = '#fff';
+    adsPanel.insertBefore(adCaptionBlock, adsPanel.querySelector('.ads-meta'));
+  }
+}
+
+function updateAdCaption(index) {
+  var track = document.getElementById('ads-track');
+  var captionBlock = document.getElementById('ad-caption-block');
+  if (!track || !captionBlock) return;
+  var cards = track.children;
+  if (!cards.length) return;
+  var card = cards[index] || cards[0];
+  var caption = card.dataset.caption || '';
+  captionBlock.textContent = caption;
+}
+
+// Patch slider logic to update caption on change
+// (This code should be called after renderPosition or slide change)
+// Example: updateAdCaption(index);
 }
 
 function formatBackgroundSource(source) {
@@ -1339,33 +1340,30 @@ function fetchSupabaseBackgrounds(client) {
   // Helper to recursively list all images in a folder
   function listAllImages(folder) {
     console.log('[Supabase Debug] Listing images in folder:', folder);
-    var listArg = (folder === "" || folder === undefined) ? undefined : folder;
-    console.log('[Supabase Debug] Using list arg:', listArg === undefined ? '<root>' : listArg);
     return client.storage
       .from(supabaseConfig.imageBucket)
-      .list(listArg, {
+      .list(folder, {
         limit: 1000,
         sortBy: { column: "name", order: "asc" }
       })
       .then(function (result) {
+        console.log('[Supabase Debug] Raw image list result:', result);
         if (result.error) {
           console.error('[Supabase Debug] Error listing images:', result.error);
           throw result.error;
         }
-        console.log('[Supabase Debug] list result length:', (result.data && result.data.length) || 0);
         if (!result.data || !result.data.length) {
-          console.warn('[Supabase Debug] No images found in folder:', listArg === undefined ? '<root>' : listArg);
+          console.warn('[Supabase Debug] No images found in folder:', folder);
           return [];
         }
         var files = [];
         var subfolders = [];
         result.data.forEach(function(entry) {
-          console.log('[Supabase Debug] entry:', entry.name, entry.metadata && entry.metadata.mimetype);
           if (entry.metadata && entry.metadata.mimetype === "inode/directory") {
-            subfolders.push(buildStoragePath(listArg || "", entry.name));
+            subfolders.push(buildStoragePath(folder, entry.name));
           } else if (entry.name) {
             var fileObj = {
-              objectPath: buildStoragePath(listArg || "", entry.name),
+              objectPath: buildStoragePath(folder, entry.name),
               name: entry.name
             };
             files.push(fileObj);
@@ -1387,302 +1385,64 @@ function fetchSupabaseBackgrounds(client) {
         caption: formatAssetCaption(file.name)
       };
     }).filter(function(slide) { return !!slide.source; });
-
-    // Include any direct image URLs configured
-    if (supabaseConfig.imageUrls && Array.isArray(supabaseConfig.imageUrls)) {
-      supabaseConfig.imageUrls.forEach(function(url) {
-        if (url) {
-          slides.push({ source: url, caption: formatAssetCaption(url) });
-          console.log('[Supabase Debug] Added direct image URL to slides:', url);
-        }
-      });
-    }
-    // Also support a single imageObjectPath if it's a full URL
-    if (supabaseConfig.imageObjectPath && /^https?:\/\//i.test(supabaseConfig.imageObjectPath)) {
-      slides.push({ source: supabaseConfig.imageObjectPath, caption: formatAssetCaption(supabaseConfig.imageObjectPath) });
-      console.log('[Supabase Debug] Added imageObjectPath (direct URL) to slides:', supabaseConfig.imageObjectPath);
-    }
-
-    // Deduplicate by source
-    var seen = {};
-    slides = slides.filter(function(s) {
-      if (!s || !s.source) return false;
-      if (seen[s.source]) return false;
-      seen[s.source] = true;
-      return true;
-    });
-
     if (slides.length) {
       BACKGROUND_SLIDES = slides;
-      // Update campaigns to mirror background slides
-      try {
-        PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
-          return {
-            eyebrow: "Scene " + (idx + 1),
-            title: slide.caption || "Portal Scene",
-            body: "Enjoy our rotating venue scenes.",
-            cta: "",
-            link: "#",
-            background: slide.source
-          };
-        });
-        console.log('[Supabase Debug] PORTAL_ADS updated from BACKGROUND_SLIDES, count:', PORTAL_ADS.length);
-      } catch (e) {
-        console.warn('[Supabase Debug] failed to update PORTAL_ADS', e);
-      }
     }
   });
 }
 
 function fetchSupabaseAudio(client) {
   console.log('[Supabase Debug] fetchSupabaseAudio config:', supabaseConfig);
+  if (!supabaseConfig.audioBucket) {
+    return Promise.resolve();
+  }
   var audioEl = document.getElementById("portal-audio");
   if (!audioEl) {
     return Promise.resolve();
   }
-
-  var audioPath = supabaseConfig.audioObjectPath;
-  var playlist = [];
-
-  // Helper to add a track
-  function addTrack(src, title) {
-    if (!src) return;
-    playlist.push({ src: src, title: title || formatAssetCaption(src) });
-    console.log('[Supabase Debug] queued audio track:', src);
-  }
-
-  // If a full URL is provided in audioObjectPath, add it first
-  if (audioPath && /^https?:\/\//i.test(audioPath)) {
-    addTrack(audioPath, supabaseConfig.audioTitle || formatAssetCaption(audioPath));
-  }
-
-  // If audioBucket is set, try to list all audio files in the prefix
-  if (supabaseConfig.audioBucket) {
-    var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
-    var listArg = prefix || undefined;
-    console.log('[Supabase Debug] listing audio bucket:', supabaseConfig.audioBucket, 'prefix:', listArg === undefined ? '<root>' : listArg);
-    return client.storage.from(supabaseConfig.audioBucket).list(listArg, { limit: 1000 }).then(function (result) {
+  var prefix = normalizeStoragePath(supabaseConfig.audioPrefix || "");
+  var listPath = prefix || undefined;
+  // List all audio files in the bucket/folder
+  return client.storage
+    .from(supabaseConfig.audioBucket)
+    .list(listPath, {
+      limit: 100,
+      sortBy: { column: "name", order: "asc" }
+    })
+    .then(function(result) {
+      console.log('[Supabase Debug] Raw audio list result:', result);
       if (result.error) {
-        console.error('[Supabase Debug] audio list error:', result.error);
-        // if we already have at least one direct track, use it
-        if (playlist.length) {
-          window.BACKGROUND_AUDIO_TRACKS = playlist;
-          return playlist;
-        }
-        return [];
-      }
-      var entries = result.data || [];
-      entries.forEach(function (entry) {
-        if (entry && entry.name && !(entry.metadata && entry.metadata.mimetype === 'inode/directory')) {
-          var objectPath = buildStoragePath(listArg || "", entry.name);
-          var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
-          var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
-          if (publicUrl) {
-            addTrack(publicUrl, formatAssetCaption(entry.name));
-          } else {
-            console.warn('[Supabase Debug] audio item has no public URL:', objectPath);
-          }
-        }
-      });
-      // Deduplicate tracks by src
-      var seen = {};
-      playlist = playlist.filter(function (t) {
-        if (seen[t.src]) return false;
-        seen[t.src] = true;
-        return true;
-      });
-      if (playlist.length) {
-        window.BACKGROUND_AUDIO_TRACKS = playlist;
-        // set first track to audio element if none set
-        audioEl.src = playlist[0].src;
-        audioEl.setAttribute('data-track-title', playlist[0].title);
-        if (document.readyState !== 'loading') audioEl.load();
-      }
-      return playlist;
-    }).catch(function (err) {
-      console.error('[Supabase Debug] failed to list audio bucket', err);
-      if (playlist.length) {
-        window.BACKGROUND_AUDIO_TRACKS = playlist;
-        return playlist;
-      }
-      return [];
-    });
-  }
-
-  // If no audioBucket and we added a direct URL, set it
-  if (playlist.length) {
-    window.BACKGROUND_AUDIO_TRACKS = playlist;
-    audioEl.src = playlist[0].src;
-    audioEl.setAttribute('data-track-title', playlist[0].title);
-    audioEl.load();
-    return Promise.resolve(playlist);
-  }
-  return Promise.resolve([]);
-}
-
-// Debug helper: show listing and thumbnails for the image bucket
-function debugSupabaseListing() {
-  try {
-    var client = initSupabaseClient();
-    if (!client) {
-      console.warn('[Supabase Debug] Supabase client not initialized');
-      return;
-    }
-    var bucket = supabaseConfig.imageBucket;
-    if (!bucket) {
-      console.warn('[Supabase Debug] imageBucket not set in config');
-      return;
-    }
-    var prefix = normalizeStoragePath(supabaseConfig.imagePrefix || '');
-    var listArg = prefix || undefined;
-    console.log('[Supabase Debug] (manual) listing', bucket, 'prefix:', listArg === undefined ? '<root>' : listArg);
-    client.storage.from(bucket).list(listArg, { limit: 1000 }).then(function(res) {
-      if (res.error) {
-        console.error('[Supabase Debug] storage.list error', res.error);
+        console.error('[Supabase Debug] Error listing audios:', result.error);
         return;
       }
-      var entries = res.data || [];
-      console.log('[Supabase Debug] manual list length:', entries.length, entries);
-      // Build or reuse modal
-      var modal = document.getElementById('supabase-debug-modal');
-      if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'supabase-debug-modal';
-        modal.style.position = 'fixed';
-        modal.style.right = '16px';
-        modal.style.bottom = '16px';
-        modal.style.width = '360px';
-        modal.style.maxHeight = '70vh';
-        modal.style.overflow = 'auto';
-        modal.style.background = 'rgba(0,0,0,0.8)';
-        modal.style.color = '#fff';
-        modal.style.borderRadius = '8px';
-        modal.style.padding = '12px';
-        modal.style.zIndex = 9999;
-        var close = document.createElement('button');
-        close.textContent = 'Close';
-        close.style.float = 'right';
-        close.addEventListener('click', function() { modal.remove(); });
-        modal.appendChild(close);
-        // Controls: allow setting image/audio prefixes and refreshing listings
-        var controls = document.createElement('div');
-        controls.style.display = 'flex';
-        controls.style.gap = '8px';
-        controls.style.marginBottom = '8px';
-
-        var imgLabel = document.createElement('label');
-        imgLabel.textContent = 'Image prefix:';
-        imgLabel.style.fontSize = '12px';
-        imgLabel.style.alignSelf = 'center';
-        var imgInput = document.createElement('input');
-        imgInput.type = 'text';
-        imgInput.value = supabaseConfig.imagePrefix || '';
-        imgInput.style.flex = '1';
-
-        var audLabel = document.createElement('label');
-        audLabel.textContent = 'Audio prefix:';
-        audLabel.style.fontSize = '12px';
-        audLabel.style.alignSelf = 'center';
-        var audInput = document.createElement('input');
-        audInput.type = 'text';
-        audInput.value = supabaseConfig.audioPrefix || '';
-        audInput.style.flex = '1';
-
-        var refreshBtn = document.createElement('button');
-        refreshBtn.textContent = 'Refresh Assets';
-        refreshBtn.style.flex = '0 0 auto';
-        refreshBtn.addEventListener('click', function () {
-          // Update config and re-run hydration
-          supabaseConfig.imagePrefix = imgInput.value || '';
-          supabaseConfig.audioPrefix = audInput.value || '';
-          console.log('[Supabase Debug] Updated prefixes, rehydrating assets', supabaseConfig.imagePrefix, supabaseConfig.audioPrefix);
-          hydrateAssetsFromSupabase().then(function() {
-            // After hydrate, refresh modal listing
-            debugSupabaseListing();
-          }).catch(function(err){
-            console.error('[Supabase Debug] hydrate failed', err);
-          });
-        });
-
-        // Append controls into modal
-        controls.appendChild(imgLabel);
-        controls.appendChild(imgInput);
-        controls.appendChild(audLabel);
-        controls.appendChild(audInput);
-        controls.appendChild(refreshBtn);
-        modal.appendChild(controls);
-
-        var title = document.createElement('div');
-        title.textContent = 'Supabase Storage Debug — ' + bucket + (listArg ? '/' + listArg : ' (root)');
-        title.style.fontWeight = '600';
-        title.style.marginBottom = '8px';
-        modal.appendChild(title);
-        var listContainer = document.createElement('div');
-        listContainer.id = 'supabase-debug-list';
-        modal.appendChild(listContainer);
-        document.body.appendChild(modal);
-      }
-      var listContainer = document.getElementById('supabase-debug-list');
-      listContainer.innerHTML = '';
-      if (!entries.length) {
-        listContainer.textContent = 'No files returned from storage.list()';
+      if (!result.data || !result.data.length) {
+        console.warn('[Supabase Debug] No audio files found in folder:', listPath);
         return;
       }
-      entries.forEach(function(entry) {
-        var row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.alignItems = 'center';
-        row.style.marginBottom = '8px';
-        var name = document.createElement('div');
-        name.textContent = entry.name;
-        name.style.flex = '1';
-        row.appendChild(name);
-        if (!(entry.metadata && entry.metadata.mimetype === 'inode/directory')) {
-          var objectPath = buildStoragePath(listArg || '', entry.name);
-          var publicResponse = client.storage.from(bucket).getPublicUrl(objectPath);
-          var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
-          if (publicUrl) {
-            var thumb = document.createElement('img');
-            thumb.src = publicUrl;
-            thumb.style.width = '72px';
-            thumb.style.height = '48px';
-            thumb.style.objectFit = 'cover';
-            thumb.style.marginLeft = '8px';
-            row.appendChild(thumb);
-          } else {
-            var note = document.createElement('span');
-            note.textContent = ' (no public URL)';
-            note.style.marginLeft = '8px';
-            row.appendChild(note);
-            console.warn('[Supabase Debug] no public url for', objectPath, publicResponse);
-          }
-        } else {
-          var folderTag = document.createElement('span');
-          folderTag.textContent = ' (folder)';
-          folderTag.style.marginLeft = '8px';
-          row.appendChild(folderTag);
-        }
-        listContainer.appendChild(row);
+      var audioFiles = result.data.filter(function(entry) {
+        if (!entry || !entry.name) return false;
+        if (entry.metadata && entry.metadata.mimetype === "inode/directory") return false;
+        // Accept common audio file extensions
+        return /\.(mp3|m4a|aac|ogg|wav)$/i.test(entry.name);
+      }).map(function(entry) {
+        var objectPath = buildStoragePath(prefix, entry.name);
+        var publicUrl = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
+        var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
+        return {
+          src: resolvedUrl || objectPath,
+          title: formatAssetCaption(entry.name)
+        };
       });
-    }).catch(function(err){
-      console.error('[Supabase Debug] list failed', err);
+      if (audioFiles.length) {
+        window.BACKGROUND_AUDIO_TRACKS = audioFiles;
+        // Start with the first track
+        audioEl.src = audioFiles[0].src;
+        audioEl.setAttribute('data-track-title', audioFiles[0].title);
+        var trackTitle = document.getElementById('track-title');
+        if (trackTitle) trackTitle.textContent = audioFiles[0].title;
+        audioEl.load();
+      }
     });
-  } catch (e) {
-    console.error('[Supabase Debug] unexpected', e);
-  }
-}
-
-
-// Always hydrate assets from Supabase on page load (no debug button needed)
-function autoHydrateSupabaseAssets() {
-  hydrateAssetsFromSupabase().then(function() {
-    console.log('[Supabase] Assets hydrated on page load.');
-  });
-}
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', autoHydrateSupabaseAssets);
-} else {
-  autoHydrateSupabaseAssets();
 }
 
 function normalizeStoragePath(path) {
