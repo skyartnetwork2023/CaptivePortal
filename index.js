@@ -1025,9 +1025,38 @@ function setNormalButton() {
     $("#button-login").html(globalConfig.buttonText);
 }
 
+
+function enableAudioAfterUserGesture() {
+  var overlay = document.getElementById('audio-overlay');
+  var btn = document.getElementById('audio-overlay-btn');
+  if (!overlay || !btn) return;
+  function enableAudio() {
+    var audioEl = document.getElementById('portal-audio');
+    if (audioEl) {
+      audioEl.muted = false;
+      var playPromise = audioEl.play();
+      if (playPromise && playPromise.catch) playPromise.catch(function(){});
+    }
+    overlay.style.display = 'none';
+    btn.removeEventListener('click', enableAudio);
+    document.removeEventListener('keydown', enableAudio);
+    document.removeEventListener('mousedown', enableAudio);
+    document.removeEventListener('touchstart', enableAudio);
+  }
+  btn.addEventListener('click', enableAudio);
+  // Also allow any user gesture to enable
+  document.addEventListener('keydown', enableAudio, { once: true });
+  document.addEventListener('mousedown', enableAudio, { once: true });
+  document.addEventListener('touchstart', enableAudio, { once: true });
+}
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", bootstrapExperienceLayers);
+  document.addEventListener("DOMContentLoaded", function() {
+    enableAudioAfterUserGesture();
+    bootstrapExperienceLayers();
+  });
 } else {
+  enableAudioAfterUserGesture();
   bootstrapExperienceLayers();
 }
 
