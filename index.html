@@ -8,11 +8,7 @@
     <link rel="stylesheet" href="index.css" type="text/css" />
 </head>
 <body class="portal">
-
-        <div id="audio-overlay" style="position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,20,30,0.88);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;">
-            <div style="font-size:2.2rem;font-weight:700;color:#fff;text-shadow:0 2px 16px #000;">Click to enable sound</div>
-            <button id="audio-overlay-btn" style="font-size:1.2rem;padding:1rem 2.5rem;border-radius:2rem;background:linear-gradient(135deg,#0fe0a6,#3ec0ff);color:#030711;font-weight:700;border:none;box-shadow:0 4px 24px #0008;cursor:pointer;">Enable Sound</button>
-        </div>
+    <div class="background-static" aria-hidden="true" style="background-image: url('background.png'); position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; background-size:cover; background-position:center;"></div>
 
     <div class="page-shell">
         <header class="top-bar">
@@ -42,20 +38,6 @@
             <!-- Experience panel removed for minimal interface -->
 
             <section class="login-card" aria-label="Connect to Wi-Fi">
-                <div id="mobile-nav-voucher" class="mobile-nav-btn" style="display:none;"></div>
-            </section>
-
-            <aside class="ads-panel" aria-label="Sponsor rotation">
-                <div id="mobile-nav-campaign" class="mobile-nav-btn" style="display:none;"></div>
-                <div class="ads-frame expanded-campaign">
-                    <button id="ad-prev" class="ad-nav" aria-label="Previous campaign">&#8592;</button>
-                    <div class="ad-track" id="ads-track"></div>
-                    <button id="ad-next" class="ad-nav" aria-label="Next campaign">&#8594;</button>
-                </div>
-                <div class="ads-meta" style="text-align:center; margin-top:1.5rem; font-size:1.25rem; font-weight:600; color:#fff; letter-spacing:0.04em;">
-                  TANGAZA NASI KWA BEI NAFUU
-                </div>
-            </aside>
                 <div class="card-header">
                     <p class="eyebrow">Jiunge Sasa</p>
                     <h2>Jaza vocha ako kupata Internet  </h2>
@@ -164,12 +146,10 @@
             audioPrefix: '',            // Folder in audio bucket ('' for root)
             audioObjectPath: 'skyart-lounge.mp3', // Audio file name in audios/
             audioTitle: 'Skyart Lounge Loop'
-
-            <div id="audio-overlay" style="position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,20,30,0.88);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;">
-                <div style="font-size:2.2rem;font-weight:700;color:#fff;text-shadow:0 2px 16px #000;">Click to enable sound</div>
-                <button id="audio-overlay-btn" style="font-size:1.2rem;padding:1rem 2.5rem;border-radius:2rem;background:linear-gradient(135deg,#0fe0a6,#3ec0ff);color:#030711;font-weight:700;border:none;box-shadow:0 4px 24px #0008;cursor:pointer;">Enable Sound</button>
-            </div>
-
-            <div class="background-static" aria-hidden="true" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; background:#030711;"></div>
+        };
+    </script>
+    <script src="index.js"></script>
+</body>
+</html>
 
 

@@ -1,45 +1,3 @@
-// Mobile navigation for paged blocks
-function setupMobilePaging() {
-  if (window.innerWidth > 700) {
-    document.querySelector('.login-card').style.display = '';
-    document.querySelector('.ads-panel').style.display = '';
-    return;
-  }
-  var voucher = document.querySelector('.login-card');
-  var campaign = document.querySelector('.ads-panel');
-  var navVoucher = document.getElementById('mobile-nav-voucher');
-  var navCampaign = document.getElementById('mobile-nav-campaign');
-  if (!voucher || !campaign || !navVoucher || !navCampaign) return;
-  function showVoucher() {
-    voucher.style.display = 'block';
-    campaign.style.display = 'none';
-    navVoucher.style.display = 'none';
-    navCampaign.style.display = 'block';
-    navCampaign.textContent = 'View Campaigns';
-  }
-  function showCampaign() {
-    voucher.style.display = 'none';
-    campaign.style.display = 'block';
-    navVoucher.style.display = 'block';
-    navVoucher.textContent = 'Back to Voucher';
-    navCampaign.style.display = 'none';
-  }
-  navCampaign.addEventListener('click', showCampaign);
-  navVoucher.addEventListener('click', showVoucher);
-  showVoucher();
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", function() {
-    enableAudioAfterUserGesture();
-    bootstrapExperienceLayers();
-    setupMobilePaging();
-  });
-} else {
-  enableAudioAfterUserGesture();
-  bootstrapExperienceLayers();
-  setupMobilePaging();
-}
 var NO_AUTH = 0,
     SIMPLE_PASSWORD = 1,
     EXTERNAL_RADIUS = 2,
@@ -1067,38 +1025,9 @@ function setNormalButton() {
     $("#button-login").html(globalConfig.buttonText);
 }
 
-
-function enableAudioAfterUserGesture() {
-  var overlay = document.getElementById('audio-overlay');
-  var btn = document.getElementById('audio-overlay-btn');
-  if (!overlay || !btn) return;
-  function enableAudio() {
-    var audioEl = document.getElementById('portal-audio');
-    if (audioEl) {
-      audioEl.muted = false;
-      var playPromise = audioEl.play();
-      if (playPromise && playPromise.catch) playPromise.catch(function(){});
-    }
-    overlay.style.display = 'none';
-    btn.removeEventListener('click', enableAudio);
-    document.removeEventListener('keydown', enableAudio);
-    document.removeEventListener('mousedown', enableAudio);
-    document.removeEventListener('touchstart', enableAudio);
-  }
-  btn.addEventListener('click', enableAudio);
-  // Also allow any user gesture to enable
-  document.addEventListener('keydown', enableAudio, { once: true });
-  document.addEventListener('mousedown', enableAudio, { once: true });
-  document.addEventListener('touchstart', enableAudio, { once: true });
-}
-
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", function() {
-    enableAudioAfterUserGesture();
-    bootstrapExperienceLayers();
-  });
+  document.addEventListener("DOMContentLoaded", bootstrapExperienceLayers);
 } else {
-  enableAudioAfterUserGesture();
   bootstrapExperienceLayers();
 }
 
@@ -1443,28 +1372,11 @@ function fetchSupabaseBackgrounds(client) {
       var resolvedUrl = publicUrl && publicUrl.data && publicUrl.data.publicUrl;
       return {
         source: resolvedUrl || file.objectPath,
-        caption: formatAssetCaption(file.name),
-        name: file.name
+        caption: formatAssetCaption(file.name)
       };
     }).filter(function(slide) { return !!slide.source; });
     if (slides.length) {
       BACKGROUND_SLIDES = slides;
-      // Set main background from first image named 'background'
-      var bg = slides.find(function(slide) {
-        return slide.name && slide.name.toLowerCase().startsWith('background');
-      });
-      var bgUrl = bg ? bg.source : null;
-      var bgEl = document.querySelector('.background-static');
-      if (bgEl) {
-        if (bgUrl) {
-          bgEl.style.backgroundImage = "url('" + bgUrl + "')";
-          bgEl.style.backgroundSize = 'cover';
-          bgEl.style.backgroundPosition = 'center';
-        } else {
-          bgEl.style.backgroundImage = 'none';
-          bgEl.style.background = '#030711';
-        }
-      }
     }
   });
 }
