@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 :root {
-  --bg-dark: #030711;
-  --bg-card: rgba(3, 7, 17, 0.72);
-  --bg-card-solid: #0c1427;
+  --bg-dark: #3a7c85;
+  --bg-card: rgba(58, 124, 133, 0.85);
+  --bg-card-solid: #3a7c85;
   --brand-emerald: #0fe0a6;
   --brand-blue: #3ec0ff;
   --text-muted: rgba(255, 255, 255, 0.7);
@@ -31,6 +31,20 @@ body.portal {
   color: #fff;
   background: var(--bg-dark);
   overflow-x: hidden;
+}
+
+.background-static {
+  background-color: #3a7c85 !important;
+}
+
+.top-bar, .ads-panel, .login-card, .media-controls, .ads-meta, .ads-frame, .social-banner {
+  background: rgba(58, 124, 133, 0.95) !important;
+}
+
+.button.control, #button-login {
+  background: linear-gradient(90deg, #3a7c85 0%, #5ec6c6 100%);
+  color: #fff;
+  border: none;
 }
 
 .background-gallery {
