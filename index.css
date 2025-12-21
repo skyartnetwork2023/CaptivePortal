@@ -1169,4 +1169,88 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
     aspect-ratio: auto;
   }
 }
-``
+
+/* === PATCH: Make campaign slides cover almost the full box they are wrapped in === */
+
+/* Give the ads panel a height context and let the frame grow inside it */
+.ads-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;                   /* allow inner flex items to shrink/scroll */
+}
+
+/* The visual wrapper box should provide full height to the track */
+.expanded-campaign,
+.ads-frame {
+  height: 100%;                    /* override earlier fixed 340px */
+  min-height: 0;
+}
+
+/* The track itself should stretch to the wrapper height */
+.ad-track {
+  height: 100%;
+}
+
+/* Each slide item becomes a grid: [image fills] + [small caption] */
+.ad-track > .ad-item {
+  flex: 0 0 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;    /* image gets remaining space, caption auto */
+  gap: 0.4rem;                     /* small gap so image area is maximized */
+  box-sizing: border-box;
+}
+
+/* Make the image cover the whole first row */
+.ad-item .ad-card {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  aspect-ratio: auto;              /* remove 16:9 limit */
+  border-radius: 16px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Keep caption small so most space goes to the image */
+.ad-item .ad-caption {
+  margin-top: 0;                   /* gap above is enough */
+  padding: 0.45rem 0.65rem;
+  font-size: clamp(0.78rem, 2.2vw, 0.9rem);
+  border-radius: 10px;
+}
+
+/* Mobile: fill nearly the whole screen but still leave promo space */
+@media (max-width: 540px) {
+  :root { --promo-space: 72px; }   /* reserved space for your promo line */
+
+  .ads-panel {
+    max-height: calc(100svh - var(--promo-space));
+    padding: 0.75rem;
+  }
+
+  .expanded-campaign,
+  .ads-frame { height: 100%; }
+
+  .ad-track { height: 100%; }
+  .ad-track > .ad-item { grid-template-rows: 1fr auto; }
+
+  .ad-item .ad-card { border-radius: 12px; }
+  /* If you want absolutely maximum image area, uncomment the next line:
+     .ad-caption { display: none; } */
+}
+
+/* Tablet: keep things tall too */
+@media (min-width: 541px) and (max-width: 900px) {
+  :root { --promo-space: 56px; }
+  .ads-panel { max-height: calc(100svh - var(--promo-space)); }
+
+  .expanded-campaign,
+  .ads-frame { height: 100%; }
+
+  .ad-item .ad-card {
+    max-height: 80svh;            /* very tall, but not full to avoid clipping */
+    aspect-ratio: auto;
+  }
+}
