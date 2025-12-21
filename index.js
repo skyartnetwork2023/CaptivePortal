@@ -1295,9 +1295,6 @@ function initAdRail() {
     if (!track || !track.children.length) return;
     var slideWidth = track.clientWidth || (track.children[0] && track.children[0].clientWidth) || 0;
     track.scrollTo({ left: i * slideWidth, behavior: smooth ? 'smooth' : 'auto' });
-    if (indicator) {
-      indicator.textContent = padWithZero(i + 1) + " / " + padWithZero(PORTAL_ADS.length);
-    }
     updateAdCaption(i);
     index = i;
   }
@@ -1341,7 +1338,6 @@ function initAdRail() {
     var newIndex = Math.round(track.scrollLeft / slideWidth);
     if (newIndex !== index) {
       index = newIndex;
-      if (indicator) indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
       updateAdCaption(index);
     }
   });
