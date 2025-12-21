@@ -1578,3 +1578,5 @@ function formatAssetCaption(filename) {
   }
   return base.replace(/\b\w/g, function (char) { return char.toUpperCase(); });
 }
+
+console.log('[Debug] BACKGROUND_SLIDES after hydration:', BACKGROUND_SLIDES);
