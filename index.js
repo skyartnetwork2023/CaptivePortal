@@ -1180,6 +1180,14 @@ function initAdRail() {
     console.log('[AdRail] Adding ad:', ad.title || ad.eyebrow || '', 'background:', ad.background || ad.image);
     track.appendChild(buildAdCard(ad));
   });
+
+  // 🔥 Ensure the rail is wide enough for all cards and set each card's flex-basis
+  track.style.width = (PORTAL_ADS.length * 100) + "%";
+  Array.prototype.forEach.call(track.children, function(card) {
+    // Use flex-basis rather than width to avoid conflicts with CSS flex settings
+    card.style.flex = "0 0 " + (100 / PORTAL_ADS.length) + "%";
+  });
+
   var index = 0;
 
   // Caption block setup
@@ -1207,7 +1215,7 @@ function initAdRail() {
   }
 
   function renderPosition() {
-    track.style.transform = "translateX(-" + (index * 100) + "%)";
+    track.style.transform = "translateX(-" + (index * (100 / PORTAL_ADS.length)) + "%)";
     if (indicator) {
       indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
     }
