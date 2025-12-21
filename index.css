@@ -277,15 +277,39 @@ body.portal {
 }
 
 .login-card {
+  width: 100%;
+  max-width: 420px;              /* desktop & laptop */
   padding: 2.5rem;
+
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-strong);
+
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+
+  margin: auto;                  /* center horizontally */
 }
+
+/* Tablets */
+@media (max-width: 768px) {
+  .login-card {
+    max-width: 360px;
+    padding: 2rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 540px) {
+  .login-card {
+    max-width: 100%;
+    padding: 1.25rem;
+    border-radius: 14px;
+  }
+}
+
 
 .status-hint {
   min-height: 1.6rem;
@@ -782,4 +806,8 @@ body.portal {
   .sms-input {
     grid-template-columns: auto 1fr;
   }
+}
+.login-card {
+  max-height: calc(100svh - 2rem);
+  overflow-y: auto;
 }
