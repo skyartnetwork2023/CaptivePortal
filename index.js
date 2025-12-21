@@ -1354,15 +1354,7 @@ function initAdRail() {
 function buildAdCard(ad) {
   var card = document.createElement("article");
   card.className = "ad-card";
-  // Remove background image, use <img> instead
-  var img = document.createElement("img");
-  img.className = "ad-img";
-  img.src = ad.background || ad.image || '';
-  img.alt = ad.title || ad.caption || '';
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.objectFit = 'cover';
-  card.appendChild(img);
+  card.style.backgroundImage = formatBackgroundSource(ad.background || ad.image);
   card.dataset.caption = ad.title || ad.caption || "";
   return card;
 }
