@@ -1172,9 +1172,51 @@ function initAudioController() {
 function initAdRail() {
   var track = document.getElementById("ads-track");
   var indicator = document.getElementById("ad-indicator");
+
+  // If the track is missing, create the canonical structure:
+  // <div class="ads-frame">
+  //   <button id="ad-prev" class="ad-nav">←</button>
+  //   <div class="ad-track" id="ads-track"></div>
+  //   <button id="ad-next" class="ad-nav">→</button>
+  // </div>
+  if (!track) {
+    var adsPanel = document.querySelector('.ads-panel');
+    if (adsPanel) {
+      var frame = document.createElement('div');
+      frame.className = 'ads-frame expanded-campaign';
+
+      var prevBtn = document.createElement('button');
+      prevBtn.id = 'ad-prev';
+      prevBtn.className = 'ad-nav';
+      prevBtn.setAttribute('aria-label', 'Previous campaign');
+      prevBtn.innerHTML = '&#8592;';
+
+      var nextBtn = document.createElement('button');
+      nextBtn.id = 'ad-next';
+      nextBtn.className = 'ad-nav';
+      nextBtn.setAttribute('aria-label', 'Next campaign');
+      nextBtn.innerHTML = '&#8594;';
+
+      var divTrack = document.createElement('div');
+      divTrack.className = 'ad-track';
+      divTrack.id = 'ads-track';
+
+      frame.appendChild(prevBtn);
+      frame.appendChild(divTrack);
+      frame.appendChild(nextBtn);
+
+      var reference = adsPanel.querySelector('.ads-meta') || adsPanel.firstChild;
+      adsPanel.insertBefore(frame, reference);
+
+      track = document.getElementById("ads-track");
+      console.log('[AdRail] Created missing ads-frame and ads-track structure');
+    }
+  }
+
   if (!track || !PORTAL_ADS.length) {
     return;
   }
+
   track.innerHTML = "";
   PORTAL_ADS.forEach(function (ad) {
     console.log('[AdRail] Adding ad:', ad.title || ad.eyebrow || '', 'background:', ad.background || ad.image);
@@ -1214,39 +1256,66 @@ function initAdRail() {
     adCaptionBlock.textContent = caption;
   }
 
-  function renderPosition() {
-    track.style.transform = "translateX(-" + (index * (100 / PORTAL_ADS.length)) + "%)";
+  function scrollToIndex(i, smooth) {
+    if (!track || !track.children.length) return;
+    var slideWidth = track.clientWidth || (track.children[0] && track.children[0].clientWidth) || 0;
+    track.scrollTo({ left: i * slideWidth, behavior: smooth ? 'smooth' : 'auto' });
     if (indicator) {
-      indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
+      indicator.textContent = padWithZero(i + 1) + " / " + padWithZero(PORTAL_ADS.length);
     }
-    updateAdCaption(index);
+    updateAdCaption(i);
+    index = i;
   }
 
-  renderPosition();
+  // sync initial position
+  scrollToIndex(0, false);
+
+  // Auto-rotate using scroll
   var autoRotate = setInterval(function () {
+    if (!track || !track.children.length) return;
     index = (index + 1) % PORTAL_ADS.length;
-    renderPosition();
+    scrollToIndex(index, true);
   }, 9000);
 
   var prevBtn = document.getElementById("ad-prev");
   var nextBtn = document.getElementById("ad-next");
   function goToPrev() {
-    index = (index - 1 + PORTAL_ADS.length) % PORTAL_ADS.length;
-    renderPosition();
+    if (!track || !track.children.length) return;
+    index = Math.max(0, index - 1);
+    scrollToIndex(index, true);
     resetAutoRotate();
   }
   function goToNext() {
+    if (!track || !track.children.length) return;
     index = (index + 1) % PORTAL_ADS.length;
-    renderPosition();
+    scrollToIndex(index, true);
     resetAutoRotate();
   }
   function resetAutoRotate() {
     clearInterval(autoRotate);
     autoRotate = setInterval(function () {
+      if (!track || !track.children.length) return;
       index = (index + 1) % PORTAL_ADS.length;
-      renderPosition();
+      scrollToIndex(index, true);
     }, 9000);
   }
+
+  // Update index on manual scroll (snap behavior)
+  track.addEventListener('scroll', function () {
+    var slideWidth = track.clientWidth || (track.children[0] && track.children[0].clientWidth) || 1;
+    var newIndex = Math.round(track.scrollLeft / slideWidth);
+    if (newIndex !== index) {
+      index = newIndex;
+      if (indicator) indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
+      updateAdCaption(index);
+    }
+  });
+
+  // Keep position on resize
+  window.addEventListener('resize', function () {
+    scrollToIndex(index, false);
+  });
+
   if (prevBtn) prevBtn.addEventListener("click", goToPrev);
   if (nextBtn) nextBtn.addEventListener("click", goToNext);
 }
