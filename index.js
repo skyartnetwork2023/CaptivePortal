@@ -1489,7 +1489,6 @@ function fetchSupabaseBackgrounds(client) {
                 caption: formatAssetCaption(file.name)
             };
         }).filter(function (slide) { return !!slide.source; });
-        console.log('[Debug] Slides before populating BACKGROUND_SLIDES:', slides);
         if (slides.length) {
             BACKGROUND_SLIDES = slides;
         }
