@@ -10,13 +10,10 @@ html, body {
   position: fixed;
   inset: 0;
   z-index: -1;
-
   background-image: url('background.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-
-  /* Modern viewport safety */
   width: 100vw;
   height: calc(var(--vh, 1vh) * 100);
 }
@@ -25,7 +22,7 @@ html, body {
 @media (max-width: 900px) {
   .background-static {
     background-attachment: scroll; /* FIX mobile bugs */
-    height: 100svh; /* Safe viewport height */
+    height: calc(var(--vh, 1vh) * 100); /* Safe viewport height */
   }
 }
 
@@ -281,7 +278,7 @@ body.portal {
 /* --- Universal fit and responsive panels --- */
 .login-card {
   width: min(94vw, 360px);
-  max-height: calc(100svh - 2rem);
+  max-height: calc(var(--vh, 1vh) * 100 - 2rem);
   overflow-y: auto;
   margin: auto;
   background: var(--bg-card);
@@ -334,7 +331,7 @@ body.portal {
     margin: 0 auto;
   }
   .login-card {
-    max-height: calc(100svh - 1.5rem);
+    max-height: calc(var(--vh, 1vh) * 100 - 1.5rem);
     width: 94vw;
   }
 }
