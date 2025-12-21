@@ -1177,6 +1177,7 @@ function initAdRail() {
   }
   track.innerHTML = "";
   PORTAL_ADS.forEach(function (ad) {
+    console.log('[AdRail] Adding ad:', ad.title || ad.eyebrow || '', 'background:', ad.background || ad.image);
     track.appendChild(buildAdCard(ad));
   });
   var index = 0;
@@ -1296,6 +1297,7 @@ function hydrateAssetsFromSupabase() {
         background: slide.source
       };
     });
+    console.log('[AdRail Debug] PORTAL_ADS:', PORTAL_ADS);
     // Re-initialize the ad rail with hydrated images
     initAdRail();
   });
