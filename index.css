@@ -1108,3 +1108,65 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 .ad-track > .ad-item {
   flex: 0 0 100%;
 }
+
+/* === PATCH: Mobile ads fill screen, reserve small promo space === */
+
+/* Reserve a small space for the banner "TANGAZA NASI KWA BEI NAFUU" */
+:root {
+  --promo-space: 72px; /* adjust as needed (e.g., 64px, 80px) */
+}
+
+/* Small phones: let ads panel fill almost the whole screen */
+@media (max-width: 540px) {
+  /* Trim outer padding a bit so the image area can grow */
+  .page-shell { padding-bottom: 0.75rem; }
+
+  /* Make the ads panel occupy (screen height - reserved banner space) */
+  .ads-panel {
+    max-height: calc(100svh - var(--promo-space));
+    padding: 0.75rem;
+  }
+
+  /* Let the frame stretch vertically (remove fixed 340px + fixed ratio) */
+  .ads-frame,
+  .expanded-campaign {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto; /* allow tall images */
+  }
+
+  .ad-track { height: 100%; }
+
+  /* Make each slide a tight stack; smaller gaps so more room goes to the image */
+  .ad-item { gap: 0.4rem; }
+
+  /* Grow the image to fill the available height */
+  .ad-card {
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;           /* no 16:9 limit on mobile */
+    border-radius: 12px;
+    background-position: center;
+    background-size: cover;
+  }
+
+  /* Optional: hide file-name captions on tiny screens to maximize image space.
+     Remove this "display: none" if you want to keep captions visible. */
+  .ad-caption { display: none; }
+}
+
+/* Mid mobile: also reserve a smaller space and allow tall images */
+@media (min-width: 541px) and (max-width: 900px) {
+  :root { --promo-space: 56px; }
+
+  .ads-panel {
+    max-height: calc(100svh - var(--promo-space));
+  }
+
+  .ad-card {
+    max-height: 80svh;  /* very tall, but leave a bit more breathing room */
+    aspect-ratio: auto;
+  }
+}
+``
