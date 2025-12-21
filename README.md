@@ -20,7 +20,7 @@ The portal script calls the Omada controller/gateway endpoints via a helper that
 
 Options for defining the base:
 
-1. **Inline global (recommended for Vercel):**
+1. **Inline global (recommended for Vercel),,:**
 	```html
 	<script>
 	  window.__OMADA_PORTAL_BASE__ = 'https://controller.example.com:8043';
