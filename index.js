@@ -1233,31 +1233,23 @@ function initAdRail() {
   if (nextBtn) nextBtn.addEventListener("click", goToNext);
 }
 
-f
 function buildAdCard(ad) {
-  const card = document.createElement("article");
+  var card = document.createElement("article");
   card.className = "ad-card";
+  card.style.backgroundImage = formatBackgroundSource(ad.background || ad.image);
 
-  // Choose a background source; support ad.background or ad.image
-  const bgSource = (ad && (ad.background || ad.image)) || "";
-  card.style.backgroundImage = formatBackgroundSource(bgSource);
-
-  // Save a fallback filename in a data attribute
-  const fallbackName = getFileNameFromSourceString(bgSource);
-  if (fallbackName) card.setAttribute('data-image-name', fallbackName);
-
-  const content = document.createElement("div");
+  var content = document.createElement("div");
   content.className = "ad-content";
 
-  const eyebrow = document.createElement("p");
+  var eyebrow = document.createElement("p");
   eyebrow.className = "ad-eyebrow";
   eyebrow.textContent = ad.eyebrow || "Featured";
 
-  const title = document.createElement("h3");
+  var title = document.createElement("h3");
   title.className = "ad-title";
   title.textContent = ad.title || "";
 
-  const body = document.createElement("p");
+  var body = document.createElement("p");
   body.className = "ad-body";
   body.textContent = ad.body || "";
 
@@ -1265,11 +1257,11 @@ function buildAdCard(ad) {
   content.appendChild(title);
   content.appendChild(body);
 
-  const ctaWrapper = document.createElement("div");
+  var ctaWrapper = document.createElement("div");
   ctaWrapper.className = "ad-cta";
   if (ad.cta) {
     if (ad.link) {
-      const linkEl = document.createElement("a");
+      var linkEl = document.createElement("a");
       linkEl.href = ad.link;
       linkEl.target = "_blank";
       linkEl.rel = "noopener noreferrer";
@@ -1732,7 +1724,7 @@ function formatAssetCaption(filename) {
   setVH();
   window.addEventListener('resize', setVH);
 })();
-
+``
 
 /* === PATCH: Build captions from ad-card background image URLs === */
 (function () {
@@ -1748,70 +1740,6 @@ function formatAssetCaption(filename) {
     const name = parts.pop() || '';
     try { return decodeURIComponent(name); } catch { return name; }
   }
-  
-/* === FIX: Ad card captions rendered after rail is built === */
-
-// Parse the last url(...) in a background-image string
-function getFileNameFromBackground(bg) {
-  if (!bg || bg === 'none') return '';
-  const urls = [...bg.matchAll(/url\((['"]?)(.*?)\1\)/gi)].map(m => m[2]);
-  const raw = urls.length ? urls[urls.length - 1] : '';
-  if (!raw) return '';
-  const clean = raw.split('?')[0].split('#')[0];
-  const parts = clean.split('/');
-  const name = parts.pop() || '';
-  try { return decodeURIComponent(name); } catch { return name; }
-}
-
-// If we have a direct string for background (url or path), derive a filename
-function getFileNameFromSourceString(src) {
-  if (!src) return '';
-  // strip url(...) wrapper if present
-  const m = src.match(/url\((['"]?)(.*?)\1\)/i);
-  const actual = m ? m[2] : src;
-  if (/gradient/i.test(actual)) return ''; // gradients have no filename
-  const clean = actual.split('?')[0].split('#')[0];
-  const parts = clean.split('/');
-  return parts.pop() || '';
-}
-
-// Wrap cards and append caption below
-function attachAdCaptions() {
-  document.querySelectorAll('.ad-card').forEach(card => {
-    // Skip if already wrapped
-    if (card.parentElement && card.parentElement.classList.contains('ad-item')) return;
-
-    const wrap = document.createElement('div');
-    wrap.className = 'ad-item';
-    card.parentNode.insertBefore(wrap, card);
-    wrap.appendChild(card);
-
-    const bg = getComputedStyle(card).backgroundImage;
-    const fname =
-      getFileNameFromBackground(bg) ||
-      card.getAttribute('data-image-name') ||
-      '—';
-
-    const caption = document.createElement('div');
-    caption.className = 'ad-caption';
-    caption.textContent = fname;
-    wrap.appendChild(caption);
-  });
-}
-
-// Hook caption rendering to ad rail initialization
-(function hookAdRailCaptions() {
-  // Run once now (in case cards already exist)
-  attachAdCaptions();
-
-  // Observe the ads track for new slides/cards
-  const track = document.getElementById('ads-track');
-  if (!track) return;
-
-  const observer = new MutationObserver(() => attachAdCaptions());
-  observer.observe(track, { childList: true, subtree: true });
-})();
-
 
   // Upgrade each ad-card into a stacked item: image + caption
   document.querySelectorAll('.ad-card').forEach(card => {
