@@ -7,10 +7,26 @@
   z-index: -1;
   background-image: url('background.png');
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
+@media (max-width: 900px) {
+  .background-static {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    width: 100vw;
+    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 :root {
