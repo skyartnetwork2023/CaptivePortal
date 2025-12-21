@@ -1714,3 +1714,14 @@ function formatAssetCaption(filename) {
   }
   return base.replace(/\b\w/g, function (char) { return char.toUpperCase(); });
 }
+
+/* === PATCH: Safe viewport fallback for older mobile browsers === */
+(function () {
+  function setVH() {
+    const vh = window.innerHeight * 0.01; // 1% of viewport height
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  setVH();
+  window.addEventListener('resize', setVH);
+})();
+``

@@ -854,3 +854,101 @@ body.portal {
     padding: 1rem;
   }
 }
+
+/* === PATCH: Mobile auto-fit within background === */
+
+/* 1) Background & page shell use SAFE viewport units (svh/svw) */
+.background-static {
+  width: 100svw;
+  height: 100svh;
+  background-attachment: scroll; /* avoid iOS fixed-attachment bugs */
+}
+
+.page-shell {
+  min-height: 100svh;            /* match background height */
+  overflow: clip;                 /* prevent outer page scroll on mobile */
+  padding: clamp(1rem, 4vw, 2.5rem)
+           clamp(1rem, 4vw, 4rem)
+           clamp(1.25rem, 5vw, 3rem);
+  gap: clamp(0.75rem, 2.5vw, 2rem);
+}
+
+/* Fallback for browsers that don't support svh/svw */
+@supports not (height: 100svh) {
+  .background-static { width: 100vw; height: calc(var(--vh, 1vh) * 100); }
+  .page-shell       { min-height: calc(var(--vh, 1vh) * 100); }
+}
+
+/* 2) Panels auto-fit inside background and scroll internally if needed */
+.login-card,
+.ads-panel,
+.experience-panel {
+  width: min(94svw, 600px);
+  max-height: calc(100svh - 2rem);
+  overflow: auto;
+  margin: auto;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  border-radius: var(--radius-lg);
+  gap: 1.25rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 540px) {
+  .login-card,
+  .ads-panel,
+  .experience-panel {
+    width: 94svw;
+    max-height: calc(100svh - 1.25rem);
+    padding: 1rem;
+    border-radius: 14px;
+    gap: 1rem;
+  }
+}
+
+/* 3) Grid collapses cleanly & spacing tightens on small screens */
+@media (max-width: 1200px) {
+  .grid-layout { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 900px) {
+  .grid-layout { grid-template-columns: 1fr; gap: 1rem; }
+  .top-bar     { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+}
+
+/* 4) Headings scale down slightly to prevent overflow */
+.experience-panel h1 {
+  font-size: clamp(1.6rem, 5.5vw, 2.4rem);
+  line-height: 1.18;
+}
+
+/* 5) Ads/media respect the viewport and aspect ratios */
+.ads-frame,
+.expanded-campaign {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+}
+
+.ad-card {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: 60svh;
+  border-radius: 16px;
+}
+
+@media (max-width: 540px) {
+  .ad-card { max-height: 44svh; border-radius: 12px; }
+}
+
+/* Media always scales down within containers */
+img,
+video { max-width: 100%; height: auto; }
+
+/* 6) Small font & line-length tweaks to reduce vertical bloat */
+body.portal { font-size: clamp(14px, 1.8vw, 16px); }
+.experience-panel .lede,
+.feature-list li,
+.help-text { max-width: 68ch; }
