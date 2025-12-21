@@ -1,3 +1,14 @@
+  // === Loop all music ===
+  // If there's more than one track, go to the next when the current one ends.
+  // If there's only one track, use the built-in loop.
+  if (audioTracks.length > 1) {
+    audioEl.addEventListener('ended', function () {
+      playTrack((currentTrack + 1) % audioTracks.length);
+    });
+    audioEl.loop = false;
+  } else {
+    audioEl.loop = true;
+  }
 var NO_AUTH = 0,
     SIMPLE_PASSWORD = 1,
     EXTERNAL_RADIUS = 2,
@@ -1200,19 +1211,10 @@ function initAudioController() {
 
   toggleBtn.addEventListener("click", function () {
     if (audioEl.paused) {
-      var attempt = audioEl.play();
-      if (attempt && attempt.then) {
-        attempt.then(function () {
-          syncState(true);
-        }).catch(function () {
-          syncState(false);
-        });
-      } else {
-        syncState(true);
-      }
+      audioEl.play().then(function(){ syncState(true); }).catch(function(){ syncState(false); });
     } else {
-      audioEl.pause();
-      syncState(false);
+      if (audioEl.muted) { audioEl.muted = false; syncState(true); return; }
+      audioEl.pause(); syncState(false);
     }
   });
   if (nextBtn) {
