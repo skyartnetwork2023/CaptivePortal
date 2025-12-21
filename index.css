@@ -1,3 +1,36 @@
+/* Data Plans Table Styles */
+.data-plans-table-wrapper {
+  margin: 1.5rem 0 0 0;
+  overflow-x: auto;
+}
+.data-plans-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.03);
+  font-size: 1rem;
+  margin: 0 auto;
+  min-width: 320px;
+  max-width: 100%;
+}
+.data-plans-table th, .data-plans-table td {
+  border: 1px solid var(--border-soft);
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+.data-plans-table th {
+  background: rgba(0,0,0,0.12);
+  color: var(--brand-blue);
+  font-weight: 600;
+}
+.data-plans-table td {
+  color: #fff;
+}
+.data-plans-table tr:nth-child(even) td {
+  background: rgba(255,255,255,0.02);
+}
+.data-plans-table tr:hover td {
+  background: rgba(62,192,255,0.08);
+}
 @media (max-width: 600px) {
   .grid-layout {
     flex-direction: column;
