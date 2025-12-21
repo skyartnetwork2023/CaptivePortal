@@ -1123,13 +1123,13 @@ function initBackgroundCarousel() {
 }
 
 function initAudioController() {
-  var audioEl = document.getElementById("portal-audio");
+  var audioEl   = document.getElementById("portal-audio");
   var toggleBtn = document.getElementById("audio-toggle");
   var stateLabel = document.getElementById("audio-state");
   var trackTitle = document.getElementById("track-title");
-  var nextBtn = document.getElementById("audio-next");
+  var nextBtn    = document.getElementById("audio-next");
 
-  // Support for multiple audio tracks
+  // ... your existing code that builds/loads the playlist ...
   var audioTracks = window.BACKGROUND_AUDIO_TRACKS || [];
   var currentTrack = 0;
   if (!Array.isArray(audioTracks) || audioTracks.length === 0) {
@@ -1138,6 +1138,37 @@ function initAudioController() {
       src: audioEl.querySelector('source') ? audioEl.querySelector('source').src : audioEl.src,
       title: audioEl.getAttribute('data-track-title') || 'Skyart Lounge Loop'
     }];
+  }
+
+  // Make the element eligible for mobile/iOS inline playback
+  if (audioEl) {
+    audioEl.autoplay = true;
+    audioEl.playsInline = true;
+  }
+
+  // === Autoplay on page load (best effort) ===
+  function attemptAutoplay() {
+    if (!audioEl) return;
+    // Ensure the element is ready (Supabase may have set src already)
+    try { audioEl.load(); } catch (e) {}
+    // 1) Try unmuted first
+    audioEl.muted = false;
+    var p = audioEl.play();
+    if (p && typeof p.then === "function") {
+      p.then(function () {
+        // unmuted autoplay succeeded
+        syncState(true);
+      }).catch(function () {
+        // 2) Fallback: muted autoplay (more widely allowed)
+        audioEl.muted = true;
+        audioEl.play().then(function () {
+          syncState(true); // playing (muted)
+        }).catch(function () {
+          // Autoplay fully blocked; keep UI consistent
+          syncState(false);
+        });
+      });
+    }
   }
 
   function playTrack(idx) {
@@ -1192,6 +1223,9 @@ function initAudioController() {
 
   audioEl.addEventListener("play", function () { syncState(true); });
   audioEl.addEventListener("pause", function () { syncState(false); });
+
+  // Call once after wiring events (initAudioController runs after asset hydration)
+  attemptAutoplay();
 }
 
 function initAdRail() {
