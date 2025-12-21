@@ -1054,6 +1054,18 @@ function bootstrapExperienceLayers() {
     })
     .finally(function () {
       enhanceExperienceLayers();
+      // Attempt to auto-play lounge music after experience layers are ready
+      setTimeout(function() {
+        var audioEl = document.getElementById("portal-audio");
+        if (audioEl && audioEl.paused) {
+          var playPromise = audioEl.play();
+          if (playPromise && playPromise.catch) {
+            playPromise.catch(function(err) {
+              // Autoplay might be blocked by browser, ignore silently
+            });
+          }
+        }
+      }, 500);
     });
 }
 
