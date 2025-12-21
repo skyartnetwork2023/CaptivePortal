@@ -952,3 +952,98 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 .experience-panel .lede,
 .feature-list li,
 .help-text { max-width: 68ch; }
+
+/* === PATCH: Bundles table (matches portal style & auto-fits on mobile) === */
+
+.bundle-table-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(0.75rem, 2.5vw, 1rem);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: rgba(3, 7, 17, 0.45);              /* translucent card */
+  backdrop-filter: blur(12px);
+}
+
+.bundle-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-inline: 0.25rem;
+}
+
+.bundle-title {
+  font-size: clamp(1rem, 2.8vw, 1.1rem);
+  font-weight: 600;
+}
+
+.bundle-scroll {
+  /* Keeps the table inside the login card; scrolls internally if tall */
+  max-height: clamp(220px, 40svh, 420px);
+  overflow: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+}
+
+/* Table base */
+.bundle-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.82rem, 2.2vw, 0.95rem);
+  line-height: 1.35;
+  background: transparent;
+}
+
+/* Sticky header with subtle backdrop */
+.bundle-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  background:
+    linear-gradient(135deg, rgba(15, 224, 166, 0.18), rgba(62, 192, 255, 0.18)),
+    rgba(3, 7, 17, 0.65);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* Body cells */
+.bundle-table tbody td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+}
+
+/* Zebra & hover */
+.bundle-table tbody tr:nth-child(odd) td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.bundle-table tbody tr:hover td {
+  background: rgba(62, 192, 255, 0.10);
+  color: #fff;
+}
+
+/* Compact spacing on very small screens */
+@media (max-width: 540px) {
+  .bundle-table-wrap { border-radius: 12px; padding: 0.75rem; }
+  .bundle-scroll     { max-height: clamp(200px, 44svh, 360px); border-radius: 10px; }
+  .bundle-table thead th { padding: 0.5rem 0.6rem; }
+  .bundle-table tbody td { padding: 0.45rem 0.6rem; }
+}
+
+/* Optional: subtle left accent to echo your gradient borders */
+.bundle-table-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  /* glow edge on the left side only */
+  box-shadow: -2px 0 0 rgba(62,192,255,0.25);
+}
+``
