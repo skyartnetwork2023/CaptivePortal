@@ -1046,3 +1046,65 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   /* glow edge on the left side only */
   box-shadow: -2px 0 0 rgba(62,192,255,0.25);
 }
+
+/* === PATCH: Ad card caption displayed below the image === */
+
+/* Each slide becomes a vertical stack: image (card) + caption */
+.ad-item {
+  flex: 0 0 auto;             /* track children remain slide-width items */
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  box-sizing: border-box;
+}
+
+/* Keep existing ad-card look; just ensure it doesn't overlap the caption */
+.ad-card {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Caption bar below the image */
+.ad-caption {
+  text-align: center;
+  font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+  color: var(--text-muted);
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: rgba(3, 7, 17, 0.45);       /* translucent card to match portal */
+  backdrop-filter: blur(10px);
+  white-space: nowrap;                     /* keep single-line, ellipsize if long */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Subtle accent to echo your gradient theme */
+.ad-caption::before {
+  content: "";
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-emerald), var(--brand-blue));
+  vertical-align: middle;
+}
+
+/* Mobile: tighter radius and spacing */
+@media (max-width: 540px) {
+  .ad-card     { border-radius: 12px; }
+  .ad-caption  { border-radius: 8px; padding: 0.45rem 0.6rem; }
+  .ad-item     { gap: 0.5rem; }
+}
+
+/* If your track logic measures children by width, ensure each item behaves like the old card */
+.ad-track > .ad-item {
+  flex: 0 0 100%;
+}
