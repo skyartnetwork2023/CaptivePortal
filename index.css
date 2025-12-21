@@ -295,20 +295,44 @@ body.portal {
   margin: auto;                  /* center horizontally */
 }
 
-/* Tablets */
-@media (max-width: 768px) {
-  .login-card {
-    max-width: 360px;
-    padding: 2rem;
+/* Tablets & below: make all panels fit like top-bar */
+@media (max-width: 900px) {
+  .page-shell {
+    padding: 1.5rem 0.5rem 2rem;
+  }
+  .grid-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+  }
+  .login-card,
+  .ads-panel,
+  .experience-panel {
+    max-width: 100%;
+    width: 100%;
+    padding: clamp(1rem, 4vw, 1.5rem);
+    margin: 0 auto;
+    border-radius: 16px;
+    box-sizing: border-box;
   }
 }
 
-/* Small phones */
+/* Small phones: tighter fit for all panels */
 @media (max-width: 540px) {
-  .login-card {
+  .page-shell {
+    padding: 0.5rem 0.25rem 1rem;
+  }
+  .login-card,
+  .ads-panel,
+  .experience-panel {
     max-width: 100%;
-    padding: 1.25rem;
+    width: 100%;
+    padding: 0.75rem;
     border-radius: 14px;
+    margin: 0 auto;
+  }
+  .grid-layout {
+    gap: 0.5rem;
   }
 }
 
