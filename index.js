@@ -1234,6 +1234,7 @@ function initAdRail() {
 
   // Caption block setup
   var adCaptionBlock = document.getElementById('ad-caption-block');
+  var indicator = document.getElementById('ad-indicator');
   if (!adCaptionBlock) {
     var adsPanel = document.querySelector('.ads-panel');
     if (adsPanel) {
@@ -1248,12 +1249,46 @@ function initAdRail() {
       adsPanel.insertBefore(adCaptionBlock, adsPanel.querySelector('.ads-meta'));
     }
   }
+
+  // Ensure we have an indicator container and populate dots
+  (function ensureIndicator() {
+    var adsPanel = document.querySelector('.ads-panel');
+    indicator = indicator || document.getElementById('ad-indicator');
+    if (!indicator && adsPanel) {
+      indicator = document.createElement('div');
+      indicator.id = 'ad-indicator';
+      indicator.className = 'ad-indicator';
+      adsPanel.insertBefore(indicator, adsPanel.querySelector('.ads-meta'));
+    }
+    if (indicator) {
+      indicator.innerHTML = '';
+      for (var d = 0; d < PORTAL_ADS.length; d++) {
+        var dot = document.createElement('span');
+        if (d === 0) dot.className = 'active';
+        (function(i){
+          dot.addEventListener('click', function(){
+            scrollToIndex(i, true);
+            resetAutoRotate();
+          });
+        })(d);
+        indicator.appendChild(dot);
+      }
+    }
+  })();
+
   function updateAdCaption(idx) {
     var cards = track.children;
     if (!adCaptionBlock || !cards.length) return;
     var card = cards[idx] || cards[0];
     var caption = card.dataset.caption || '';
     adCaptionBlock.textContent = caption;
+    // update indicator active dot
+    if (indicator) {
+      var dots = indicator.children;
+      for (var j = 0; j < dots.length; j++) {
+        if (j === idx) dots[j].classList.add('active'); else dots[j].classList.remove('active');
+      }
+    }
   }
 
   function scrollToIndex(i, smooth) {
