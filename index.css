@@ -465,8 +465,11 @@ body.portal {
 
 .ad-card {
   width: 100%;
-  height: 340px;
-  flex: 0 0 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  aspect-ratio: 16/9;
+  flex: 0 0 auto;
   margin: 0;
   padding: 0;
   display: flex;
@@ -478,6 +481,27 @@ body.portal {
   overflow: hidden;
   position: relative;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-sizing: border-box;
+}
+/* Responsive fit for ad-card on small screens */
+@media (max-width: 900px) {
+  .ad-card {
+    aspect-ratio: 16/9;
+    height: auto;
+    min-height: 180px;
+    max-height: 60vw;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 540px) {
+  .ad-card {
+    aspect-ratio: 16/9;
+    height: auto;
+    min-height: 120px;
+    max-height: 44vw;
+    border-radius: 12px;
+  }
 }
 
 .ad-card::after {
