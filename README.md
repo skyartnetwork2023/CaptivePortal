@@ -1,5 +1,5 @@
 https://www.instagram.com/skyart_tech?igsh=bW5peHJxMnk3bHJl
-# CaptivePortal
+# CaptivePortall
 
 An Omada-compatible captive portal microsite that layers immersive visuals, sponsor slides, ambient audio, and a **voucher-only** authentication workflow. The layout is optimized for static hosting (Vercel, Azure Static Web Apps, S3 + CloudFront, etc.) while still talking to the Omada controller APIs.
 
