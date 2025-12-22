@@ -179,23 +179,41 @@
         <source src="media/skyart-lounge.mp3" type="audio/mpeg" />
     </audio>
 
+
+<!-- jQuery (local) -->
+/assets/js/jquery.min.js</script>
+
+<!-- Supabase SDK (self-hosted or Supabase Storage) -->
+<!--/assets/js/supabase.min.js</script> -->
+
+
     <script src="jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-    <script>
-        // Define the Omada controller base when hosting the portal outside the controller network.
-        window.__OMADA_PORTAL_BASE__ = window.__OMADA_PORTAL_BASE__ || '';
-        // Configure Supabase project + bucket used for background slides and audio.
-        window.__SUPABASE_CONFIG__ = window.__SUPABASE_CONFIG__ || {
-            url: 'https://bcuupjvxpjaelpmcldnh.supabase.co',
-            anonKey: 'sb_publishable_-U9QwYC4h11W2ITt7NHyQg_XVnkfu8d',
-            imageBucket: 'backgrounds', // Bucket for images
-            imagePrefix: '',            // Folder in image bucket ('' for root)
-            audioBucket: 'audios',      // Bucket for audio
-            audioPrefix: '',            // Folder in audio bucket ('' for root)
-            audioObjectPath: 'skyart-lounge.mp3', // Audio file name in audios/
-            audioTitle: 'Skyart Lounge Loop'
-        };
-    </script>
+        <!-- <script src="https://bcuupjvxpjaelpmclco/storage/v1/object/public/assets/supabase.min.js</script> -->
+
+        <script>
+            // Omada controller base (keep as-is if not used)
+            window.__OMADA_PORTAL_BASE__ = window.__OMADA_PORTAL_BASE__ || '';
+
+            // Supabase portal assets config
+            window.__SUPABASE_CONFIG__ = {
+                url: 'https://bcuupjvxpjaelpmcldnh.supabase.co',
+                anonKey: 'sb_publishable_-U9QwYC4h11W2ITt7NHyQg_XVnkfu8d', // client-safe publishable key
+
+                // Background slides from 'backgrounds' bucket
+                imageBucket: 'backgrounds',
+                imagePrefix: '',
+
+                // Audio: list everything in 'audios' bucket root and build a playlist
+                audioBucket: 'audios',
+                audioPrefix: '',
+
+                // If you prefer one fixed track, comment the two lines above and use a full URL:
+                // audioObjectPath: 'https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/audios/skyart-lounge.mp3',
+                audioTitle: 'Skyart Lounge Loop'
+            };
+        </script>
+
+        /index.js</script>
     <script src="index.js"></script>
     <script>
 function setVH() {
