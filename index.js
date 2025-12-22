@@ -75,10 +75,10 @@ var errorHintMap = {
     "-1": "General error.",
     "-41500": "Invalid authentication type.",
     "-41501": "Failed to authenticate.",
-    "-41502": "Voucher code is incorrect.",
-    "-41503": "Voucher is expired.",
+    "-41502": "Voucher code is incorrect. (Vocha si sahihi aise)",
+    "-41503": "Voucher is expired. (Vocha Imeisha💔😢)",
     "-41504": "Voucher traffic has exceeded the limit.",
-    "-41505": "The number of users has reached the limit.",
+    "-41505": "The number of users has reached the limit. (Idadi ya watumiaji imefika kikomo👮)",
     "-41506": "Invalid authorization information.",
     "-41507": "Your authentication times out. You can get authenticated again until the next day.",
     "-41508": "Local User traffic has exceeded the limit.",
@@ -86,12 +86,12 @@ var errorHintMap = {
     "-41513": "Local User is disabled.",
     "-41514": "MAC address is incorrect.",
     "-41515": "Local User Quota has exceeded the limit.",
-    "-41516": "The number of users has reached the limit.",
+    "-41516": "The number of users has reached the limit. (Idadi ya watumiaji imefika kikomo👮)",
     "-41517": "Incorrect password.",
     "-41518": "This SSID does not exist.",
     "-41519": "Invalid code.",
     "-41520": "The code is expired.",
-    "-41521": "The number of users has reached the limit.",
+    "-41521": "The number of users has reached the limit. (Idadi ya watumiaji imefika kikomo👮)",
     "-41522": "Failed to validate the code.",
     "-41523": "Failed to send verification code.",
     "-41524": "Authentication failed because the username does not exist.",
@@ -310,7 +310,7 @@ Ajax.post(
                             window.location.href = landingUrl;
                           } else {
                             // Stay on portal page, show success
-                            document.getElementById("oper-hint").innerHTML = "Voucher accepted. You are now connected.";
+                            document.getElementById("oper-hint").innerHTML = "Hongera!!!🎉 Umefanikiwa kuunga Internet Furahia Mtandao👍.";
                           }
                         } else {
                           document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
