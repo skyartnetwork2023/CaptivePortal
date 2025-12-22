@@ -303,12 +303,17 @@ Ajax.post(
                     Ajax.post(submitUrl, JSON.stringify(submitData).toString(), function(data){
                         data = JSON.parse(data);
                         if(!!data && data.errorCode === 0) {
-                            isCommited = true;
-                            landingUrl = data.result || landingUrl
+                          isCommited = true;
+                          landingUrl = data.result || landingUrl;
+                          // Only redirect if landingUrl is set and not the original portal page
+                          if (landingUrl && !/index\.html/i.test(landingUrl)) {
                             window.location.href = landingUrl;
-                            document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
-                        } else{
-                            document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
+                          } else {
+                            // Stay on portal page, show success
+                            document.getElementById("oper-hint").innerHTML = "Voucher accepted. You are now connected.";
+                          }
+                        } else {
+                          document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
                         }
                     });
                 }
