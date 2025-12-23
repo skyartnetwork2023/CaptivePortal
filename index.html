@@ -26,17 +26,19 @@
                     <input id="audio-progress" type="range" min="0" max="100" value="0" step="1" style="flex:1;" aria-label="Audio progress" />
                     <span id="audio-duration" style="min-width:40px;font-size:0.95em;">0:00</span>
                 </div>
-                <!-- Controls -->
-                <button id="audio-prev" class="ghost-button" type="button" aria-label="Previous track" style="margin-right:4px;">
-                    <span class="icon-prev">&#9198;</span>
-                </button>
-                <button id="audio-toggle" class="ghost-button" type="button">
-                    <span class="icon-sound"></span>
-                    <span id="audio-state">Play</span>
-                </button>
-                <button id="audio-next" class="ghost-button" type="button" aria-label="Next track" style="margin-left:8px;">
-                    <span class="icon-next">&#9654;&#9654;</span>
-                </button>
+                <!-- Controls: group in a row, compact -->
+                <div class="audio-btn-group" style="display:flex;align-items:center;gap:0.25rem;">
+                    <button id="audio-prev" class="ghost-button audio-btn-min" type="button" aria-label="Previous track">
+                        <span class="icon-prev">&#9198;</span>
+                    </button>
+                    <button id="audio-toggle" class="ghost-button audio-btn-min" type="button" aria-label="Play/Pause">
+                        <span class="icon-sound"></span>
+                        <span id="audio-state">Play</span>
+                    </button>
+                    <button id="audio-next" class="ghost-button audio-btn-min" type="button" aria-label="Next track">
+                        <span class="icon-next">&#9654;&#9654;</span>
+                    </button>
+                </div>
                 <div class="now-playing">
                     <span class="label">Now playing</span>
                     <span id="track-title">Waveform Echoes</span>
