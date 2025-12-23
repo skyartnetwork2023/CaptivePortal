@@ -1087,3 +1087,18 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 .experience-panel {
   scroll-behavior: smooth;
 }
+
+/* Remove internal scroll from bundle table */
+.bundle-scroll-no-scroll {
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: 0;
+}
+
+/* Remove internal scroll from login-card and ads-panel for unified page scroll */
+.login-card,
+.ads-panel,
+.experience-panel {
+  max-height: none !important;
+  overflow: visible !important;
+}
