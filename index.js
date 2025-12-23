@@ -1082,6 +1082,7 @@ function enhanceExperienceLayers() {
   initBackgroundCarousel();
   initAudioController();
   initAdRail();
+  if (window.extractAdFilenames) window.extractAdFilenames();
 }
 
 function initBackgroundCarousel() {

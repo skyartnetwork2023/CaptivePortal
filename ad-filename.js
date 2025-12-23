@@ -1,5 +1,6 @@
 // Extract and display image file names for each .ad-card
-window.addEventListener('DOMContentLoaded', function() {
+
+function extractAdFilenames() {
   document.querySelectorAll('.ad-card').forEach(function(card) {
     // Try to get background-image from inline style or computed style
     let bg = card.style.backgroundImage;
@@ -35,4 +36,7 @@ window.addEventListener('DOMContentLoaded', function() {
       wrapper.appendChild(fileElem);
     }
   });
-});
+}
+
+// Optionally, expose globally
+window.extractAdFilenames = extractAdFilenames;
