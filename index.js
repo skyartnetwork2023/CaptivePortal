@@ -24,8 +24,8 @@ var BACKGROUND_SLIDES = [
 var PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
   return {
     eyebrow: "Scene " + (idx + 1),
-    title: slide.caption || "Portal Scene",
-    body: "Enjoy our rotating venue scenes.",
+        title: slide.caption || "Portal",
+        body: "",
     cta: "",
     link: "#",
     background: slide.source
@@ -1299,15 +1299,24 @@ function buildAdCard(ad) {
 
   var eyebrow = document.createElement("p");
   eyebrow.className = "ad-eyebrow";
-  eyebrow.textContent = ad.eyebrow || "Featured";
+  if (ad.eyebrow) {
+    eyebrow.textContent = ad.eyebrow;
+    content.appendChild(eyebrow);
+  }
 
   var title = document.createElement("h3");
   title.className = "ad-title";
-  title.textContent = ad.title || "";
+  if (ad.title) {
+    title.textContent = ad.title;
+    content.appendChild(title);
+  }
 
   var body = document.createElement("p");
   body.className = "ad-body";
-  body.textContent = ad.body || "";
+  if (ad.body) {
+    body.textContent = ad.body;
+    content.appendChild(body);
+  }
 
   content.appendChild(eyebrow);
   content.appendChild(title);
