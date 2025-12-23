@@ -1133,38 +1133,11 @@ function initAudioController() {
   var stateLabel = document.getElementById("audio-state");
   var trackTitle = document.getElementById("track-title");
   var nextBtn = document.getElementById("audio-next");
-  var rewindBtn = document.getElementById("audio-rewind");
-  var fastforwardBtn = document.getElementById("audio-fastforward");
+  var prevBtn = document.getElementById("audio-prev");
   var progressBar = document.getElementById("audio-progress");
   var currentTimeLabel = document.getElementById("audio-current-time");
   var durationLabel = document.getElementById("audio-duration");
 
-  // Support for multiple audio tracks
-  var audioTracks = window.BACKGROUND_AUDIO_TRACKS || [];
-  var currentTrack = 0;
-  if (!Array.isArray(audioTracks) || audioTracks.length === 0) {
-    // fallback to single audio
-    audioTracks = [{
-      src: audioEl.querySelector('source') ? audioEl.querySelector('source').src : audioEl.src,
-      title: audioEl.getAttribute('data-track-title') || 'Skyart Lounge Loop'
-    }];
-  }
-
-  function playTrack(idx) {
-    if (idx < 0 || idx >= audioTracks.length) return;
-    currentTrack = idx;
-    audioEl.src = audioTracks[idx].src;
-    audioEl.setAttribute('data-track-title', audioTracks[idx].title);
-    if (trackTitle) trackTitle.textContent = audioTracks[idx].title;
-    audioEl.load();
-    audioEl.play().catch(function(){});
-    syncState(true);
-    setTimeout(updateTimeBar, 100); // update time bar after loading new track
-  }
-
-  if (!audioEl || !toggleBtn) {
-    return;
-  }
   // --- Time bar helpers ---
   function formatTime(sec) {
     sec = Math.floor(sec);
@@ -1189,57 +1162,42 @@ function initAudioController() {
     audioEl.addEventListener('timeupdate', updateTimeBar);
     audioEl.addEventListener('loadedmetadata', updateTimeBar);
   }
-  // --- Fast forward/rewind ---
-  if (rewindBtn) {
-    rewindBtn.addEventListener('click', function() {
-      audioEl.currentTime = Math.max(0, audioEl.currentTime - 10);
-      updateTimeBar();
-    });
-  }
-  if (fastforwardBtn) {
-    fastforwardBtn.addEventListener('click', function() {
-      audioEl.currentTime = Math.min(audioEl.duration || 0, audioEl.currentTime + 10);
-      updateTimeBar();
-    });
-  }
 
-  var declaredTitle = audioEl.getAttribute("data-track-title");
-  if (trackTitle && declaredTitle) {
-    trackTitle.textContent = declaredTitle;
-  }
-
-  function syncState(isPlaying) {
-    if (stateLabel) {
-      stateLabel.textContent = isPlaying ? "Playing" : "Muted";
-    }
-    toggleBtn.setAttribute("aria-pressed", isPlaying);
-  }
-
+  // --- Play/Pause ---
   toggleBtn.addEventListener("click", function () {
     if (audioEl.paused) {
       var attempt = audioEl.play();
       if (attempt && attempt.then) {
         attempt.then(function () {
-          syncState(true);
+          stateLabel.textContent = "Pause";
         }).catch(function () {
-          syncState(false);
+          stateLabel.textContent = "Play";
         });
       } else {
-        syncState(true);
+        stateLabel.textContent = "Pause";
       }
     } else {
       audioEl.pause();
-      syncState(false);
+      stateLabel.textContent = "Play";
     }
   });
+
+  // --- Previous Track ---
+  if (prevBtn) {
+    prevBtn.addEventListener("click", function () {
+      playTrack((currentTrack - 1 + audioTracks.length) % audioTracks.length);
+    });
+  }
+
+  // --- Next Track ---
   if (nextBtn) {
     nextBtn.addEventListener("click", function () {
       playTrack((currentTrack + 1) % audioTracks.length);
     });
   }
 
-  audioEl.addEventListener("play", function () { syncState(true); });
-  audioEl.addEventListener("pause", function () { syncState(false); });
+  audioEl.addEventListener("play", function () { stateLabel.textContent = "Pause"; });
+  audioEl.addEventListener("pause", function () { stateLabel.textContent = "Play"; });
 }
 
 function initAdRail() {
@@ -1784,4 +1742,3 @@ function formatAssetCaption(filename) {
   setVH();
   window.addEventListener('resize', setVH);
 })();
-``
