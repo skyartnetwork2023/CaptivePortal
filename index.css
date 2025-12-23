@@ -1114,39 +1114,65 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   margin: 0 auto;
 }
 .ad-card {
-  min-height: 180px;
-  height: 220px;
-  max-width: 380px;
-  margin: 0 auto 0.5rem auto;
+  min-height: 220px;
+  height: 260px;
   background-size: cover;
   background-position: center;
   border-radius: 18px;
-  box-shadow: 0 2px 16px #0002;
+  margin-bottom: 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  box-shadow: 0 2px 16px #0002;
+}
+.ads-meta {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0 !important;
 }
 
-/* Login card (red box) - compact, centered */
-.login-card {
-  max-width: 380px;
+/* Main flex layout for large screens */
+.main-flex-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2.5rem;
+  width: 100%;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
-  border-radius: 18px;
-  box-shadow: 0 2px 16px #0002;
-  background: rgba(10,20,30,0.85);
 }
-.login-card .card-header {
-  margin-bottom: 0.75rem;
+
+.main-center-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  flex: 1 1 480px;
+  min-width: 340px;
+  max-width: 600px;
 }
-.login-card .control-group {
-  margin-bottom: 0.5rem;
+
+.bundle-table-wrap {
+  flex: 1 1 420px;
+  max-width: 480px;
+  margin-left: 0;
+  margin-right: 0;
 }
-#button-area {
-  margin-top: 0.75rem;
-  margin-bottom: 0.5rem;
+
+@media (max-width: 1100px) {
+  .main-flex-layout {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+  .main-center-group, .bundle-table-wrap {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+  }
 }
-.login-card .meta.help-text {
-  font-size: 0.95em;
-  margin-top: 0.5rem;
+
+.social-banner {
+  max-width: 1200px;
+  margin: 2.5rem auto 0 auto !important;
 }
