@@ -1138,16 +1138,26 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 @media (max-width: 600px) {
   .ads-panel {
-    max-width: 98vw;
-    margin-bottom: 0.25rem;
+    max-width: 100vw;
+    width: 100vw;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: visible;
+  }
+  .ads-frame.expanded-campaign {
+    width: 100vw;
+    max-width: 100vw;
+    padding: 0;
+    margin: 0;
   }
   .ad-card {
-    min-height: 120px;
-    height: 140px;
-    border-radius: 12px;
-  }
-  .ads-meta {
-    font-size: 1rem !important;
-    margin-top: 0.25rem !important;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
   }
 }
