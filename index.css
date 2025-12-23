@@ -520,6 +520,10 @@ body.portal {
 .ad-title {
   font-size: 0.8rem; /* Reduce font size for filenames */
   font-weight: 600;
+  text-align: center; /* Center the filename at the bottom */
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .ad-body {
@@ -1240,4 +1244,6 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 .ad-card {
   padding: 0; /* Remove padding to expand image frame */
   justify-content: space-between; /* Ensure content stretches to fill the card */
+  background-color: #000; /* Enhance light and view quality */
+  filter: brightness(1.2); /* Increase brightness */
 }
