@@ -1187,5 +1187,18 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   }
   .ads-panel {
     margin-bottom: 0.5rem !important;
+    min-height: unset !important;
+    padding-bottom: 0 !important;
+    height: auto !important;
+  }
+  .ads-frame.expanded-campaign {
+    min-height: unset !important;
+    height: auto !important;
+    margin-bottom: 0 !important;
+  }
+  .ad-card {
+    min-height: 120px !important;
+    height: 160px !important;
+    margin-bottom: 0.25rem !important;
   }
 }
