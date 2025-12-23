@@ -1046,21 +1046,3 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   /* glow edge on the left side only */
   box-shadow: -2px 0 0 rgba(62,192,255,0.25);
 }
-
-
-/* Bottom caption overlay inside ad-card */
-.ad-caption {
-  position: absolute;
-  left: 0.75rem;
-  right: 0.75rem;
-  bottom: 0.75rem;
-  z-index: 2;                      /* above gradient ::after */
-  text-align: center;
-  font-size: 0.95rem;
-  color: #fff;
-  padding: 0.35rem 0.5rem;
-  border-radius: 8px;
-  background: rgba(3, 7, 17, 0.35);     /* subtle pane */
-  backdrop-filter: blur(6px);           /* nice glassy look */
-  border: 1px solid var(--border-soft); /* re-use your theme var */
-}

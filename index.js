@@ -1209,29 +1209,7 @@ function initAdRail() {
 
   track.innerHTML = "";
   PORTAL_ADS.forEach(function (ad) {
-    var card = buildAdCard(ad);
-    track.appendChild(card);
-
-    // Improved: Add filename label below the card for full image visibility
-    if (ad.background) {
-      var url = ad.background.trim();
-      if (url.startsWith('url(')) {
-        url = url.replace(/^url\(\s*['"]?/, '').replace(/['"]?\s*\)$/, '');
-      }
-      var name = (url.split('/').pop() || '').split('?')[0];
-
-      if (name) {
-        var fileLabel = document.createElement('div');
-        fileLabel.className = 'ad-filename-label';
-        fileLabel.textContent = name;
-        fileLabel.style.textAlign = 'center';
-        fileLabel.style.fontSize = '0.95rem';
-        fileLabel.style.color = '#fff';
-        fileLabel.style.margin = '0.5rem 0 1.5rem 0';
-        fileLabel.style.wordBreak = 'break-all';
-        track.appendChild(fileLabel);
-      }
-    }
+    track.appendChild(buildAdCard(ad));
   });
 
   var index = 0;
