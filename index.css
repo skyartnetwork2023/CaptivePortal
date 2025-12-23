@@ -1202,3 +1202,40 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
     margin-bottom: 0.25rem !important;
   }
 }
+
+.login-card {
+  min-height: 220px;
+  max-height: 380px;
+  padding: 1.5rem 2rem;
+  background: rgba(10, 20, 30, 0.82);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #0002;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.login-card .card-header {
+  margin-bottom: 0.5rem;
+}
+
+.login-card .meta.help-text {
+  margin-top: 0.5rem;
+  font-size: 0.98em;
+  color: #b8e0e6;
+}
+
+@media (max-width: 600px) {
+  .login-card {
+    min-height: 160px;
+    max-height: 320px;
+    padding: 1rem 0.5rem;
+    border-radius: 12px;
+    gap: 0.7rem;
+  }
+  .login-card .card-header {
+    margin-bottom: 0.3rem;
+  }
+}
