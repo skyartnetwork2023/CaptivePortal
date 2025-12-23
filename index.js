@@ -1719,13 +1719,17 @@ function buildStoragePath(prefix, name) {
 }
 
 function formatAssetCaption(filename) {
-  if (!filename && filename !== 0) return "Supabase Scene";
-  const str = String(filename);
-  const sanitized = str.split("/").filter(Boolean).pop() || "";
-  if (!sanitized) return "Supabase Scene";
-  const base = sanitized.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
-  const final = base || sanitized; // use sanitized (with extension) if base is empty
-  return final.replace(/\b\w/g, c => c.toUpperCase());
+  if (!filename) {
+    return "Supabase Scene";
+  }
+  var sanitized = filename.toString().split("/").pop();
+  var base = sanitized.replace(/\.[^.]+$/, "");
+  base = base.replace(/[-_]+/g, " ");
+  base = base.trim();
+  if (!base) {
+    return "Supabase Scene";
+  }
+  return base.replace(/\b\w/g, function (char) { return char.toUpperCase(); });
 }
 
 /* === PATCH: Safe viewport fallback for older mobile browsers === */
