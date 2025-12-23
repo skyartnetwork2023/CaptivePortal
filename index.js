@@ -1138,6 +1138,28 @@ function initAudioController() {
   var currentTimeLabel = document.getElementById("audio-current-time");
   var durationLabel = document.getElementById("audio-duration");
 
+  // Support for multiple audio tracks
+  var audioTracks = window.BACKGROUND_AUDIO_TRACKS || [];
+  var currentTrack = 0;
+  if (!Array.isArray(audioTracks) || audioTracks.length === 0) {
+    // fallback to single audio
+    audioTracks = [{
+      src: audioEl.querySelector('source') ? audioEl.querySelector('source').src : audioEl.src,
+      title: audioEl.getAttribute('data-track-title') || 'Skyart Lounge Loop'
+    }];
+  }
+
+  function playTrack(idx) {
+    if (idx < 0 || idx >= audioTracks.length) return;
+    currentTrack = idx;
+    audioEl.src = audioTracks[idx].src;
+    audioEl.setAttribute('data-track-title', audioTracks[idx].title);
+    if (trackTitle) trackTitle.textContent = audioTracks[idx].title;
+    audioEl.load();
+    audioEl.play().catch(function(){});
+    setTimeout(updateTimeBar, 100); // update time bar after loading new track
+  }
+
   // --- Time bar helpers ---
   function formatTime(sec) {
     sec = Math.floor(sec);
