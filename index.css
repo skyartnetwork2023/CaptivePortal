@@ -521,7 +521,7 @@ body.portal {
 }
 
 .ad-title {
-  font-size: 1.55rem;
+  font-size: 0.8rem; /* Reduce font size for filenames */
   font-weight: 600;
 }
 

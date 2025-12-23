@@ -1478,7 +1478,7 @@ function fetchSupabaseBackgrounds(client) {
     });
 
     if (slides.length) {
-      BACKGROUND_SLIDES = slides;
+      BACKGROUND_SLIDES = slides.slice(1); // Skip the first scene
       // Update campaigns to mirror background slides
       try {
         PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
