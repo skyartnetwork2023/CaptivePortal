@@ -1149,15 +1149,58 @@ function initAudioController() {
     }];
   }
 
-  function playTrack(idx) {
+  // Crossfade helper
+  function crossfadeToTrack(audioEl, nextSrc, fadeDuration, onDone) {
+    var fadeOutStep = 0.05;
+    var fadeInStep = 0.05;
+    var fadeOutInterval = fadeDuration / (1 / fadeOutStep);
+    var fadeInInterval = fadeDuration / (1 / fadeInStep);
+    // Fade out
+    function fadeOut() {
+      if (audioEl.volume > fadeOutStep) {
+        audioEl.volume = Math.max(0, audioEl.volume - fadeOutStep);
+        setTimeout(fadeOut, fadeOutInterval);
+      } else {
+        audioEl.volume = 0;
+        audioEl.pause();
+        audioEl.src = nextSrc;
+        audioEl.load();
+        audioEl.play().then(function() {
+          fadeIn();
+        }).catch(function() {
+          fadeIn();
+        });
+      }
+    }
+    // Fade in
+    function fadeIn() {
+      if (audioEl.volume < 1 - fadeInStep) {
+        audioEl.volume = Math.min(1, audioEl.volume + fadeInStep);
+        setTimeout(fadeIn, fadeInInterval);
+      } else {
+        audioEl.volume = 1;
+        if (onDone) onDone();
+      }
+    }
+    fadeOut();
+  }
+
+  function playTrack(idx, crossfade) {
     if (idx < 0 || idx >= audioTracks.length) return;
     currentTrack = idx;
-    audioEl.src = audioTracks[idx].src;
+    var nextSrc = audioTracks[idx].src;
     audioEl.setAttribute('data-track-title', audioTracks[idx].title);
     if (trackTitle) trackTitle.textContent = audioTracks[idx].title;
-    audioEl.load();
-    audioEl.play().catch(function(){});
-    setTimeout(updateTimeBar, 100); // update time bar after loading new track
+    if (crossfade) {
+      crossfadeToTrack(audioEl, nextSrc, 600, function() {
+        setTimeout(updateTimeBar, 100);
+      });
+    } else {
+      audioEl.src = nextSrc;
+      audioEl.load();
+      audioEl.play().catch(function(){});
+      setTimeout(updateTimeBar, 100);
+    }
   }
 
   // --- Time bar helpers ---
@@ -1220,17 +1263,15 @@ function initAudioController() {
 
   // --- Auto-loop playlist ---
   audioEl.addEventListener('ended', function() {
-    // Defensive: ensure audioTracks is up-to-date and not empty
     var tracks = window.BACKGROUND_AUDIO_TRACKS || audioTracks;
     if (!Array.isArray(tracks) || tracks.length === 0) {
       audioEl.currentTime = 0;
       audioEl.play();
       return;
     }
-    // Defensive: ensure currentTrack is a valid index
     var nextIdx = (typeof currentTrack === 'number' ? currentTrack : 0) + 1;
     if (nextIdx >= tracks.length) nextIdx = 0;
-    playTrack(nextIdx);
+    playTrack(nextIdx, true);
   });
 
   audioEl.addEventListener("play", function () { stateLabel.textContent = "Pause"; });
