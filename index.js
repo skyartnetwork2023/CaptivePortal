@@ -1513,15 +1513,16 @@ function fetchSupabaseAudio(client) {
       }
       var entries = result.data || [];
       entries.forEach(function (entry) {
-        if (entry && entry.name && !(entry.metadata && entry.metadata.mimetype === 'inode/directory')) {
-          var objectPath = buildStoragePath(listArg || "", entry.name);
-          var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
-          var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
-          if (publicUrl) {
-            addTrack(publicUrl, formatAssetCaption(entry.name));
-          } else {
-            console.warn('[Supabase Debug] audio item has no public URL:', objectPath);
-          }
+        // Skip placeholder and non-audio files
+        if (!entry || !entry.name || entry.name === '.emptyFolderPlaceholder') return;
+        if (entry.metadata && entry.metadata.mimetype && !entry.metadata.mimetype.startsWith('audio/')) return;
+        var objectPath = buildStoragePath(listArg || "", entry.name);
+        var publicResponse = client.storage.from(supabaseConfig.audioBucket).getPublicUrl(objectPath);
+        var publicUrl = publicResponse && publicResponse.data && publicResponse.data.publicUrl;
+        if (publicUrl) {
+          addTrack(publicUrl, formatAssetCaption(entry.name));
+        } else {
+          console.warn('[Supabase Debug] audio item has no public URL:', objectPath);
         }
       });
       // Deduplicate tracks by src
