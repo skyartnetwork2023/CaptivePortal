@@ -90,10 +90,7 @@ body.portal {
 }
 
 .gallery-vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.15), transparent 45%),
-    linear-gradient(120deg, rgba(3, 7, 17, 0.35), rgba(3, 7, 17, 0.85));
+  background: none; /* Remove fading effect at the bottom */
 }
 
 .page-shell {

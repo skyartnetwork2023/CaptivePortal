@@ -1285,8 +1285,17 @@ function initAdRail() {
       renderPosition();
     }, 3000);
   }
-  if (prevBtn) prevBtn.addEventListener("click", goToPrev);
-  if (nextBtn) nextBtn.addEventListener("click", goToNext);
+  if (prevBtn) prevBtn.remove(); // Remove the previous button
+  if (nextBtn) {
+    nextBtn.addEventListener("click", function () {
+      index = (index + 1) % PORTAL_ADS.length;
+      renderPosition();
+      resetAutoRotate();
+    });
+  }
+
+  track.addEventListener("swipeleft", goToNext);
+  track.addEventListener("swiperight", goToPrev);
 }
 
 function buildAdCard(ad) {
