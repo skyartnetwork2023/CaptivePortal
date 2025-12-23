@@ -1220,12 +1220,17 @@ function initAudioController() {
 
   // --- Auto-loop playlist ---
   audioEl.addEventListener('ended', function() {
-    if (audioTracks.length > 1) {
-      playTrack((currentTrack + 1) % audioTracks.length);
-    } else {
+    // Defensive: ensure audioTracks is up-to-date and not empty
+    var tracks = window.BACKGROUND_AUDIO_TRACKS || audioTracks;
+    if (!Array.isArray(tracks) || tracks.length === 0) {
       audioEl.currentTime = 0;
       audioEl.play();
+      return;
     }
+    // Defensive: ensure currentTrack is a valid index
+    var nextIdx = (typeof currentTrack === 'number' ? currentTrack : 0) + 1;
+    if (nextIdx >= tracks.length) nextIdx = 0;
+    playTrack(nextIdx);
   });
 
   audioEl.addEventListener("play", function () { stateLabel.textContent = "Pause"; });
