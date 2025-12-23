@@ -1278,6 +1278,42 @@ function initAudioController() {
   audioEl.addEventListener("pause", function () { stateLabel.textContent = "Play"; });
 }
 
+// Crossfade helper
+function crossfadeToTrack(audioEl, nextSrc, fadeDuration, onDone) {
+  var fadeOutStep = 0.05;
+  var fadeInStep = 0.05;
+  var fadeOutInterval = fadeDuration / (1 / fadeOutStep);
+  var fadeInInterval = fadeDuration / (1 / fadeInStep);
+  // Fade out
+  function fadeOut() {
+    if (audioEl.volume > fadeOutStep) {
+      audioEl.volume = Math.max(0, audioEl.volume - fadeOutStep);
+      setTimeout(fadeOut, fadeOutInterval);
+    } else {
+      audioEl.volume = 0;
+      // Do NOT pause, just switch src and play
+      audioEl.src = nextSrc;
+      audioEl.load();
+      audioEl.play().then(function() {
+        fadeIn();
+      }).catch(function() {
+        fadeIn();
+      });
+    }
+  }
+  // Fade in
+  function fadeIn() {
+    if (audioEl.volume < 1 - fadeInStep) {
+      audioEl.volume = Math.min(1, audioEl.volume + fadeInStep);
+      setTimeout(fadeIn, fadeInInterval);
+    } else {
+      audioEl.volume = 1;
+      if (onDone) onDone();
+    }
+  }
+  fadeOut();
+}
+
 function initAdRail() {
   var track = document.getElementById("ads-track");
   var indicator = document.getElementById("ad-indicator");
