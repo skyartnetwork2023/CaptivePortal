@@ -480,7 +480,6 @@ body.portal {
   overflow: hidden;
   position: relative;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  box-sizing: border-box;
 }
 @media (max-width: 900px) {
   .ad-card {
@@ -1101,4 +1100,32 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 .experience-panel {
   max-height: none !important;
   overflow: visible !important;
+}
+
+/* Expand ad card image size in ads-panel */
+.ads-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ads-frame.expanded-campaign {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.ad-card {
+  min-height: 220px;
+  height: 260px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 18px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  box-shadow: 0 2px 16px #0002;
+}
+.ads-meta {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0 !important;
 }
