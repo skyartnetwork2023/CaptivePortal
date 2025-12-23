@@ -20,9 +20,22 @@
                 </div>
             </div>
             <div class="media-controls" aria-label="Soundscape controls">
+                <!-- Music time bar -->
+                <div class="audio-time-bar" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <span id="audio-current-time" style="min-width:40px;font-size:0.95em;">0:00</span>
+                    <input id="audio-progress" type="range" min="0" max="100" value="0" step="1" style="flex:1;" aria-label="Audio progress" />
+                    <span id="audio-duration" style="min-width:40px;font-size:0.95em;">0:00</span>
+                </div>
+                <!-- Controls -->
+                <button id="audio-rewind" class="ghost-button" type="button" aria-label="Rewind 10 seconds" style="margin-right:4px;">
+                    <span class="icon-rewind">&#9194;</span>
+                </button>
                 <button id="audio-toggle" class="ghost-button" type="button">
                     <span class="icon-sound"></span>
                     <span id="audio-state">Muted</span>
+                </button>
+                <button id="audio-fastforward" class="ghost-button" type="button" aria-label="Fast forward 10 seconds" style="margin-left:4px;">
+                    <span class="icon-fastforward">&#9193;</span>
                 </button>
                 <button id="audio-next" class="ghost-button" type="button" aria-label="Next track" style="margin-left:8px;">
                     <span class="icon-next">&#9654;&#9654;</span>

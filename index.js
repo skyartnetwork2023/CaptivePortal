@@ -1133,6 +1133,11 @@ function initAudioController() {
   var stateLabel = document.getElementById("audio-state");
   var trackTitle = document.getElementById("track-title");
   var nextBtn = document.getElementById("audio-next");
+  var rewindBtn = document.getElementById("audio-rewind");
+  var fastforwardBtn = document.getElementById("audio-fastforward");
+  var progressBar = document.getElementById("audio-progress");
+  var currentTimeLabel = document.getElementById("audio-current-time");
+  var durationLabel = document.getElementById("audio-duration");
 
   // Support for multiple audio tracks
   var audioTracks = window.BACKGROUND_AUDIO_TRACKS || [];
@@ -1154,10 +1159,48 @@ function initAudioController() {
     audioEl.load();
     audioEl.play().catch(function(){});
     syncState(true);
+    setTimeout(updateTimeBar, 100); // update time bar after loading new track
   }
 
   if (!audioEl || !toggleBtn) {
     return;
+  }
+  // --- Time bar helpers ---
+  function formatTime(sec) {
+    sec = Math.floor(sec);
+    var m = Math.floor(sec / 60);
+    var s = sec % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+  function updateTimeBar() {
+    if (!progressBar || !audioEl.duration) return;
+    progressBar.max = Math.floor(audioEl.duration);
+    progressBar.value = Math.floor(audioEl.currentTime);
+    if (currentTimeLabel) currentTimeLabel.textContent = formatTime(audioEl.currentTime);
+    if (durationLabel) durationLabel.textContent = formatTime(audioEl.duration);
+  }
+  if (progressBar) {
+    progressBar.addEventListener('input', function() {
+      audioEl.currentTime = progressBar.value;
+      updateTimeBar();
+    });
+  }
+  if (audioEl) {
+    audioEl.addEventListener('timeupdate', updateTimeBar);
+    audioEl.addEventListener('loadedmetadata', updateTimeBar);
+  }
+  // --- Fast forward/rewind ---
+  if (rewindBtn) {
+    rewindBtn.addEventListener('click', function() {
+      audioEl.currentTime = Math.max(0, audioEl.currentTime - 10);
+      updateTimeBar();
+    });
+  }
+  if (fastforwardBtn) {
+    fastforwardBtn.addEventListener('click', function() {
+      audioEl.currentTime = Math.min(audioEl.duration || 0, audioEl.currentTime + 10);
+      updateTimeBar();
+    });
   }
 
   var declaredTitle = audioEl.getAttribute("data-track-title");
