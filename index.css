@@ -1241,6 +1241,3 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   padding: 0; /* Remove padding to expand image frame */
   justify-content: space-between; /* Ensure content stretches to fill the card */
 }
-.ad-card .ad-content {
-  padding: 0.5rem; /* Add slight padding for text content */
-}
