@@ -23,8 +23,8 @@ var BACKGROUND_SLIDES = [
 // Rotating sponsor/ad placements rendered in the right rail.
 var PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
   return {
-    eyebrow: "Scene " + (idx + 1),
-        title: slide.caption || "Portal",
+    eyebrow: "",
+        title: slide.caption || "",
         body: "",
     cta: "",
     link: "#",
@@ -1483,9 +1483,9 @@ function fetchSupabaseBackgrounds(client) {
       try {
         PORTAL_ADS = BACKGROUND_SLIDES.map(function(slide, idx) {
           return {
-            eyebrow: "Scene " + (idx + 1),
-            title: slide.caption || "Portal Scene",
-            body: "Enjoy our rotating venue scenes.",
+            eyebrow: "",
+            title: slide.caption || "",
+            body: "",
             cta: "",
             link: "#",
             background: slide.source
