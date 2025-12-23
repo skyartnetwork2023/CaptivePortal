@@ -1764,3 +1764,17 @@ function formatAssetCaption(filename) {
   setVH();
   window.addEventListener('resize', setVH);
 })();
+
+document.addEventListener("DOMContentLoaded", function() {
+  var overlay = document.getElementById("audio-autoplay-overlay");
+  var btn = document.getElementById("audio-autoplay-btn");
+  var audioEl = document.getElementById("portal-audio");
+  if (overlay && btn && audioEl) {
+    btn.addEventListener("click", function() {
+      audioEl.play().catch(function(){});
+      overlay.style.display = "none";
+    });
+  } else if (overlay) {
+    overlay.style.display = "none";
+  }
+});

@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="index.css" type="text/css" />
 </head>
 <body class="portal">
+  <div id="audio-autoplay-overlay" style="position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(10,20,30,0.92);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2rem;">
+    <div style="color:#fff;font-size:1.5rem;font-weight:600;text-align:center;">Welcome!<br>Click below to enable music</div>
+    <button id="audio-autoplay-btn" style="padding:1rem 2.5rem;font-size:1.2rem;border-radius:2rem;background:#3a7c85;color:#fff;border:none;cursor:pointer;box-shadow:0 2px 12px #0003;">Gusa kujaza vocha</button>
+  </div>
+
     <div class="background-static" aria-hidden="true" style="background-image: url('background.png'); position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; background-size:cover; background-position:center;"></div>
 
     <div class="page-shell">
