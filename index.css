@@ -1239,3 +1239,10 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
     margin-bottom: 0.3rem;
   }
 }
+
+.ad-card {
+  padding: 0; /* Remove padding to expand image frame */
+}
+.ad-card .ad-content {
+  padding: 0.5rem; /* Add slight padding for text content */
+}
