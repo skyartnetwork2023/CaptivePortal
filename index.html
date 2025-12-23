@@ -51,126 +51,120 @@
             </div>
         </header>
 
-        <main class="grid-layout">
-            <!-- Experience panel removed for minimal interface e-->
-
+        <main class="main-flex-layout">
+          <div class="main-center-group">
             <aside class="ads-panel" aria-label="Sponsor rotation">
-                <div class="ads-frame expanded-campaign">
-                    <button id="ad-prev" class="ad-nav" aria-label="Previous campaign">&#8592;</button>
-                    <div class="ad-track" id="ads-track"></div>
-                    <button id="ad-next" class="ad-nav" aria-label="Next campaign">&#8594;</button>
-                </div>
-                <div class="ads-meta" style="text-align:center; margin-top:1.5rem; font-size:1.25rem; font-weight:600; color:#fff; letter-spacing:0.04em;">
-                  TANGAZA NASI KWA BEI NAFUU
-                </div>
-            </aside>
-
-            <section class="login-card" aria-label="Connect to Wi-Fi">
-                <div class="card-header">
-                    <p class="eyebrow">Jiunge Sasa</p>
-                    <h2>Jaza vocha ako kupata Internet  </h2>
-                    <p id="oper-hint" class="status-hint" role="status"></p>
-                </div>
-                <div id="hotspot-section" class="control-group legacy-auth" aria-hidden="true">
-                    <label for="hotspot-selector" class="label">Choose method</label>
-                    <select id="hotspot-selector" class="input control"></select>
-                </div>
-                <form id="login-form">
-                    <div id="input-voucher" class="control-group">
-                        <label for="voucherCode" class="label">Voucher code</label>
-                        <input id="voucherCode" class="input control" name="voucherCode" type="text" placeholder="ABC-123-456" />
-                    </div>
-                    <div id="input-user" class="control-group legacy-auth" aria-hidden="true">
-                        <label for="username" class="label">Username</label>
-                        <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" />
-                    </div>
-                    <div id="input-password" class="control-group legacy-auth" aria-hidden="true">
-                        <label for="password" class="label">Password</label>
-                        <input id="password" class="input control" name="password" type="password" placeholder="••••••••" autocomplete="new-password" />
-                    </div>
-                    <div id="input-simple" class="control-group legacy-auth" aria-hidden="true">
-                        <label for="simplePassword" class="label">Shared passphrase</label>
-                        <input id="simplePassword" class="input control" name="simplePassword" type="password" placeholder="Venue pass" autocomplete="new-password" />
-                    </div>
-                    <div id="input-phone-num" class="control-group legacy-auth" aria-hidden="true">
-                        <label class="label" for="phone-number">Phone number</label>
-                        <div class="sms-input">
-                            <span class="add">+</span>
-                            <input id="country-code" class="input country" type="text" aria-label="Country code" />
-                            <input id="phone-number" class="input" name="phone-number" type="text" placeholder="712 345 678" />
-                        </div>
-                    </div>
-                    <div id="input-verify-code" class="control-group sms-code legacy-auth" aria-hidden="true">
-                        <label class="label" for="verify-code">Verification code</label>
-                        <div class="code-input">
-                            <input id="verify-code" class="input" name="verify-code" type="text" placeholder="123456" />
-                            <button id="get-code" class="ghost-button" type="button">Get code</button>
-                        </div>
-                    </div>
-                    <input name="clientMac" id="cMac" type="hidden" />
-                    <input name="radiusSvrIp" id="radiusServerIp" type="hidden" />
-                </form>
-                <div id="button-area">
-                    <button id="button-login" class="button control">Gusa kuingia [Log In]</button>
-                </div>
-                <p class="meta help-text">Kwa taarifa za hali ya internet na huduma kwa ujumla jiunge whatsapp apo chini</p>
-            </section>
-
-            <section class="bundle-table-wrap" aria-labelledby="bundles-title">
-              <header class="bundle-header">
-                <h3 id="bundles-title" class="bundle-title">Vifurushi vya Data</h3>
-                <small class="hint">Bei kwa TSH</small>
-              </header>
-              <div class="bundle-scroll-no-scroll" role="region" aria-label="Jedwali la vifurushi" tabindex="0">
-                <table class="bundle-table">
-                  <thead>
-                    <tr>
-                      <th>Data</th>
-                      <th>Muda (siku)</th>
-                      <th>Bei (TSH)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>1 GB</td>   <td>1</td>  <td>1,000</td></tr>
-                    <tr><td>3 GB</td>   <td>3</td>  <td>2,500</td></tr>
-                    <tr><td>5 GB</td>   <td>7</td>  <td>5,000</td></tr>
-                    <tr><td>8 GB</td>   <td>7</td>  <td>7,000</td></tr>
-                    <tr><td>10 GB</td>  <td>14</td> <td>9,000</td></tr>
-                    <tr><td>12 GB</td>  <td>14</td> <td>10,000</td></tr>
-                    <tr><td>15 GB</td>  <td>30</td> <td>12,000</td></tr>
-                    <tr><td>20 GB</td>  <td>30</td> <td>16,000</td></tr>
-                    <tr><td>35 GB</td>  <td>30</td> <td>25,000</td></tr>
-                    <tr><td>45 GB</td>  <td>30</td> <td>30,000</td></tr>
-                    <tr><td>50 GB</td>  <td>30</td> <td>34,000</td></tr>
-                    <tr><td>60 GB</td>  <td>30</td> <td>40,000</td></tr>
-                    <tr><td>75 GB</td>  <td>30</td> <td>50,000</td></tr>
-                    <tr><td>90 GB</td>  <td>30</td> <td>60,000</td></tr>
-                    <tr><td>Unlimited</td><td>7</td><td>12,000</td></tr>
-                    <tr><td>Unlimited</td><td>30</td><td>35,000</td></tr>
-                  </tbody>
-                </table>
+              <div class="ads-frame expanded-campaign">
+                <button id="ad-prev" class="ad-nav" aria-label="Previous campaign">&#8592;</button>
+                <div class="ad-track" id="ads-track"></div>
+                <button id="ad-next" class="ad-nav" aria-label="Next campaign">&#8594;</button>
               </div>
-              <footer class="bundle-footer">
-                <p class="bundle-note help-text">
-                  Vocha za internet utazipata dukani: Agatha Shayo, Ashura Lyamba.
-                </p>
-              </footer>
+              <div class="ads-meta" style="text-align:center; margin-top:0.5rem; font-size:1.25rem; font-weight:600; color:#fff; letter-spacing:0.04em;">
+                TANGAZA NASI KWA BEI NAFUU
+              </div>
+            </aside>
+            <section class="login-card" aria-label="Connect to Wi-Fi">
+              <div class="card-header">
+                <p class="eyebrow">Jiunge Sasa</p>
+                <h2>Jaza vocha ako kupata Internet  </h2>
+                <p id="oper-hint" class="status-hint" role="status"></p>
+              </div>
+              <div id="hotspot-section" class="control-group legacy-auth" aria-hidden="true">
+                <label for="hotspot-selector" class="label">Choose method</label>
+                <select id="hotspot-selector" class="input control"></select>
+              </div>
+              <form id="login-form">
+                <div id="input-voucher" class="control-group">
+                  <label for="voucherCode" class="label">Voucher code</label>
+                  <input id="voucherCode" class="input control" name="voucherCode" type="text" placeholder="ABC-123-456" />
+                </div>
+                <div id="input-user" class="control-group legacy-auth" aria-hidden="true">
+                  <label for="username" class="label">Username</label>
+                  <input id="username" class="input control" name="username" type="text" placeholder="guest@venue" />
+                </div>
+                <div id="input-password" class="control-group legacy-auth" aria-hidden="true">
+                  <label for="password" class="label">Password</label>
+                  <input id="password" class="input control" name="password" type="password" placeholder="••••••••" autocomplete="new-password" />
+                </div>
+                <div id="input-simple" class="control-group legacy-auth" aria-hidden="true">
+                  <label for="simplePassword" class="label">Shared passphrase</label>
+                  <input id="simplePassword" class="input control" name="simplePassword" type="password" placeholder="Venue pass" autocomplete="new-password" />
+                </div>
+                <div id="input-phone-num" class="control-group legacy-auth" aria-hidden="true">
+                  <label class="label" for="phone-number">Phone number</label>
+                  <div class="sms-input">
+                    <span class="add">+</span>
+                    <input id="country-code" class="input country" type="text" aria-label="Country code" />
+                    <input id="phone-number" class="input" name="phone-number" type="text" placeholder="712 345 678" />
+                  </div>
+                </div>
+                <div id="input-verify-code" class="control-group sms-code legacy-auth" aria-hidden="true">
+                  <label class="label" for="verify-code">Verification code</label>
+                  <div class="code-input">
+                    <input id="verify-code" class="input" name="verify-code" type="text" placeholder="123456" />
+                    <button id="get-code" class="ghost-button" type="button">Get code</button>
+                  </div>
+                </div>
+                <input name="clientMac" id="cMac" type="hidden" />
+                <input name="radiusSvrIp" id="radiusServerIp" type="hidden" />
+              </form>
+              <div id="button-area">
+                <button id="button-login" class="button control">Gusa kuingia [Log In]</button>
+              </div>
+              <p class="meta help-text">Kwa taarifa za hali ya internet na huduma kwa ujumla jiunge whatsapp apo chini</p>
             </section>
-
-            <div class="social-banner" style="margin-top:24px; padding:16px; background:rgba(0,0,0,0.5); border-radius:12px; text-align:center; color:#fff;">
-                <div style="font-weight:bold; margin-bottom:8px;">Join &amp; Follow Us:</div>
-                <a href="https://chat.whatsapp.com/LFsMEAntPhVEP8nxi7uLvm" target="_blank" style="color:#25d366; margin:0 8px; text-decoration:none; font-weight:500;">WhatsApp Group</a>
-                <a href="https://whatsapp.com/channel/0029VaEhJE7CsU9QMg0PCc3R" target="_blank" style="color:#25d366; margin:0 8px; text-decoration:none; font-weight:500;">WhatsApp Channel</a>
-                <a href="https://www.instagram.com/skyart_tech?igsh=bW5peHJxMnk3bHJl" target="_blank" style="color:#e1306c; margin:0 8px; text-decoration:none; font-weight:500;">Instagram</a>
-                <span style="color:#fff; margin:0 8px; font-weight:500;">Phone: <a href="tel:+255123456789" style="color:#fff; text-decoration:underline;">+255625707139</a></span>
-                <span style="color:#fff; margin:0 8px; font-weight:500;">Email: <a href="mailto:Skyartnetwork@gmail.com" style="color:#fff; text-decoration:underline;">Skyartnetwork@gmail.com</a></span>
-                <a href="https://facebook.com/skyartfm" target="_blank" style="color:#1877f3; margin:0 8px; text-decoration:none; font-weight:500;">Facebook</a>
-                <a href="https://twitter.com/skyartfm" target="_blank" style="color:#1da1f2; margin:0 8px; text-decoration:none; font-weight:500;">X (Twitter)</a>
+          </div>
+          <section class="bundle-table-wrap" aria-labelledby="bundles-title">
+            <header class="bundle-header">
+              <h3 id="bundles-title" class="bundle-title">Vifurushi vya Data</h3>
+              <small class="hint">Bei kwa TSH</small>
+            </header>
+            <div class="bundle-scroll-no-scroll" role="region" aria-label="Jedwali la vifurushi" tabindex="0">
+              <table class="bundle-table">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Muda (siku)</th>
+                    <th>Bei (TSH)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>1 GB</td>   <td>1</td>  <td>1,000</td></tr>
+                  <tr><td>3 GB</td>   <td>3</td>  <td>2,500</td></tr>
+                  <tr><td>5 GB</td>   <td>7</td>  <td>5,000</td></tr>
+                  <tr><td>8 GB</td>   <td>7</td>  <td>7,000</td></tr>
+                  <tr><td>10 GB</td>  <td>14</td> <td>9,000</td></tr>
+                  <tr><td>12 GB</td>  <td>14</td> <td>10,000</td></tr>
+                  <tr><td>15 GB</td>  <td>30</td> <td>12,000</td></tr>
+                  <tr><td>20 GB</td>  <td>30</td> <td>16,000</td></tr>
+                  <tr><td>35 GB</td>  <td>30</td> <td>25,000</td></tr>
+                  <tr><td>45 GB</td>  <td>30</td> <td>30,000</td></tr>
+                  <tr><td>50 GB</td>  <td>30</td> <td>34,000</td></tr>
+                  <tr><td>60 GB</td>  <td>30</td> <td>40,000</td></tr>
+                  <tr><td>75 GB</td>  <td>30</td> <td>50,000</td></tr>
+                  <tr><td>90 GB</td>  <td>30</td> <td>60,000</td></tr>
+                  <tr><td>Unlimited</td><td>7</td><td>12,000</td></tr>
+                  <tr><td>Unlimited</td><td>30</td><td>35,000</td></tr>
+                </tbody>
+              </table>
             </div>
-            </section>
-
-            
+            <footer class="bundle-footer">
+              <p class="bundle-note help-text">
+                Vocha za internet utazipata dukani: Agatha Shayo, Ashura Lyamba.
+              </p>
+            </footer>
+          </section>
         </main>
+        <div class="social-banner" style="margin-top:24px; padding:16px; background:rgba(0,0,0,0.5); border-radius:12px; text-align:center; color:#fff;">
+          <div style="font-weight:bold; margin-bottom:8px;">Join &amp; Follow Us:</div>
+          <a href="https://chat.whatsapp.com/LFsMEAntPhVEP8nxi7uLvm" target="_blank" style="color:#25d366; margin:0 8px; text-decoration:none; font-weight:500;">WhatsApp Group</a>
+          <a href="https://whatsapp.com/channel/0029VaEhJE7CsU9QMg0PCc3R" target="_blank" style="color:#25d366; margin:0 8px; text-decoration:none; font-weight:500;">WhatsApp Channel</a>
+          <a href="https://www.instagram.com/skyart_tech?igsh=bW5peHJxMnk3bHJl" target="_blank" style="color:#e1306c; margin:0 8px; text-decoration:none; font-weight:500;">Instagram</a>
+          <span style="color:#fff; margin:0 8px; font-weight:500;">Phone: <a href="tel:+255123456789" style="color:#fff; text-decoration:underline;">+255625707139</a></span>
+          <span style="color:#fff; margin:0 8px; font-weight:500;">Email: <a href="mailto:Skyartnetwork@gmail.com" style="color:#fff; text-decoration:underline;">Skyartnetwork@gmail.com</a></span>
+          <a href="https://facebook.com/skyartfm" target="_blank" style="color:#1877f3; margin:0 8px; text-decoration:none; font-weight:500;">Facebook</a>
+          <a href="https://twitter.com/skyartfm" target="_blank" style="color:#1da1f2; margin:0 8px; text-decoration:none; font-weight:500;">X (Twitter)</a>
+        </div>
     </div>
 
     <div id="form-auth-msg">
