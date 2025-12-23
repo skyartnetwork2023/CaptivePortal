@@ -1176,3 +1176,16 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   max-width: 1200px;
   margin: 2.5rem auto 0 auto !important;
 }
+
+@media (max-width: 600px) {
+  .ads-meta {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+    font-size: 1rem;
+    padding-bottom: 0 !important;
+    line-height: 1.2;
+  }
+  .ads-panel {
+    margin-bottom: 0.5rem !important;
+  }
+}
