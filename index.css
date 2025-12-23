@@ -6,6 +6,10 @@ html, body {
   overflow-x: hidden;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .background-static {
   position: fixed;
   inset: 0;
@@ -1075,4 +1079,11 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 .audio-btn-group {
   margin-bottom: 0.25rem;
+}
+
+/* Ensure scrollable panels also use smooth scrolling */
+.login-card,
+.ads-panel,
+.experience-panel {
+  scroll-behavior: smooth;
 }
