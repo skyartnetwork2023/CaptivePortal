@@ -1218,6 +1218,16 @@ function initAudioController() {
     });
   }
 
+  // --- Auto-loop playlist ---
+  audioEl.addEventListener('ended', function() {
+    if (audioTracks.length > 1) {
+      playTrack((currentTrack + 1) % audioTracks.length);
+    } else {
+      audioEl.currentTime = 0;
+      audioEl.play();
+    }
+  });
+
   audioEl.addEventListener("play", function () { stateLabel.textContent = "Pause"; });
   audioEl.addEventListener("pause", function () { stateLabel.textContent = "Play"; });
 }
