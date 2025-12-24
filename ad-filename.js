@@ -8,7 +8,7 @@ if (typeof supabase === 'undefined') {
 // Function to fetch media files from Supabase storage
 async function fetchMedia() {
   if (!supabase || typeof supabase.storage === 'undefined') {
-    console.error('Supabase client is not initialized properly.');
+    console.error('Supabase client is not initialized properly:', supabase);
     return [];
   }
 
@@ -29,6 +29,10 @@ async function fetchMedia() {
 // Function to render the 300x250 Medium Rectangle component
 async function renderMediumRectangle() {
   const container = document.getElementById('medium-rectangle');
+  if (!container) {
+    console.error('Element with ID "medium-rectangle" not found in the DOM.');
+    return;
+  }
 
   const mediaFiles = await fetchMedia();
 
@@ -49,6 +53,6 @@ async function renderMediumRectangle() {
   }
 }
 
-// Call the function to render the component
-renderMediumRectangle();
+// Call the function to render the component after DOM is loaded
+document.addEventListener('DOMContentLoaded', renderMediumRectangle);
 
