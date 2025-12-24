@@ -1222,6 +1222,10 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 .bundle-table-wrap {
   margin-top: 2.5rem;
+  width: min(94svw, 600px);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .medium-rectangle {
