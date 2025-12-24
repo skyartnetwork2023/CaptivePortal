@@ -69,6 +69,43 @@ document.addEventListener('DOMContentLoaded', function() {
       video.loop = true;
       video.muted = true;
       wrapper.appendChild(video);
+      // Add 10s backward and forward buttons
+      const backBtn = document.createElement('button');
+      backBtn.innerHTML = '⏪ 10s';
+      backBtn.style.position = 'absolute';
+      backBtn.style.left = '12px';
+      backBtn.style.bottom = '12px';
+      backBtn.style.zIndex = '3';
+      backBtn.style.background = 'rgba(0,0,0,0.5)';
+      backBtn.style.color = '#fff';
+      backBtn.style.border = 'none';
+      backBtn.style.borderRadius = '8px';
+      backBtn.style.padding = '6px 12px';
+      backBtn.style.fontSize = '1rem';
+      backBtn.style.cursor = 'pointer';
+      backBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        video.currentTime = Math.max(0, video.currentTime - 10);
+      });
+      const fwdBtn = document.createElement('button');
+      fwdBtn.innerHTML = '10s ⏩';
+      fwdBtn.style.position = 'absolute';
+      fwdBtn.style.right = '12px';
+      fwdBtn.style.bottom = '12px';
+      fwdBtn.style.zIndex = '3';
+      fwdBtn.style.background = 'rgba(0,0,0,0.5)';
+      fwdBtn.style.color = '#fff';
+      fwdBtn.style.border = 'none';
+      fwdBtn.style.borderRadius = '8px';
+      fwdBtn.style.padding = '6px 12px';
+      fwdBtn.style.fontSize = '1rem';
+      fwdBtn.style.cursor = 'pointer';
+      fwdBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        video.currentTime = Math.min(video.duration, video.currentTime + 10);
+      });
+      wrapper.appendChild(backBtn);
+      wrapper.appendChild(fwdBtn);
       container.appendChild(wrapper);
     } else {
       // Create a wrapper to enforce 1:1 aspect ratio for images
