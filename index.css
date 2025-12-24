@@ -440,7 +440,7 @@ body.portal {
 .expanded-campaign {
   width: 100%;
   max-width: 480px;
-  margin: 0 auto 12px auto;
+  margin: 0 auto 0 auto;
   padding: 0;
   border: none !important;
   border-radius: 12px;
@@ -451,14 +451,6 @@ body.portal {
   justify-content: center;
   min-height: 120px;
   height: auto;
-  margin-bottom: 12px;
-}
-
-@media (min-width: 700px) {
-  .ads-frame,
-  .expanded-campaign {
-    margin-bottom: 24px;
-  }
 }
 
 @media (max-width: 700px) {
@@ -1129,17 +1121,10 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 /* Remove internal scroll from bundle table */
 .bundle-scroll-no-scroll {
-  max-height: none;
-  overflow-y: visible;
+  max-height: 220px;
+  overflow-y: auto;
   border: 1px solid var(--border-soft);
   border-radius: 10px;
-}
-
-@media (max-width: 700px) {
-  .bundle-scroll-no-scroll {
-    max-height: clamp(200px, 44svh, 360px);
-    overflow-y: auto;
-  }
 }
 
 /* Ensure medium-rectangle is always below bundle table with clear margin */
@@ -1221,11 +1206,8 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: 0 4px 24px #0002;
-  padding: 1.25rem 1.25rem 1.5rem 1.25rem;
+  padding: clamp(1rem, 4vw, 2.5rem);
   z-index: 2;
-  min-height: unset;
-  height: auto;
-  gap: 1rem;
 }
 
 .main-center-group {
@@ -1238,32 +1220,8 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   max-width: 600px;
 }
 
-@media (min-width: 1000px) {
-  .main-center-group {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 2.5rem;
-    max-width: 1240px;
-    width: 100%;
-  }
-  .login-card, .bundle-table-wrap {
-    width: 50%;
-    max-width: 600px;
-    margin: 0;
-  }
-  .bundle-table-wrap {
-    margin-top: 0;
-  }
-}
-}
-
 .bundle-table-wrap {
   margin-top: 2.5rem;
-  width: min(94svw, 600px);
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .medium-rectangle {
