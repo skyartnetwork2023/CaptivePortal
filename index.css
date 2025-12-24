@@ -1220,6 +1220,13 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   max-width: 600px;
 }
 
+@media (max-width: 900px) {
+  .main-center-group {
+    flex-direction: column-reverse;
+  }
+}
+}
+
 .bundle-table-wrap {
   margin-top: 2.5rem;
 }
