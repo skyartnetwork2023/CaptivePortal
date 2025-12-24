@@ -76,35 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
       video.addEventListener('mousedown', function(e) { e.stopPropagation(); });
       video.addEventListener('touchstart', function(e) { e.stopPropagation(); });
       wrapper.appendChild(video);
-      // Add expand (fullscreen) button
-      const expandBtn = document.createElement('button');
-      expandBtn.innerHTML = '⛶';
-      expandBtn.title = 'Expand';
-      expandBtn.style.position = 'absolute';
-      expandBtn.style.right = '50%';
-      expandBtn.style.bottom = '12px';
-      expandBtn.style.transform = 'translateX(50%)';
-      expandBtn.style.zIndex = '3';
-      expandBtn.style.background = 'rgba(0,0,0,0.5)';
-      expandBtn.style.color = '#fff';
-      expandBtn.style.border = 'none';
-      expandBtn.style.borderRadius = '8px';
-      expandBtn.style.padding = '6px 12px';
-      expandBtn.style.fontSize = '1.2rem';
-      expandBtn.style.cursor = 'pointer';
-      expandBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if (video.requestFullscreen) {
-          video.requestFullscreen();
-        } else if (video.webkitRequestFullscreen) {
-          video.webkitRequestFullscreen();
-        } else if (video.msRequestFullscreen) {
-          video.msRequestFullscreen();
-        }
-      });
-      expandBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); });
-      expandBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); });
-      wrapper.appendChild(expandBtn);
       // Pause lounge audio when video plays with sound, resume when paused
       video.addEventListener('play', function() {
         if (!video.muted) {
@@ -126,47 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
           loungeAudio.play();
         }
       });
-      // Add 10s backward and forward buttons
-      const backBtn = document.createElement('button');
-      backBtn.innerHTML = '⏪ 10s';
-      backBtn.style.position = 'absolute';
-      backBtn.style.left = '12px';
-      backBtn.style.bottom = '12px';
-      backBtn.style.zIndex = '3';
-      backBtn.style.background = 'rgba(0,0,0,0.5)';
-      backBtn.style.color = '#fff';
-      backBtn.style.border = 'none';
-      backBtn.style.borderRadius = '8px';
-      backBtn.style.padding = '6px 12px';
-      backBtn.style.fontSize = '1rem';
-      backBtn.style.cursor = 'pointer';
-      backBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        video.currentTime = Math.max(0, video.currentTime - 10);
-      });
-      backBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); });
-      backBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); });
-      const fwdBtn = document.createElement('button');
-      fwdBtn.innerHTML = '10s ⏩';
-      fwdBtn.style.position = 'absolute';
-      fwdBtn.style.right = '12px';
-      fwdBtn.style.bottom = '12px';
-      fwdBtn.style.zIndex = '3';
-      fwdBtn.style.background = 'rgba(0,0,0,0.5)';
-      fwdBtn.style.color = '#fff';
-      fwdBtn.style.border = 'none';
-      fwdBtn.style.borderRadius = '8px';
-      fwdBtn.style.padding = '6px 12px';
-      fwdBtn.style.fontSize = '1rem';
-      fwdBtn.style.cursor = 'pointer';
-      fwdBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        video.currentTime = Math.min(video.duration, video.currentTime + 10);
-      });
-      fwdBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); });
-      fwdBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); });
-      wrapper.appendChild(backBtn);
-      wrapper.appendChild(fwdBtn);
       container.appendChild(wrapper);
     } else {
       // Create a wrapper to enforce 1:1 aspect ratio for images
