@@ -436,7 +436,7 @@ body.portal {
 .expanded-campaign {
   width: 100%;
   max-width: 480px;
-  margin: 0 auto;
+  margin: 0 auto 0 auto;
   padding: 0;
   border: 1px solid #ccc;
   border-radius: 12px;
@@ -445,7 +445,6 @@ body.portal {
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: unset;
   min-height: 120px;
   height: auto;
 }
@@ -547,9 +546,15 @@ body.portal {
 }
 
 .ads-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  letter-spacing: 0.04em;
+  background: none;
+  padding: 0;
 }
 
 .ad-indicator {
