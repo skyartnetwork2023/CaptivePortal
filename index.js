@@ -1239,6 +1239,26 @@ function initAudioController() {
 }
 
 function initAdRail() {
+    // Touch event handlers for swipe
+    let startX = 0;
+    let endX = 0;
+    track.addEventListener('touchstart', function(e) {
+      if (e.touches && e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+      }
+    }, false);
+    track.addEventListener('touchmove', function(e) {
+      if (e.touches && e.touches.length === 1) {
+        endX = e.touches[0].clientX;
+      }
+    }, false);
+    track.addEventListener('touchend', function(e) {
+      if (startX - endX > 50) {
+        goToNext();
+      } else if (endX - startX > 50) {
+        goToPrev();
+      }
+    }, false);
   var track = document.getElementById("ads-track");
   var indicator = document.getElementById("ad-indicator");
 
