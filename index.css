@@ -442,7 +442,7 @@ body.portal {
   max-width: 480px;
   margin: 0 auto 0 auto;
   padding: 0;
-  border: 1px solid #ccc;
+  border: none !important;
   border-radius: 12px;
   background: transparent !important;
   box-shadow: none;
