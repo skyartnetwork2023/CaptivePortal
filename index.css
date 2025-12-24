@@ -1201,3 +1201,17 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 .medium-rectangle {
   margin-top: 2.5rem;
 }
+
+@media (max-width: 700px) {
+  .ads-frame,
+  .expanded-campaign {
+    padding: 12px 8px;
+    border-radius: 12px;
+    box-sizing: border-box;
+  }
+  .ads-meta {
+    margin-top: 0.25rem !important;
+    font-size: 1.1rem;
+    padding: 0 4px;
+  }
+}
