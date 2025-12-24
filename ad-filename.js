@@ -7,12 +7,23 @@ if (typeof supabase === 'undefined') {
 
 // Function to fetch media files from Supabase storage
 async function fetchMedia() {
-  const { data, error } = await supabase.storage.from('media-bucket').list('');
-  if (error) {
-    console.error('Error fetching media:', error);
+  if (!supabase || typeof supabase.storage === 'undefined') {
+    console.error('Supabase client is not initialized properly.');
     return [];
   }
-  return data;
+
+  try {
+    const { data, error } = await supabase.storage.from('media-bucket').list('');
+    if (error) {
+      console.error('Error fetching media:', error);
+      return [];
+    }
+    console.log('Fetched media:', data);
+    return data;
+  } catch (err) {
+    console.error('Unexpected error fetching media:', err);
+    return [];
+  }
 }
 
 // Function to render the 300x250 Medium Rectangle component
