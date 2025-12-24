@@ -1166,3 +1166,33 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
     margin-bottom: 2.5rem;
   }
 }
+
+/* Restore login-card and main-center-group layout */
+.login-card {
+  width: min(94svw, 600px);
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 24px #0002;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  z-index: 2;
+}
+
+.main-center-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  flex: 1 1 480px;
+  min-width: 340px;
+  max-width: 600px;
+}
+
+.bundle-table-wrap {
+  margin-top: 2.5rem;
+}
+
+.medium-rectangle {
+  margin-top: 2.5rem;
+}
