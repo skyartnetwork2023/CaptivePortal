@@ -150,7 +150,7 @@ body.portal {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap; /* Allow wrapping on narrow screens */
-  background: rgba(10, 20, 30, 0.22); /* More transparent lounge background */
+  background: rgba(10, 20, 30, 0.12); /* Even more transparent lounge background */
   border-radius: 18px;
   padding: 0.5rem 1.2rem;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -505,6 +505,8 @@ body.portal {
     min-height: 120px;
     max-height: 44vw;
     border-radius: 12px;
+    border: none !important;
+    box-shadow: none !important;
   }
 }
 
