@@ -1294,8 +1294,28 @@ function initAdRail() {
     });
   }
 
-  track.addEventListener("swipeleft", goToNext);
-  track.addEventListener("swiperight", goToPrev);
+  // Add touch event listeners for swipe left/right
+  let startX = 0;
+  let endX = 0;
+  track.addEventListener('touchstart', function(e) {
+    if (e.touches && e.touches.length === 1) {
+      startX = e.touches[0].clientX;
+    }
+  });
+  track.addEventListener('touchmove', function(e) {
+    if (e.touches && e.touches.length === 1) {
+      endX = e.touches[0].clientX;
+    }
+  });
+  track.addEventListener('touchend', function() {
+    if (startX - endX > 50) {
+      goToNext();
+    } else if (endX - startX > 50) {
+      goToPrev();
+    }
+    startX = 0;
+    endX = 0;
+  });
 }
 
 function buildAdCard(ad) {
