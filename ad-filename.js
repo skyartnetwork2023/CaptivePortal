@@ -71,12 +71,23 @@ document.addEventListener('DOMContentLoaded', function() {
       wrapper.appendChild(video);
       container.appendChild(wrapper);
     } else {
+      // Create a wrapper to enforce 1:1 aspect ratio for images
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'relative';
+      wrapper.style.width = '100%';
+      wrapper.style.height = '0';
+      wrapper.style.paddingBottom = '100%'; // 1:1 aspect ratio
+      wrapper.style.background = '#000';
       const img = document.createElement('img');
       img.src = `https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/media-bucket/${file.name}`;
+      img.style.position = 'absolute';
+      img.style.top = '0';
+      img.style.left = '0';
       img.style.width = '100%';
       img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      container.appendChild(img);
+      img.style.objectFit = 'contain'; // Fit inside, no cropping
+      wrapper.appendChild(img);
+      container.appendChild(wrapper);
     }
   }
 
