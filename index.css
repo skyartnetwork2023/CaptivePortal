@@ -150,6 +150,10 @@ body.portal {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap; /* Allow wrapping on narrow screens */
+  background: rgba(10, 20, 30, 0.22); /* More transparent lounge background */
+  border-radius: 18px;
+  padding: 0.5rem 1.2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
 @media (max-width: 540px) {
@@ -1093,6 +1097,12 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.audio-btn-min:hover {
+  border-color: var(--brand-emerald);
+  background: rgba(15, 224, 166, 0.98) !important;
+  color: #030711;
 }
 
 .audio-btn-group {
