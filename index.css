@@ -27,7 +27,6 @@ html {
   .background-static {
     background-attachment: scroll; /* FIX mobile bugs */
     height: calc(var(--vh, 1vh) * 100); /* Safe viewport height */
-  }
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
@@ -1225,9 +1224,10 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
     display: grid;
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
+    gap: 1.2rem 1.2rem;
     max-width: 900px;
-    align-items: start;
+    align-items: center;
+    justify-items: center;
   }
   .ads-frame.expanded-campaign {
     grid-column: 1 / span 2;
@@ -1241,18 +1241,20 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
     grid-row: 2;
     margin: 0;
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
     min-width: 320px;
     box-sizing: border-box;
+    align-self: center;
   }
   .bundle-table-wrap {
     grid-column: 2;
     grid-row: 2;
     margin: 0;
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
     min-width: 320px;
     box-sizing: border-box;
+    align-self: center;
   }
 }
 }
