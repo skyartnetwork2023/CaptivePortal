@@ -1121,10 +1121,17 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 /* Remove internal scroll from bundle table */
 .bundle-scroll-no-scroll {
-  max-height: 220px;
-  overflow-y: auto;
+  max-height: none;
+  overflow-y: visible;
   border: 1px solid var(--border-soft);
   border-radius: 10px;
+}
+
+@media (max-width: 700px) {
+  .bundle-scroll-no-scroll {
+    max-height: clamp(200px, 44svh, 360px);
+    overflow-y: auto;
+  }
 }
 
 /* Ensure medium-rectangle is always below bundle table with clear margin */
