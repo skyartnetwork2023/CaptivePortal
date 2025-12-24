@@ -1162,12 +1162,36 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   overflow: hidden;
   position: relative;
   background-color: #f9f9f9;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  z-index: 1;
+  z-index: 10;
   clear: both;
+  animation: none;
+  transition: transform 0.35s cubic-bezier(.4,2,.6,1), opacity 0.25s;
+}
+
+.medium-rectangle.zoom-in {
+  display: flex !important;
+  transform: scale(1);
+  opacity: 1;
+  animation: zoomIn 0.35s cubic-bezier(.4,2,.6,1);
+}
+.medium-rectangle.zoom-out {
+  display: flex !important;
+  transform: scale(0.7);
+  opacity: 0;
+  animation: zoomOut 0.25s cubic-bezier(.4,2,.6,1);
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+@keyframes zoomOut {
+  from { transform: scale(1); opacity: 1; }
+  to   { transform: scale(0.7); opacity: 0; }
 }
 
 @media (max-width: 700px) {
