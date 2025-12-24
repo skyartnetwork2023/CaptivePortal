@@ -73,6 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Prevent click/tap from bubbling to container
       video.addEventListener('click', function(e) { e.stopPropagation(); });
       video.addEventListener('touchend', function(e) { e.stopPropagation(); });
+      video.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+      video.addEventListener('touchstart', function(e) { e.stopPropagation(); });
       wrapper.appendChild(video);
       // Add expand (fullscreen) button
       const expandBtn = document.createElement('button');
@@ -100,6 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
           video.msRequestFullscreen();
         }
       });
+      expandBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+      expandBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); });
       wrapper.appendChild(expandBtn);
       // Pause lounge audio when video plays with sound, resume when paused
       video.addEventListener('play', function() {
@@ -140,6 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
         e.stopPropagation();
         video.currentTime = Math.max(0, video.currentTime - 10);
       });
+      backBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+      backBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); });
       const fwdBtn = document.createElement('button');
       fwdBtn.innerHTML = '10s ⏩';
       fwdBtn.style.position = 'absolute';
@@ -157,6 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
         e.stopPropagation();
         video.currentTime = Math.min(video.duration, video.currentTime + 10);
       });
+      fwdBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+      fwdBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); });
       wrapper.appendChild(backBtn);
       wrapper.appendChild(fwdBtn);
       container.appendChild(wrapper);
