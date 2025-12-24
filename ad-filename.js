@@ -1,7 +1,9 @@
-// Initialize Supabase client using credentials from index.html
-const SUPABASE_URL = 'https://bcuupjvxpjaelpmcldnh.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_-U9QwYC4h11W2ITt7NHyQg_XVnkfu8d';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Check if supabase is already defined
+if (typeof supabase === 'undefined') {
+  const SUPABASE_URL = 'https://bcuupjvxpjaelpmcldnh.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_-U9QwYC4h11W2ITt7NHyQg_XVnkfu8d';
+  var supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 // Function to fetch media files from Supabase storage
 async function fetchMedia() {
