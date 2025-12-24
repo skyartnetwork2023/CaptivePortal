@@ -1121,8 +1121,6 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 /* Remove internal scroll from bundle table */
 .bundle-scroll-no-scroll {
-  max-height: 220px;
-  overflow-y: auto;
   border: 1px solid var(--border-soft);
   border-radius: 10px;
 }
