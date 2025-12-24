@@ -1090,158 +1090,45 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 /* Remove internal scroll from bundle table */
 .bundle-scroll-no-scroll {
-  max-height: none !important;
-  overflow: visible !important;
-  padding-bottom: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
 }
 
-/* Remove internal scroll from login-card and ads-panel for unified page scroll */
-.login-card,
-.ads-panel,
-.experience-panel {
-  max-height: none !important;
-  overflow: visible !important;
-}
-
-/* Expand ad card image size in ads-panel */
-.ads-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.ads-frame.expanded-campaign {
+/* Ensure medium-rectangle is always below bundle table with clear margin */
+.medium-rectangle {
   width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
-}
-.ad-card {
-  min-height: 220px;
-  height: 260px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 18px;
-  margin-bottom: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  box-shadow: 0 2px 16px #0002;
-}
-.ads-meta {
-  margin-top: 0.5rem !important;
-  margin-bottom: 0 !important;
-}
-
-/* Main flex layout for large screens */
-.main-flex-layout {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 2.5rem;
-  width: 100%;
-  max-width: 1800px;
-  margin: 0 auto;
-}
-
-.main-center-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.5rem;
-  flex: 1 1 480px;
-  min-width: 340px;
-  max-width: 600px;
-}
-
-.bundle-table-wrap {
-  flex: 1 1 420px;
   max-width: 480px;
-  margin-left: 0;
-  margin-right: 0;
+  height: 320px;
+  margin: 32px auto 0 auto;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  position: relative;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  z-index: 1;
+  clear: both;
 }
 
-@media (max-width: 1100px) {
-  .main-flex-layout {
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: stretch;
-  }
-  .main-center-group, .bundle-table-wrap {
+@media (max-width: 700px) {
+  .medium-rectangle {
     max-width: 100%;
-    width: 100%;
-    margin: 0 auto;
+    height: 180px;
   }
 }
 
-.social-banner {
-  max-width: 1200px;
-  margin: 2.5rem auto 0 auto !important;
-}
-
-@media (max-width: 600px) {
-  .ads-meta {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0 !important;
-    font-size: 1rem;
-    padding-bottom: 0 !important;
-    line-height: 1.2;
-  }
-  .ads-panel {
-    margin-bottom: 0.5rem !important;
-    min-height: unset !important;
-    padding-bottom: 0 !important;
-    height: auto !important;
-  }
-  .ads-frame.expanded-campaign {
-    min-height: unset !important;
-    height: auto !important;
-    margin-bottom: 0 !important;
-  }
-  .ad-card {
-    min-height: 120px !important;
-    height: 160px !important;
-    margin-bottom: 0.25rem !important;
+@media (min-width: 1101px) {
+  .main-center-group > .medium-rectangle {
+    margin-top: 1.5rem;
+    margin-bottom: 2.5rem;
   }
 }
 
 .login-card {
-  min-height: 220px;
-  max-height: 380px;
-  padding: 1.5rem 2rem;
-  background: rgba(10, 20, 30, 0.82);
-  border-radius: 18px;
-  box-shadow: 0 2px 16px #0002;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1.1rem;
-}
-
-.login-card .card-header {
-  margin-bottom: 0.5rem;
-}
-
-.login-card .meta.help-text {
-  margin-top: 0.5rem;
-  font-size: 0.98em;
-  color: #b8e0e6;
-}
-
-@media (max-width: 600px) {
-  .login-card {
-    min-height: 160px;
-    max-height: 320px;
-    padding: 1rem 0.5rem;
-    border-radius: 12px;
-    gap: 0.7rem;
-  }
-  .login-card .card-header {
-    margin-bottom: 0.3rem;
-  }
-}
-
-.ad-card {
   padding: 0; /* Remove padding to expand image frame */
   justify-content: space-between; /* Ensure content stretches to fill the card */
   background-color: #000; /* Enhance light and view quality */
