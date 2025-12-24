@@ -440,7 +440,7 @@ body.portal {
 .expanded-campaign {
   width: 100%;
   max-width: 480px;
-  margin: 0 auto 0 auto;
+  margin: 0 auto 12px auto;
   padding: 0;
   border: none !important;
   border-radius: 12px;
@@ -451,6 +451,14 @@ body.portal {
   justify-content: center;
   min-height: 120px;
   height: auto;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 700px) {
+  .ads-frame,
+  .expanded-campaign {
+    margin-bottom: 24px;
+  }
 }
 
 @media (max-width: 700px) {
