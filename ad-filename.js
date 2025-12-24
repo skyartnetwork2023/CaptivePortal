@@ -48,18 +48,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     const file = mediaFiles[index];
     const isVideo = file.name.match(/\.mp4$/i);
-    const mediaElement = document.createElement(isVideo ? 'video' : 'img');
-    mediaElement.src = `https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/media-bucket/${file.name}`;
-    mediaElement.style.width = '100%';
-    mediaElement.style.height = '100%';
-    mediaElement.style.objectFit = 'cover';
     if (isVideo) {
-      mediaElement.controls = true;
-      mediaElement.autoplay = true;
-      mediaElement.loop = true;
-      mediaElement.muted = true;
+      // Create a wrapper to enforce 16:9 aspect ratio
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'relative';
+      wrapper.style.width = '100%';
+      wrapper.style.height = '0';
+      wrapper.style.paddingBottom = '56.25%'; // 16:9 aspect ratio
+      wrapper.style.background = '#000';
+      const video = document.createElement('video');
+      video.src = `https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/media-bucket/${file.name}`;
+      video.style.position = 'absolute';
+      video.style.top = '0';
+      video.style.left = '0';
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.objectFit = 'contain'; // Fit inside, no cropping
+      video.controls = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.muted = true;
+      wrapper.appendChild(video);
+      container.appendChild(wrapper);
+    } else {
+      const img = document.createElement('img');
+      img.src = `https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/media-bucket/${file.name}`;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      container.appendChild(img);
     }
-    container.appendChild(mediaElement);
   }
 
   function showNext() {
