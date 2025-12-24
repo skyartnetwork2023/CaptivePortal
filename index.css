@@ -1222,6 +1222,43 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 @media (min-width: 900px) {
   .main-center-group {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    max-width: 900px;
+    align-items: start;
+  }
+  .ads-frame.expanded-campaign {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  .login-card {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    width: 100%;
+    max-width: 420px;
+    min-width: 320px;
+    box-sizing: border-box;
+  }
+  .bundle-table-wrap {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    width: 100%;
+    max-width: 420px;
+    min-width: 320px;
+    box-sizing: border-box;
+  }
+}
+}
+
+@media (min-width: 900px) {
+  .main-center-group {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
