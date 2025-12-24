@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
       wrapper.style.height = '0';
       wrapper.style.paddingBottom = '56.25%'; // 16:9 aspect ratio
       wrapper.style.background = '#000';
+      wrapper.style.display = 'block';
+      wrapper.style.overflow = 'hidden';
       const video = document.createElement('video');
       video.src = `https://bcuupjvxpjaelpmcldnh.supabase.co/storage/v1/object/public/media-bucket/${file.name}`;
       video.style.position = 'absolute';
@@ -68,6 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
       video.autoplay = true;
       video.loop = true;
       video.muted = true;
+      // Prevent click/tap from bubbling to container
+      video.addEventListener('click', function(e) { e.stopPropagation(); });
+      video.addEventListener('touchend', function(e) { e.stopPropagation(); });
       wrapper.appendChild(video);
       // Add 10s backward and forward buttons
       const backBtn = document.createElement('button');
@@ -123,6 +128,8 @@ document.addEventListener('DOMContentLoaded', function() {
       img.style.width = '100%';
       img.style.height = '100%';
       img.style.objectFit = 'contain'; // Fit inside, no cropping
+      img.addEventListener('click', function(e) { e.stopPropagation(); });
+      img.addEventListener('touchend', function(e) { e.stopPropagation(); });
       wrapper.appendChild(img);
       container.appendChild(wrapper);
     }
