@@ -1220,6 +1220,26 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   max-width: 600px;
 }
 
+@media (min-width: 900px) {
+  .main-center-group {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2.5rem;
+  }
+  .login-card, .bundle-table-wrap {
+    margin: 0;
+    width: 50%;
+    max-width: 420px;
+    min-width: 320px;
+    box-sizing: border-box;
+  }
+  .bundle-table-wrap {
+    margin-top: 0;
+  }
+}
+}
+
 .bundle-table-wrap {
   margin-top: 2.5rem;
 }
