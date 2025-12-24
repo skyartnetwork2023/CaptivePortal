@@ -1247,3 +1247,17 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
   background-color: #000; /* Enhance light and view quality */
   filter: brightness(1.2); /* Increase brightness */
 }
+
+/* Styles for the 300x250 Medium Rectangle component */
+.medium-rectangle {
+  width: 300px;
+  height: 250px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  position: relative;
+  margin: 20px auto;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -28,12 +28,7 @@ async function fetchMedia() {
 
 // Function to render the 300x250 Medium Rectangle component
 async function renderMediumRectangle() {
-  const container = document.createElement('div');
-  container.style.width = '300px';
-  container.style.height = '250px';
-  container.style.border = '1px solid #ccc';
-  container.style.overflow = 'hidden';
-  container.style.position = 'relative';
+  const container = document.getElementById('medium-rectangle');
 
   const mediaFiles = await fetchMedia();
 
@@ -52,8 +47,6 @@ async function renderMediumRectangle() {
       container.appendChild(mediaElement);
     });
   }
-
-  document.body.appendChild(container);
 }
 
 // Call the function to render the component
