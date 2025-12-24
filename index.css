@@ -487,7 +487,8 @@ body.portal {
   border-radius: 16px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border: none !important;
+  box-shadow: none !important;
 }
 @media (max-width: 900px) {
   .ad-card {
