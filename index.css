@@ -1,10 +1,19 @@
 @media (min-width: 701px) {
-  .login-card,
+  .login-card {
+    width: 100%;
+    max-width: 600px;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: clamp(0.75rem, 2.5vw, 1rem);
+    padding-right: clamp(0.75rem, 2.5vw, 1rem);
+  }
   .bundle-table-wrap {
     width: 100%;
     max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: clamp(0.75rem, 2.5vw, 1rem);
+    padding-right: clamp(0.75rem, 2.5vw, 1rem);
   }
 }
 html, body {
