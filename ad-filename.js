@@ -74,6 +74,54 @@ document.addEventListener('DOMContentLoaded', function() {
       video.addEventListener('click', function(e) { e.stopPropagation(); });
       video.addEventListener('touchend', function(e) { e.stopPropagation(); });
       wrapper.appendChild(video);
+      // Add expand (fullscreen) button
+      const expandBtn = document.createElement('button');
+      expandBtn.innerHTML = '⛶';
+      expandBtn.title = 'Expand';
+      expandBtn.style.position = 'absolute';
+      expandBtn.style.right = '50%';
+      expandBtn.style.bottom = '12px';
+      expandBtn.style.transform = 'translateX(50%)';
+      expandBtn.style.zIndex = '3';
+      expandBtn.style.background = 'rgba(0,0,0,0.5)';
+      expandBtn.style.color = '#fff';
+      expandBtn.style.border = 'none';
+      expandBtn.style.borderRadius = '8px';
+      expandBtn.style.padding = '6px 12px';
+      expandBtn.style.fontSize = '1.2rem';
+      expandBtn.style.cursor = 'pointer';
+      expandBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (video.requestFullscreen) {
+          video.requestFullscreen();
+        } else if (video.webkitRequestFullscreen) {
+          video.webkitRequestFullscreen();
+        } else if (video.msRequestFullscreen) {
+          video.msRequestFullscreen();
+        }
+      });
+      wrapper.appendChild(expandBtn);
+      // Pause lounge audio when video plays with sound, resume when paused
+      video.addEventListener('play', function() {
+        if (!video.muted) {
+          const loungeAudio = document.getElementById('portal-audio');
+          if (loungeAudio && !loungeAudio.paused) loungeAudio.pause();
+        }
+      });
+      video.addEventListener('pause', function() {
+        if (!video.muted) {
+          const loungeAudio = document.getElementById('portal-audio');
+          if (loungeAudio && loungeAudio.paused) loungeAudio.play();
+        }
+      });
+      video.addEventListener('volumechange', function() {
+        const loungeAudio = document.getElementById('portal-audio');
+        if (!video.muted && !video.paused) {
+          if (loungeAudio && !loungeAudio.paused) loungeAudio.pause();
+        } else if ((video.muted || video.paused) && loungeAudio && loungeAudio.paused) {
+          loungeAudio.play();
+        }
+      });
       // Add 10s backward and forward buttons
       const backBtn = document.createElement('button');
       backBtn.innerHTML = '⏪ 10s';
