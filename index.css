@@ -1250,14 +1250,23 @@ body.portal { font-size: clamp(14px, 1.8vw, 16px); }
 
 /* Styles for the 300x250 Medium Rectangle component */
 .medium-rectangle {
-  width: 300px;
-  height: 250px;
+  width: 100%;
+  max-width: 600px;
+  height: 350px;
+  margin: 32px auto 16px auto;
   border: 1px solid #ccc;
   overflow: hidden;
   position: relative;
-  margin: 20px auto;
   background-color: #f9f9f9;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .medium-rectangle {
+    max-width: 100%;
+    height: 220px;
+  }
 }
