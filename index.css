@@ -432,22 +432,30 @@ body.portal {
   gap: 1.5rem;
 }
 
-.ads-frame {
-  overflow: hidden;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 100%;
-  height: 340px;
-  min-height: unset;
-  margin: 0 auto;
-  position: relative;
-  background: transparent;
-}
-
+.ads-frame,
 .expanded-campaign {
   width: 100%;
-  height: 340px;
-  max-width: 600px;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background: #f9f9f9;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: unset;
+  min-height: 120px;
+  height: auto;
+}
+
+@media (max-width: 700px) {
+  .ads-frame,
+  .expanded-campaign {
+    max-width: 100%;
+    border-radius: 10px;
+  }
 }
 
 .ad-track {
