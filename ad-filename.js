@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
       wrapper.appendChild(img);
       container.appendChild(wrapper);
     }
+    renderMediumRectangleButtons();
   }
 
   function showNext() {
@@ -131,6 +132,54 @@ document.addEventListener('DOMContentLoaded', function() {
       container.addEventListener('touchmove', handleTouchMove, false);
       container.addEventListener('touchend', handleTouchEnd, false);
     }
+  }
+
+  function renderMediumRectangleButtons() {
+    const container = document.getElementById('medium-rectangle');
+    if (!container) return;
+    // Remove old buttons if any
+    const oldPrev = document.getElementById('medium-rectangle-prev');
+    const oldNext = document.getElementById('medium-rectangle-next');
+    if (oldPrev) oldPrev.remove();
+    if (oldNext) oldNext.remove();
+    // Create prev button
+    const prevBtn = document.createElement('button');
+    prevBtn.id = 'medium-rectangle-prev';
+    prevBtn.innerHTML = '&#8592;';
+    prevBtn.style.position = 'absolute';
+    prevBtn.style.left = '8px';
+    prevBtn.style.top = '50%';
+    prevBtn.style.transform = 'translateY(-50%)';
+    prevBtn.style.zIndex = '2';
+    prevBtn.style.background = 'rgba(0,0,0,0.4)';
+    prevBtn.style.color = '#fff';
+    prevBtn.style.border = 'none';
+    prevBtn.style.borderRadius = '50%';
+    prevBtn.style.width = '36px';
+    prevBtn.style.height = '36px';
+    prevBtn.style.fontSize = '1.5rem';
+    prevBtn.style.cursor = 'pointer';
+    prevBtn.addEventListener('click', showPrev);
+    // Create next button
+    const nextBtn = document.createElement('button');
+    nextBtn.id = 'medium-rectangle-next';
+    nextBtn.innerHTML = '&#8594;';
+    nextBtn.style.position = 'absolute';
+    nextBtn.style.right = '8px';
+    nextBtn.style.top = '50%';
+    nextBtn.style.transform = 'translateY(-50%)';
+    nextBtn.style.zIndex = '2';
+    nextBtn.style.background = 'rgba(0,0,0,0.4)';
+    nextBtn.style.color = '#fff';
+    nextBtn.style.border = 'none';
+    nextBtn.style.borderRadius = '50%';
+    nextBtn.style.width = '36px';
+    nextBtn.style.height = '36px';
+    nextBtn.style.fontSize = '1.5rem';
+    nextBtn.style.cursor = 'pointer';
+    nextBtn.addEventListener('click', showNext);
+    container.appendChild(prevBtn);
+    container.appendChild(nextBtn);
   }
 
   renderMediumRectangle();
