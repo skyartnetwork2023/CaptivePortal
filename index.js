@@ -1824,10 +1824,6 @@ document.addEventListener("DOMContentLoaded", function() {
   var overlay = document.getElementById("audio-autoplay-overlay");
   var btn = document.getElementById("audio-autoplay-btn");
   var audioEl = document.getElementById("portal-audio");
-  var mediumRect = document.getElementById("medium-rectangle");
-  var showVideoBtn = document.getElementById("show-video-btn");
-  var closeVideoBtn = document.getElementById("close-video-btn");
-
   if (overlay && btn && audioEl) {
     btn.addEventListener("click", function() {
       audioEl.play().catch(function(){});
@@ -1835,27 +1831,5 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   } else if (overlay) {
     overlay.style.display = "none";
-  }
-
-  if (mediumRect) {
-    mediumRect.classList.remove('zoom-in', 'zoom-out');
-    mediumRect.style.display = 'none';
-  }
-
-  if (showVideoBtn && mediumRect) {
-    showVideoBtn.addEventListener('click', function() {
-      mediumRect.classList.remove('zoom-out');
-      mediumRect.classList.add('zoom-in');
-      mediumRect.style.display = 'flex';
-    });
-  }
-  if (closeVideoBtn && mediumRect) {
-    closeVideoBtn.addEventListener('click', function() {
-      mediumRect.classList.remove('zoom-in');
-      mediumRect.classList.add('zoom-out');
-      setTimeout(function() {
-        mediumRect.style.display = 'none';
-      }, 250);
-    });
   }
 });
