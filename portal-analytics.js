@@ -38,11 +38,30 @@
     if (!bucketId || !assetName) {
       return;
     }
+    // Fetch device/session info from query string
+    function getQueryStringKey(key) {
+      var q = window.location.search.substring(1);
+      var s = /([^&;=]+)=?([^&;]*)/g;
+      var r = {};
+      var e;
+      while (e = s.exec(q)) {
+        var k = decodeURIComponent(e[1]);
+        var v = decodeURIComponent(e[2]);
+        r[k] = v;
+      }
+      return r[key];
+    }
+    var clientMac = getQueryStringKey('clientMac');
+    var apMac = getQueryStringKey('apMac');
+    var clientIp = getQueryStringKey('clientIp');
     var payload = {
       bucketId: bucketId,
       assetName: assetName,
       viewDate: new Date().toISOString().slice(0, 10),
       increment: Math.max(1, increment || 1),
+      clientMac: clientMac,
+      apMac: apMac,
+      clientIp: clientIp
     };
     impressionQueue.push(payload);
     scheduleFlush();
@@ -70,6 +89,9 @@
           p_asset_name: item.assetName,
           p_view_date: item.viewDate,
           p_increment: item.increment,
+          p_client_mac: item.clientMac,
+          p_ap_mac: item.apMac,
+          p_client_ip: item.clientIp
         });
         if (error) {
           logDebug('Failed to record impression', item, error);
