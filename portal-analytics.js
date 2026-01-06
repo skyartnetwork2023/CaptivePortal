@@ -53,7 +53,7 @@
     flushTimer = window.setTimeout(flushQueue, FLUSH_DELAY);
   }
 
-  function flushQueue() {
+  async function flushQueue() {
     flushTimer = null;
     if (!impressionQueue.length) return;
     var supabaseClient = initClient();
@@ -63,20 +63,21 @@
       return;
     }
     var batch = impressionQueue.splice(0, impressionQueue.length);
-    batch.reduce(function (promise, item) {
-      return promise.then(function () {
-        return supabaseClient
-          .rpc('increment_ad_metric', {
-            p_bucket_id: item.bucketId,
-            p_asset_name: item.assetName,
-            p_view_date: item.viewDate,
-            p_increment: item.increment,
-          })
-          .catch(function (err) {
-            logDebug('Failed to record impression', item, err);
-          });
-      });
-    }, Promise.resolve());
+    for (const item of batch) {
+      try {
+        const { data, error } = await supabaseClient.rpc('increment_ad_metric', {
+          p_bucket_id: item.bucketId,
+          p_asset_name: item.assetName,
+          p_view_date: item.viewDate,
+          p_increment: item.increment,
+        });
+        if (error) {
+          logDebug('Failed to record impression', item, error);
+        }
+      } catch (err) {
+        logDebug('Failed to record impression (exception)', item, err);
+      }
+    }
   }
 
   function deriveObjectPath(rawSource, bucketId) {
