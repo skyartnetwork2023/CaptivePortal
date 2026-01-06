@@ -1254,7 +1254,7 @@ function initAdRail() {
   var index = 0;
 
   function renderPosition() {
-    track.style.transform = "translateX(-" + (index * 100) + "%")";
+    track.style.transform = "translateX(-" + (index * 100) + "%)";
     if (indicator) {
       indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
     }
