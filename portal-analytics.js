@@ -123,17 +123,25 @@
   }
 
   function watchSlides() {
-    var bucket = (window.__SUPABASE_CONFIG__ && window.__SUPABASE_CONFIG__.imageBucket) || 'media-bucket';
+    var buckets = [];
+    if (window.__SUPABASE_CONFIG__ && window.__SUPABASE_CONFIG__.imageBucket) {
+      buckets.push(window.__SUPABASE_CONFIG__.imageBucket);
+    }
+    if (!buckets.includes('media-bucket')) {
+      buckets.push('media-bucket');
+    }
     var observer = new MutationObserver(function () {
       var active = document.querySelector('.gallery-slide.active');
       if (!active) return;
       var bgValue = active.style.backgroundImage || '';
-      var objectPath = deriveObjectPath(extractUrlFromBackground(bgValue), bucket);
-      var signature = objectPath + '::' + (active.dataset.sceneIndex || '0');
-      if (signature === slideSignature) return;
-      slideSignature = signature;
-      queueImpression(bucket, objectPath, 1);
-      logDebug('Slide impression', objectPath);
+      buckets.forEach(function(bucket) {
+        var objectPath = deriveObjectPath(extractUrlFromBackground(bgValue), bucket);
+        var signature = bucket + '::' + objectPath + '::' + (active.dataset.sceneIndex || '0');
+        if (signature === slideSignature) return;
+        slideSignature = signature;
+        queueImpression(bucket, objectPath, 1);
+        logDebug('Slide impression', bucket, objectPath);
+      });
     });
     observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
   }
@@ -144,7 +152,13 @@
   }
 
   function watchAdRail() {
-    var bucket = (window.__SUPABASE_CONFIG__ && window.__SUPABASE_CONFIG__.imageBucket) || 'media-bucket';
+    var buckets = [];
+    if (window.__SUPABASE_CONFIG__ && window.__SUPABASE_CONFIG__.imageBucket) {
+      buckets.push(window.__SUPABASE_CONFIG__.imageBucket);
+    }
+    if (!buckets.includes('media-bucket')) {
+      buckets.push('media-bucket');
+    }
     var track = document.getElementById('ads-track');
     if (!track) return;
     var observer = new MutationObserver(function () {
@@ -155,12 +169,14 @@
       if (!ads.length) return;
       var ad = ads[(index % ads.length + ads.length) % ads.length];
       if (!ad) return;
-      var objectPath = deriveObjectPath(ad.background || ad.image, bucket);
-      var signature = objectPath + '::' + index;
-      if (signature === adSignature) return;
-      adSignature = signature;
-      queueImpression(bucket, objectPath, 1);
-      logDebug('Ad impression', objectPath);
+      buckets.forEach(function(bucket) {
+        var objectPath = deriveObjectPath(ad.background || ad.image, bucket);
+        var signature = bucket + '::' + objectPath + '::' + index;
+        if (signature === adSignature) return;
+        adSignature = signature;
+        queueImpression(bucket, objectPath, 1);
+        logDebug('Ad impression', bucket, objectPath);
+      });
     });
     observer.observe(track, { attributes: true, attributeFilter: ['style'] });
   }
