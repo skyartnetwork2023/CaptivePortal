@@ -1,28 +1,3 @@
-// --- Ad Metrics Tracking ---
-function incrementAdMetric(adId, eventType) {
-  try {
-    if (!window.supabase) return;
-    const client = window.supabase.createClient(
-      window.__SUPABASE_CONFIG__.url,
-      window.__SUPABASE_CONFIG__.anonKey
-    );
-    client.from('ad_metrics').insert([
-      {
-        ad_id: adId,
-        event_type: eventType,
-        timestamp: new Date().toISOString(),
-        user_agent: navigator.userAgent
-      }
-    ]).then(function(res) {
-      // Optionally log or handle errors
-      if (res.error) {
-        console.warn('Supabase ad_metrics error:', res.error);
-      }
-    });
-  } catch (e) {
-    // Fail silently
-  }
-}
 var NO_AUTH = 0,
     SIMPLE_PASSWORD = 1,
     EXTERNAL_RADIUS = 2,
@@ -1283,12 +1258,7 @@ function initAdRail() {
     if (indicator) {
       indicator.textContent = padWithZero(index + 1) + " / " + padWithZero(PORTAL_ADS.length);
     }
-    // Increment ad view metric for the current ad
-    if (PORTAL_ADS[index] && PORTAL_ADS[index].id) {
-      incrementAdMetric(PORTAL_ADS[index].id, 'view');
-    } else {
-      incrementAdMetric(index, 'view');
-    }
+    // Impression tracking is now handled by portal-analytics.js
   }
 
   renderPosition();
@@ -1322,12 +1292,7 @@ function initAdRail() {
       index = (index + 1) % PORTAL_ADS.length;
       renderPosition();
       resetAutoRotate();
-      // Increment ad next click metric
-      if (PORTAL_ADS[index] && PORTAL_ADS[index].id) {
-        incrementAdMetric(PORTAL_ADS[index].id, 'next_click');
-      } else {
-        incrementAdMetric(index, 'next_click');
-      }
+      // Impression tracking is now handled by portal-analytics.js
     });
   }
 
