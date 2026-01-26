@@ -105,18 +105,54 @@
                 <button id="button-login" class="button control">Gusa kuingia [Log In]</button>
                 <button id="button-voucher-status" class="button control">Matumizi ya Vocha</button>
                   <!-- Voucher Details Modal/Card -->
-                  <div id="voucherDetailsModal" class="voucher-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(10,20,30,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;">
-                    <div class="voucher-card" style="background:#222c38;padding:2rem 2.5rem;border-radius:18px;box-shadow:0 2px 24px #0006;color:#fff;min-width:340px;max-width:90vw;">
-                      <h2 style="margin-bottom:1rem;">Voucher Details</h2>
-                      <div><strong>Voucher ID</strong>: <span id="voucherId"></span></div>
-                      <div><strong>Status</strong>: <span id="voucherStatus"></span></div>
-                      <div><strong>Usage</strong>: <span id="voucherUsage"></span></div>
-                      <div><strong>Total</strong>: <span id="voucherTotal"></span></div>
-                      <div><strong>Start</strong>: <span id="voucherStart"></span></div>
-                      <div><strong>End</strong>: <span id="voucherEnd"></span></div>
-                      <button onclick="document.getElementById('voucherDetailsModal').style.display='none'" style="margin-top:1.5rem;padding:0.5rem 2rem;border-radius:1rem;background:#3a7c85;color:#fff;border:none;cursor:pointer;">Close</button>
+                  <div id="voucherDetailsModal" class="voucher-modal" style="display:none;">
+                    <div class="voucher-card">
+                      <header class="voucher-card__header">
+                        <div>
+                          <p class="voucher-card__title">Voucher Details</p>
+                          <p class="voucher-card__subtitle">Voucher ID <span id="voucherId"></span></p>
+                        </div>
+                        <button id="voucherModalClose" class="voucher-card__close" type="button" aria-label="Funga dirisha">&times;</button>
+                      </header>
+                      <section class="voucher-card__status">
+                        <div id="voucherStatusIcon" class="voucher-status__icon"></div>
+                        <div class="voucher-status__copy">
+                          <span class="voucher-status__label">Status:</span>
+                          <span id="voucherStatusPrimary" class="voucher-status__primary"></span>
+                          <span id="voucherStatusSecondary" class="voucher-status__secondary"></span>
+                          <span id="voucherStatusGroup" class="voucher-status__group"></span>
+                        </div>
+                      </section>
+                      <section class="voucher-card__usage">
+                        <span class="voucher-section__eyebrow">Usage</span>
+                        <div class="voucher-usage__row">
+                          <span id="voucherUsageCombined" class="voucher-usage__primary"></span>
+                          <span id="voucherUsagePercent" class="voucher-usage__percent"></span>
+                        </div>
+                        <div id="voucherUsageSecondary" class="voucher-usage__secondary"></div>
+                        <div class="voucher-usage__total">Total: <span id="voucherTotal"></span></div>
+                        <div class="voucher-usage__bar" aria-hidden="true">
+                          <div id="voucherUsageBar" class="voucher-usage__bar-fill"></div>
+                        </div>
+                      </section>
+                      <section class="voucher-card__meta">
+                        <span class="voucher-section__eyebrow">Validity</span>
+                        <div class="voucher-card__meta-grid">
+                          <div>
+                            <span class="voucher-meta__label">Start</span>
+                            <span id="voucherStart" class="voucher-meta__value"></span>
+                          </div>
+                          <div>
+                            <span class="voucher-meta__label">End</span>
+                            <span id="voucherEnd" class="voucher-meta__value"></span>
+                          </div>
+                        </div>
+                      </section>
+                      <footer class="voucher-card__footer">
+                        <button id="voucherCloseButton" class="voucher-card__action" type="button">Close</button>
+                      </footer>
                     </div>
-                  </div
+                  </div>
               </div>
               <p class="meta help-text">Kwa taarifa za hali ya internet na huduma kwa ujumla jiunge whatsapp apo chini</p>
             </section>

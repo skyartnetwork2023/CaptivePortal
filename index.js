@@ -1,38 +1,451 @@
 // Voucher Status Check Handler
 function showVoucherDetailsModal(details) {
-  document.getElementById('voucherDetailsModal').style.display = 'flex';
-  document.getElementById('voucherId').textContent = details.id || '';
-  document.getElementById('voucherStatus').innerHTML = details.statusHtml || '';
-  document.getElementById('voucherUsage').textContent = details.usage || '';
-  document.getElementById('voucherTotal').textContent = details.total || '';
-  document.getElementById('voucherStart').textContent = details.start || '';
-  document.getElementById('voucherEnd').textContent = details.end || '';
+  var modal = document.getElementById('voucherDetailsModal');
+  if (!modal) return;
+
+  modal.style.display = 'flex';
+
+  var setText = function(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value || '';
+  };
+
+  setText('voucherId', details.id || '');
+  setText('voucherStart', details.start || '');
+  setText('voucherEnd', details.end || '');
+  setText('voucherTotal', details.totalDisplay || details.total || '');
+
+  var accentColor = details.statusColor || '#4ca1ff';
+
+  var primaryStatus = document.getElementById('voucherStatusPrimary');
+  if (primaryStatus) {
+    primaryStatus.textContent = details.statusPrimary || '';
+    primaryStatus.style.color = accentColor;
+  }
+
+  var secondaryStatus = document.getElementById('voucherStatusSecondary');
+  if (secondaryStatus) {
+    var secondary = details.statusSecondary ? ' (' + details.statusSecondary + ')' : '';
+    secondaryStatus.textContent = secondary;
+  }
+
+  var statusGroup = document.getElementById('voucherStatusGroup');
+  if (statusGroup) {
+    if (details.groupName) {
+      statusGroup.textContent = 'Group: ' + details.groupName;
+      statusGroup.style.display = 'block';
+    } else {
+      statusGroup.textContent = '';
+      statusGroup.style.display = 'none';
+    }
+  }
+
+  var statusIcon = document.getElementById('voucherStatusIcon');
+  if (statusIcon) {
+    statusIcon.textContent = details.statusIcon || '';
+    statusIcon.style.boxShadow = '0 0 0 2px ' + accentColor + '55';
+    statusIcon.style.background = accentColor + '22';
+    statusIcon.style.color = '#fff';
+  }
+
+  var usageCombined = document.getElementById('voucherUsageCombined');
+  if (usageCombined) {
+    usageCombined.textContent = details.usageCombined || details.usage || '';
+  }
+
+  var usageSecondary = document.getElementById('voucherUsageSecondary');
+  if (usageSecondary) {
+    if (details.usageSecondary) {
+      usageSecondary.textContent = details.usageSecondary;
+      usageSecondary.style.display = 'block';
+    } else {
+      usageSecondary.textContent = '';
+      usageSecondary.style.display = 'none';
+    }
+  }
+
+  var usagePercent = document.getElementById('voucherUsagePercent');
+  if (usagePercent) {
+    if (details.usagePercentLabel) {
+      usagePercent.textContent = details.usagePercentLabel;
+      usagePercent.style.display = 'inline';
+    } else {
+      usagePercent.textContent = '';
+      usagePercent.style.display = 'none';
+    }
+  }
+
+  var usageBar = document.getElementById('voucherUsageBar');
+  if (usageBar) {
+    var hasPercent = typeof details.percentUsed === 'number' && isFinite(details.percentUsed);
+    var pct = hasPercent ? details.percentUsed : 0;
+    usageBar.style.width = pct + '%';
+    if (usageBar.parentElement) {
+      usageBar.parentElement.style.opacity = hasPercent ? '1' : '0.35';
+    }
+  }
 }
 
-function fetchVoucherStatus(voucherCode) {
-  // Replace with actual Omada API endpoint for voucher status
-  var url = withPortalBase('/portal/voucher/status');
-  var payload = JSON.stringify({ voucherCode: voucherCode });
-  Ajax.post(url, payload, function(res) {
-    var data = {};
-    try { data = JSON.parse(res); } catch(e) {}
-    // Example response mapping, adjust to actual API
-    var details = {
-      id: data.result?.voucherId || voucherCode,
-      statusHtml: (data.result?.expired ? '<span style="color:#e74c3c;font-weight:bold;">Imeisha (Expired)</span>' : '<span style="color:#27ae60;font-weight:bold;">Hai Expired (Active)</span>'),
-      usage: (data.result?.used + ' / ' + data.result?.total + ' GB (' + Math.round((data.result?.used/data.result?.total)*100) + '%)') || '',
-      total: (data.result?.total + ' GB') || '',
-      start: data.result?.startTime || '',
-      end: data.result?.endTime || ''
+function hideVoucherDetailsModal() {
+  var modal = document.getElementById('voucherDetailsModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+function formatTimestamp(value) {
+  if (!value) return '';
+  var date;
+  if (typeof value === 'number') {
+    date = new Date(value);
+  } else if (!isNaN(Number(value))) {
+    var numeric = Number(value);
+    date = new Date(numeric > 1e12 ? numeric : numeric * 1000);
+  } else {
+    date = new Date(value);
+  }
+  if (isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
+
+function resolveProxyBase() {
+  if (typeof window === 'undefined' || !window.location) {
+    return 'http://localhost:4000';
+  }
+  var protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+  var host = window.location.hostname || 'localhost';
+  return protocol + '//' + host + ':4000';
+}
+
+function formatGigabytesFromBytes(bytes) {
+  if (bytes === undefined || bytes === null) return '';
+  var numeric = Number(bytes);
+  if (!isFinite(numeric)) return '';
+  var gb = numeric / (1024 * 1024 * 1024);
+  if (!isFinite(gb)) return '';
+  var precision = gb >= 100 ? 0 : gb >= 10 ? 1 : 2;
+  return gb.toFixed(precision) + ' GB';
+}
+
+function formatGigabytesFromMegabytes(megabytes) {
+  if (megabytes === undefined || megabytes === null) return '';
+  var numeric = Number(megabytes);
+  if (!isFinite(numeric)) return '';
+  var gb = numeric / 1024;
+  if (!isFinite(gb)) return '';
+  var precision = gb >= 100 ? 0 : gb >= 10 ? 1 : 2;
+  return gb.toFixed(precision) + ' GB';
+}
+
+function buildVoucherDetails(voucherCode, response) {
+  var voucher = response && response.voucher ? response.voucher : {};
+  var group = response && response.group ? response.group : {};
+  var sourceVoucher = response && response.sourceVoucher ? response.sourceVoucher : null;
+  var code = voucher.code || voucher.voucherCode || voucher.voucherCodeStr || voucher.id || voucher.voucherId || voucherCode;
+
+  var rawStatus = voucher.status;
+  if (rawStatus === undefined || rawStatus === null) {
+    rawStatus = voucher.state;
+  }
+  if ((rawStatus === undefined || rawStatus === null) && sourceVoucher) {
+    rawStatus = sourceVoucher.status !== undefined ? sourceVoucher.status : sourceVoucher.state;
+  }
+
+  var normalizedStatus = typeof rawStatus === 'string' ? rawStatus.trim().toLowerCase() : rawStatus;
+
+  var expiredByTime = false;
+  if (voucher.expireTime) {
+    var expiry = new Date(Number(voucher.expireTime));
+    if (!isNaN(expiry.getTime()) && expiry.getTime() < Date.now()) {
+      expiredByTime = true;
+    }
+  }
+
+  var statusColor = '#27ae60';
+  var statusPrimary = 'Mpya';
+  var statusSecondary = 'Unused';
+  var statusIcon = '✔';
+
+  if (
+    normalizedStatus === 0 ||
+    normalizedStatus === '0' ||
+    normalizedStatus === 'new' ||
+    normalizedStatus === 'unused'
+  ) {
+    statusColor = '#27ae60';
+    statusPrimary = 'Mpya';
+    statusSecondary = 'Unused';
+    statusIcon = '✔';
+  } else if (
+    normalizedStatus === 1 ||
+    normalizedStatus === '1' ||
+    normalizedStatus === 'in use' ||
+    normalizedStatus === 'inuse'
+  ) {
+    statusColor = '#f39c12';
+    statusPrimary = 'Inatumika';
+    statusSecondary = 'In Use';
+    statusIcon = '↺';
+  } else if (
+    normalizedStatus === 2 ||
+    normalizedStatus === '2' ||
+    normalizedStatus === 'expired' ||
+    normalizedStatus === 'imeisha'
+  ) {
+    statusColor = '#e74c3c';
+    statusPrimary = 'Imeisha hiyo!';
+    statusSecondary = 'Expired';
+    statusIcon = '✖';
+  } else if (expiredByTime) {
+    statusColor = '#e74c3c';
+    statusPrimary = 'Imeisha hiyo!';
+    statusSecondary = 'Expired';
+    statusIcon = '✖';
+  }
+  var statusText = statusPrimary + (statusSecondary ? ' (' + statusSecondary + ')' : '');
+
+  var used = voucher.usedFlow || voucher.usedTraffic || voucher.used || voucher.usage || 0;
+  var total = voucher.totalFlow || voucher.totalTraffic || voucher.total || voucher.limit || voucher.totalBytes;
+  var totalForPercent = Number(total);
+  var totalDisplay = total || '';
+  var usageText = '';
+  var usedBytes = voucher.trafficUsed !== undefined ? voucher.trafficUsed : undefined;
+  var unusedBytes = voucher.trafficUnused !== undefined ? voucher.trafficUnused : undefined;
+  var limitMegabytes = voucher.trafficLimit !== undefined ? voucher.trafficLimit : undefined;
+
+  if ((usedBytes === undefined || usedBytes === null) && sourceVoucher && sourceVoucher.trafficUsed !== undefined) {
+    usedBytes = sourceVoucher.trafficUsed;
+  }
+  if ((unusedBytes === undefined || unusedBytes === null) && sourceVoucher && sourceVoucher.trafficUnused !== undefined) {
+    unusedBytes = sourceVoucher.trafficUnused;
+  }
+  if ((limitMegabytes === undefined || limitMegabytes === null) && sourceVoucher && sourceVoucher.trafficLimit !== undefined) {
+    limitMegabytes = sourceVoucher.trafficLimit;
+  }
+
+  var usedGbText = formatGigabytesFromBytes(usedBytes);
+  var unusedGbText = formatGigabytesFromBytes(unusedBytes);
+  var totalGbText = formatGigabytesFromMegabytes(limitMegabytes);
+
+  var usageCombined = '';
+  var percentUsed = null;
+
+  if (usedGbText || unusedGbText) {
+    var trafficParts = [];
+    if (usedGbText) {
+      trafficParts.push(usedGbText + ' used');
+    }
+    if (unusedGbText) {
+      trafficParts.push(unusedGbText + ' remaining');
+    }
+    usageText = trafficParts.join(', ');
+  }
+  if (totalGbText) {
+    totalDisplay = totalGbText;
+  }
+
+  if (usedGbText && totalGbText) {
+    var usedNumber = usedGbText.replace(/\s*GB$/i, '');
+    var totalNumber = totalGbText.replace(/\s*GB$/i, '');
+    if (usedNumber && totalNumber) {
+      usageCombined = usedNumber + ' / ' + totalNumber + ' GB';
+    }
+  }
+
+  var limitBytes = null;
+  if (limitMegabytes !== undefined && limitMegabytes !== null && !isNaN(Number(limitMegabytes))) {
+    limitBytes = Number(limitMegabytes) * 1024 * 1024;
+  }
+
+  if (limitBytes && usedBytes !== undefined && usedBytes !== null && !isNaN(Number(usedBytes))) {
+    percentUsed = (Number(usedBytes) / limitBytes) * 100;
+  }
+
+  var usedNumeric = Number(used);
+  if ((percentUsed === null || !isFinite(percentUsed)) && usedNumeric && totalForPercent) {
+    percentUsed = (usedNumeric / totalForPercent) * 100;
+    if (!usageCombined && usedNumeric && totalForPercent) {
+      usageCombined = usedNumeric + ' / ' + totalForPercent;
+    }
+  }
+
+  if (percentUsed !== null && isFinite(percentUsed)) {
+    percentUsed = Math.min(100, Math.max(0, percentUsed));
+  } else {
+    percentUsed = null;
+  }
+
+  if (!usageText) {
+    if (usedNumeric && totalForPercent) {
+      var percent = Math.round((usedNumeric / totalForPercent) * 100);
+      usageText = usedNumeric + ' / ' + totalForPercent + (isNaN(percent) ? '' : ' (' + percent + '%)');
+    } else if (usedNumeric) {
+      usageText = String(usedNumeric);
+    }
+  }
+
+  var start = voucher.createTime || voucher.startTime || voucher.bindTime || voucher.activateTime || voucher.bindTimeStamp;
+  var end = voucher.expireTime || voucher.endTime || voucher.deactivateTime || voucher.expireTimeStamp;
+
+  if (!start && sourceVoucher) {
+    start = sourceVoucher.createTime || sourceVoucher.startTime || sourceVoucher.bindTime || sourceVoucher.activateTime;
+  }
+  if (!end && sourceVoucher) {
+    end = sourceVoucher.expireTime || sourceVoucher.endTime || sourceVoucher.deactivateTime;
+  }
+
+  var groupName = group.name || group.groupName || group.displayName || '';
+
+  return {
+    id: code || voucherCode,
+    statusHtml: '<span style="color:' + statusColor + ';font-weight:bold;">' + statusText + '</span>' + (groupName ? '<div style="font-size:0.85em;color:#95a5a6;">Group: ' + groupName + '</div>' : ''),
+    statusPrimary: statusPrimary,
+    statusSecondary: statusSecondary,
+    statusIcon: statusIcon,
+    statusColor: statusColor,
+    groupName: groupName,
+    usage: usageText,
+    usageCombined: usageCombined || usageText,
+    usageSecondary: unusedGbText ? unusedGbText + ' remaining' : '',
+    usagePercentLabel: percentUsed !== null ? '(' + Math.round(percentUsed) + '%)' : '',
+    percentUsed: percentUsed,
+    total: totalDisplay || '',
+    totalDisplay: totalDisplay || '',
+    start: formatTimestamp(start),
+    end: formatTimestamp(end)
+  };
+}
+
+async function fetchVoucherStatus(voucherCode) {
+  var base = resolveProxyBase();
+  var searchPayload = {
+    searchKey: voucherCode,
+    includeAllGroups: true,
+    page: 1,
+    pageSize: 10
+  };
+
+  try {
+    var searchResponse = await fetch(base + '/api/voucher-search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(searchPayload)
+    });
+
+    var searchText = await searchResponse.text();
+    var searchJson;
+    try {
+      searchJson = JSON.parse(searchText);
+    } catch (jsonErr) {
+      throw new Error('Hatukupata majibu sahihi kutoka kwa seva.');
+    }
+
+    if (!searchResponse.ok) {
+      var errMsg = searchJson && searchJson.error ? searchJson.error : 'Hatukupata vocha hii.';
+      throw new Error(errMsg);
+    }
+
+    var hitsArray = Array.isArray(searchJson && searchJson.hits) ? searchJson.hits : [];
+    var firstHit = null;
+    for (var i = 0; i < hitsArray.length; i++) {
+      var hit = hitsArray[i];
+      if (hit && Array.isArray(hit.vouchers) && hit.vouchers.length > 0) {
+        firstHit = hit;
+        break;
+      }
+    }
+
+    if (!firstHit) {
+      throw new Error('Hatukupata vocha hii.');
+    }
+
+    var firstVoucher = firstHit.vouchers[0] || {};
+    var voucherId = firstVoucher.voucherId || firstVoucher.id;
+    var detailPayload = firstVoucher;
+
+    if (voucherId) {
+      try {
+        var detailResponse = await fetch(base + '/api/voucher-detail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ voucherId: voucherId })
+        });
+
+        if (detailResponse.ok) {
+          var detailJson = await detailResponse.json();
+          if (detailJson && detailJson.result) {
+            detailPayload = detailJson.result;
+          }
+        }
+      } catch (detailErr) {
+        // ignore detail fetch errors, fall back to search payload
+      }
+    }
+
+        if ((detailPayload.status === undefined || detailPayload.status === null) && firstVoucher.status !== undefined) {
+          detailPayload.status = firstVoucher.status;
+        }
+        if ((detailPayload.state === undefined || detailPayload.state === null) && firstVoucher.state !== undefined) {
+          detailPayload.state = firstVoucher.state;
+        }
+    if ((detailPayload.trafficUsed === undefined || detailPayload.trafficUsed === null) && firstVoucher.trafficUsed !== undefined) {
+      detailPayload.trafficUsed = firstVoucher.trafficUsed;
+    }
+    if ((detailPayload.trafficUnused === undefined || detailPayload.trafficUnused === null) && firstVoucher.trafficUnused !== undefined) {
+      detailPayload.trafficUnused = firstVoucher.trafficUnused;
+    }
+    if ((detailPayload.trafficLimit === undefined || detailPayload.trafficLimit === null) && firstVoucher.trafficLimit !== undefined) {
+      detailPayload.trafficLimit = firstVoucher.trafficLimit;
+    }
+
+    var groupInfo = firstHit.group || {
+      id: firstHit.groupId,
+      name: firstHit.groupName
     };
+
+    var details = buildVoucherDetails(voucherCode, {
+      voucher: detailPayload,
+          group: groupInfo,
+          sourceVoucher: firstVoucher
+    });
     showVoucherDetailsModal(details);
-  });
+  } catch (error) {
+    var fallbackMessage = error && error.message ? error.message : 'Hatukupata vocha hii.';
+    alert(fallbackMessage);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   // Always hide voucher modal on page load
   var voucherModal = document.getElementById('voucherDetailsModal');
-  if (voucherModal) voucherModal.style.display = 'none';
+  if (voucherModal) {
+    voucherModal.style.display = 'none';
+    voucherModal.addEventListener('click', function(evt) {
+      if (evt.target === voucherModal) {
+        hideVoucherDetailsModal();
+      }
+    });
+  }
+
+  var voucherCloseButton = document.getElementById('voucherCloseButton');
+  if (voucherCloseButton) {
+    voucherCloseButton.addEventListener('click', hideVoucherDetailsModal);
+  }
+
+  var voucherModalClose = document.getElementById('voucherModalClose');
+  if (voucherModalClose) {
+    voucherModalClose.addEventListener('click', hideVoucherDetailsModal);
+  }
+
+  document.addEventListener('keydown', function(evt) {
+    if (evt.key === 'Escape') {
+      hideVoucherDetailsModal();
+    }
+  });
 
   // Only attach event to 'Matumizi ya Vocha' button
   var voucherBtn = document.getElementById('button-voucher-status');
@@ -87,17 +500,28 @@ var supabaseConfig = (typeof window !== "undefined" && window.__SUPABASE_CONFIG_
 var supabaseClient = null;
 
 var Ajax = {
-    post: function (url, data, fn) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
-                fn.call(this, xhr.responseText);
-            }
-        };
-        xhr.send(data);
-    }
+  post: function (url, data, onSuccess, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200 || xhr.status === 304) {
+          if (typeof onSuccess === 'function') {
+            onSuccess.call(this, xhr.responseText);
+          }
+        } else if (typeof onError === 'function') {
+          onError({ status: xhr.status, responseText: xhr.responseText });
+        }
+      }
+    };
+    xhr.onerror = function() {
+      if (typeof onError === 'function') {
+        onError({ status: xhr.status, responseText: xhr.responseText });
+      }
+    };
+    xhr.send(data);
+  }
 };
 var data = {};
 var globalConfig = {};

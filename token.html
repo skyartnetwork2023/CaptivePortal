@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omada Access Token Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.35);
+      padding: 32px 40px;
+      width: min(640px, 90vw);
+    }
+    h1 {
+      margin-top: 0;
+      color: #38bdf8;
+      font-size: 1.75rem;
+    }
+    button {
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.35);
+    }
+    pre {
+      background: #020617;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      line-height: 1.45;
+    }
+    .meta {
+      font-size: 0.875rem;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .error {
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="meta">
+      Omada Controller • Client Credentials Flow
+    </div>
+    <h1>Open API Access Token</h1>
+    <p>
+      Click the button below to request a new access token from the Omada Open API
+      using the configured client credentials. The response will be displayed in
+      the panel.
+    </p>
+    <button id="fetchTokenBtn">Fetch Access Token</button>
+    <div style="margin-top: 24px;">
+      <div class="badge">Latest Response</div>
+      <pre id="tokenOutput">No token fetched yet.</pre>
+    </div>
+
+    <div style="margin-top: 36px;">
+      <h2 style="margin-bottom: 12px; color: #38bdf8; font-size: 1.25rem;">Voucher Group Details</h2>
+      <p style="margin-top: 0; margin-bottom: 12px; color: #94a3b8;">
+        Provide a voucher group ID (defaults to the known Omada group) and request its details using a freshly obtained access token.
+      </p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+        <input id="groupIdInput" type="text" value="67455aaff62dca21068ce83b" style="flex: 1 1 260px; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #e2e8f0;" placeholder="Voucher Group ID" />
+        <button id="fetchGroupBtn" style="flex: 0 0 auto;">Get Group Details</button>
+      </div>
+      <div class="badge">Latest Group Response</div>
+      <pre id="groupOutput">No group details fetched yet.</pre>
+      <div style="margin-top: 16px;">
+        <div class="badge">Voucher IDs in Response</div>
+        <div id="voucherList" style="margin-top: 12px; display: grid; gap: 8px;">
+          <span style="color: #94a3b8;">Fetch group details to list vouchers.</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 36px;">
+      <h2 style="margin-bottom: 12px; color: #38bdf8; font-size: 1.25rem;">Voucher Code Search</h2>
+      <p style="margin-top: 0; margin-bottom: 12px; color: #94a3b8;">
+        Enter a voucher code to search across all cached voucher group IDs. Fetch group details first to expand the search scope.
+      </p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+        <input id="voucherCodeInput" type="text" style="flex: 1 1 260px; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #e2e8f0;" placeholder="Voucher code" />
+        <button id="searchVoucherBtn" style="flex: 0 0 auto;">Search Voucher</button>
+      </div>
+      <div class="badge">Voucher Search Result</div>
+      <pre id="voucherOutput">No voucher search performed yet.</pre>
+    </div>
+
+    <div style="margin-top: 36px;">
+      <h2 style="margin-bottom: 12px; color: #38bdf8; font-size: 1.25rem;">Voucher Detail</h2>
+      <p style="margin-top: 0; margin-bottom: 12px; color: #94a3b8;">
+        Select a voucher ID from group details or search by voucher code to view full voucher information.
+      </p>
+      <div class="badge">Voucher Detail Response</div>
+      <pre id="voucherDetailOutput">No voucher selected.</pre>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_GROUP_ID = '67455aaff62dca21068ce83b';
+    const tokenOutput = document.getElementById('tokenOutput');
+    const groupOutput = document.getElementById('groupOutput');
+    const voucherOutput = document.getElementById('voucherOutput');
+    const voucherDetailOutput = document.getElementById('voucherDetailOutput');
+    const voucherList = document.getElementById('voucherList');
+    const fetchTokenBtn = document.getElementById('fetchTokenBtn');
+    const fetchGroupBtn = document.getElementById('fetchGroupBtn');
+    const groupIdInput = document.getElementById('groupIdInput');
+    const searchVoucherBtn = document.getElementById('searchVoucherBtn');
+    const voucherCodeInput = document.getElementById('voucherCodeInput');
+
+    const groupIdCache = new Set([DEFAULT_GROUP_ID]);
+    const voucherIdCache = new Map();
+
+    function resolveProxyBase() {
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        var host = window.location.hostname ? window.location.hostname : 'localhost';
+        return window.location.protocol + '//' + host + ':4000';
+      }
+      return 'http://localhost:4000';
+    }
+
+    const proxyBase = resolveProxyBase();
+
+    function showResult(text, isError) {
+      tokenOutput.textContent = text;
+      tokenOutput.classList.toggle('error', Boolean(isError));
+    }
+
+    function showGroupResult(text, isError) {
+      groupOutput.textContent = text;
+      groupOutput.classList.toggle('error', Boolean(isError));
+    }
+
+    function showVoucherResult(text, isError) {
+      voucherOutput.textContent = text;
+      voucherOutput.classList.toggle('error', Boolean(isError));
+    }
+
+    function showVoucherDetail(text, isError) {
+      voucherDetailOutput.textContent = text;
+      voucherDetailOutput.classList.toggle('error', Boolean(isError));
+    }
+
+    function setVoucherListPlaceholder(message) {
+      voucherList.innerHTML = '';
+      var span = document.createElement('span');
+      span.style.color = '#94a3b8';
+      span.textContent = message;
+      voucherList.appendChild(span);
+    }
+
+    function collectVoucherEntries(node, list, context) {
+      if (!node) {
+        return;
+      }
+
+      if (Array.isArray(node)) {
+        node.forEach(function(item) {
+          collectVoucherEntries(item, list, context);
+        });
+        return;
+      }
+
+      if (typeof node !== 'object') {
+        return;
+      }
+
+      var contextInfo = context || {};
+      var nextContext = contextInfo;
+
+      var hasGroupMetadata = Object.prototype.hasOwnProperty.call(node, 'groupId') || Object.prototype.hasOwnProperty.call(node, 'groupName');
+      if (hasGroupMetadata) {
+        nextContext = Object.assign({}, contextInfo);
+        if (Object.prototype.hasOwnProperty.call(node, 'groupId')) {
+          nextContext.groupId = node.groupId;
+        }
+        if (Object.prototype.hasOwnProperty.call(node, 'groupName')) {
+          nextContext.groupName = node.groupName;
+        }
+      }
+
+      if (Object.prototype.hasOwnProperty.call(node, 'voucherId') || Object.prototype.hasOwnProperty.call(node, 'voucherID')) {
+        var voucherId = String(node.voucherId || node.voucherID || node.id || '').trim();
+        if (voucherId) {
+          var voucherCode = '';
+          if (Object.prototype.hasOwnProperty.call(node, 'code')) {
+            voucherCode = String(node.code || '').trim();
+          }
+          list.push({
+            voucherId: voucherId,
+            voucherCode: voucherCode,
+            groupId: nextContext.groupId || null,
+            groupName: nextContext.groupName || null
+          });
+          voucherIdCache.set(voucherId, {
+            node: node,
+            groupId: nextContext.groupId || null,
+            groupName: nextContext.groupName || null
+          });
+        }
+      }
+
+      Object.keys(node).forEach(function(key) {
+        collectVoucherEntries(node[key], list, nextContext);
+      });
+    }
+
+    function renderVoucherList(entries) {
+      voucherList.innerHTML = '';
+
+      if (!entries.length) {
+        setVoucherListPlaceholder('No vouchers found in latest response.');
+        return;
+      }
+
+      entries.forEach(function(entry) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.style.display = 'flex';
+        button.style.justifyContent = 'space-between';
+        button.style.alignItems = 'center';
+        button.style.gap = '8px';
+        button.style.padding = '10px 14px';
+        button.style.borderRadius = '8px';
+        button.style.border = '1px solid #334155';
+        button.style.background = '#0f172a';
+        button.style.color = '#e2e8f0';
+        button.style.cursor = 'pointer';
+        button.dataset.voucherId = entry.voucherId;
+
+        var labelParts = [];
+        if (entry.voucherCode) {
+          labelParts.push(entry.voucherCode);
+        }
+
+        if (!entry.voucherCode || entry.voucherCode !== entry.voucherId) {
+          labelParts.push(entry.voucherId);
+        }
+
+        var metaParts = [];
+        if (entry.groupName) {
+          metaParts.push(entry.groupName);
+        }
+        if (entry.groupId) {
+          metaParts.push(entry.groupId);
+        }
+
+        var label = labelParts.join(' • ');
+        if (metaParts.length) {
+          label += ' • ' + metaParts.join(' • ');
+        }
+
+        button.textContent = label;
+        button.title = 'Voucher ID: ' + entry.voucherId + (entry.groupName ? '\nGroup: ' + entry.groupName : '') + (entry.groupId ? '\nGroup ID: ' + entry.groupId : '');
+
+        button.addEventListener('click', function() {
+          fetchVoucherDetail(entry.voucherId);
+        });
+
+        voucherList.appendChild(button);
+      });
+    }
+
+    function harvestVouchers(node) {
+      voucherIdCache.clear();
+      var entries = [];
+      collectVoucherEntries(node, entries);
+      renderVoucherList(entries);
+    }
+
+    async function fetchVoucherDetail(voucherId) {
+      showVoucherDetail('Requesting detail for voucher ' + voucherId + '…');
+
+      try {
+        const response = await fetch(proxyBase + '/api/voucher-detail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ voucherId: voucherId })
+        });
+
+        const text = await response.text();
+        let formatted = text;
+        try {
+          const json = JSON.parse(text);
+          formatted = JSON.stringify(json, null, 2);
+        } catch (parseErr) {
+          // keep raw text if not JSON
+        }
+
+        if (!response.ok) {
+          showVoucherDetail('Error from proxy (status ' + response.status + '):\n' + formatted, true);
+        } else {
+          showVoucherDetail(formatted, false);
+        }
+      } catch (err) {
+        showVoucherDetail('Network error: ' + err.message, true);
+      }
+    }
+
+    function harvestGroupIds(node) {
+      if (!node) {
+        return;
+      }
+
+      if (Array.isArray(node)) {
+        node.forEach(harvestGroupIds);
+        return;
+      }
+
+      if (typeof node !== 'object') {
+        return;
+      }
+
+      var idLike = node.id || node.groupId || node.groupID;
+      if (idLike) {
+        var candidate = String(idLike).trim();
+        if (candidate) {
+          groupIdCache.add(candidate);
+        }
+      }
+
+      Object.keys(node).forEach(function(key) {
+        harvestGroupIds(node[key]);
+      });
+    }
+
+    async function fetchAccessToken() {
+      fetchTokenBtn.disabled = true;
+      fetchTokenBtn.textContent = 'Requesting…';
+      showResult('Requesting token from Omada controller…');
+
+      try {
+        const response = await fetch(proxyBase + '/api/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const text = await response.text();
+        let formatted = text;
+        try {
+          const json = JSON.parse(text);
+          formatted = JSON.stringify(json, null, 2);
+          harvestGroupIds(json);
+        } catch (parseErr) {
+          // leave as original text if not JSON
+        }
+
+        if (!response.ok) {
+          showResult('Error from proxy (status ' + response.status + '):\n' + formatted, true);
+        } else {
+          showResult(formatted, false);
+        }
+      } catch (err) {
+        showResult('Network error: ' + err.message, true);
+      } finally {
+        fetchTokenBtn.disabled = false;
+        fetchTokenBtn.textContent = 'Fetch Access Token';
+      }
+    }
+
+    fetchTokenBtn.addEventListener('click', fetchAccessToken);
+
+    async function fetchGroupDetails() {
+      var groupId = groupIdInput.value.trim();
+      if (!groupId) {
+        showGroupResult('Please supply a voucher group ID.', true);
+        return;
+      }
+
+      fetchGroupBtn.disabled = true;
+      fetchGroupBtn.textContent = 'Requesting…';
+      showGroupResult('Requesting group details…');
+      showVoucherDetail('No voucher selected.');
+      setVoucherListPlaceholder('Loading voucher list…');
+
+      try {
+        const response = await fetch(proxyBase + '/api/group-details', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            groupId: groupId,
+            page: 1,
+            pageSize: 10
+          })
+        });
+
+        const text = await response.text();
+        let formatted = text;
+        try {
+          const json = JSON.parse(text);
+          formatted = JSON.stringify(json, null, 2);
+          harvestGroupIds(json);
+          harvestVouchers(json);
+        } catch (parseErr) {
+          // keep raw text if not JSON
+        }
+
+        if (!response.ok) {
+          showGroupResult('Error from proxy (status ' + response.status + '):\n' + formatted, true);
+        } else {
+          showGroupResult(formatted, false);
+        }
+      } catch (err) {
+        showGroupResult('Network error: ' + err.message, true);
+      } finally {
+        fetchGroupBtn.disabled = false;
+        fetchGroupBtn.textContent = 'Get Group Details';
+      }
+    }
+
+    fetchGroupBtn.addEventListener('click', fetchGroupDetails);
+
+    async function searchVoucher() {
+      var voucherCode = voucherCodeInput.value.trim();
+      if (!voucherCode) {
+        showVoucherResult('Please enter a voucher code to search.', true);
+        return;
+      }
+      var groupIds = Array.from(groupIdCache);
+
+      searchVoucherBtn.disabled = true;
+      searchVoucherBtn.textContent = 'Searching…';
+      var scopeMessage = groupIds.length
+        ? 'Searching voucher across cached groups (' + groupIds.length + ') plus controller directory…'
+        : 'Searching voucher across all controller groups…';
+      showVoucherResult(scopeMessage);
+      showVoucherDetail('Attempting to locate voucher ' + voucherCode + '…');
+      setVoucherListPlaceholder('Searching for voucher ' + voucherCode + '…');
+
+      try {
+        const response = await fetch(proxyBase + '/api/voucher-search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            searchKey: voucherCode,
+            groupIds: groupIds,
+            includeAllGroups: true,
+            page: 1,
+            pageSize: 10
+          })
+        });
+
+        const text = await response.text();
+        let formatted = text;
+        try {
+          const json = JSON.parse(text);
+          formatted = JSON.stringify(json, null, 2);
+          harvestGroupIds(json);
+          harvestVouchers(json);
+          triggerVoucherDetailFromSearch(json, voucherCode);
+        } catch (parseErr) {
+          // keep raw text if not JSON
+        }
+
+        if (!response.ok) {
+          showVoucherResult('Error from proxy (status ' + response.status + '):\n' + formatted, true);
+        } else {
+          showVoucherResult(formatted, false);
+        }
+      } catch (err) {
+        showVoucherResult('Network error: ' + err.message, true);
+      } finally {
+        searchVoucherBtn.disabled = false;
+        searchVoucherBtn.textContent = 'Search Voucher';
+      }
+    }
+
+    searchVoucherBtn.addEventListener('click', searchVoucher);
+
+    function triggerVoucherDetailFromSearch(payload, voucherCode) {
+      var normalized = String(voucherCode || '').trim().toLowerCase();
+      if (!normalized) {
+        return;
+      }
+
+      var entries = [];
+      collectVoucherEntries(payload, entries);
+      if (!entries.length) {
+        showVoucherDetail('Search completed but no vouchers returned.', true);
+        return;
+      }
+
+      var match = entries.find(function(entry) {
+        return entry.voucherCode && entry.voucherCode.toLowerCase() === normalized;
+      });
+
+      if (match) {
+        fetchVoucherDetail(match.voucherId);
+      } else {
+        showVoucherDetail('Search completed but voucher code was not found. Select a voucher from the list above to inspect.', true);
+      }
+    }
+  </script>
+</body>
+</html>
