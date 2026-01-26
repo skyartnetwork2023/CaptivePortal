@@ -30,9 +30,15 @@ function fetchVoucherStatus(voucherCode) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Always hide voucher modal on page load
+  var voucherModal = document.getElementById('voucherDetailsModal');
+  if (voucherModal) voucherModal.style.display = 'none';
+
+  // Only attach event to 'Matumizi ya Vocha' button
   var voucherBtn = document.getElementById('button-voucher-status');
   if (voucherBtn) {
-    voucherBtn.addEventListener('click', function() {
+    voucherBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent bubbling
       var voucherCode = document.getElementById('voucherCode').value.trim();
       if (!voucherCode) {
         alert('Tafadhali jaza vocha kwanza!');
