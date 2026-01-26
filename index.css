@@ -1,3 +1,35 @@
+/* Voucher Details Modal/Card Styles */
+.voucher-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(10,20,30,0.92);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.voucher-card {
+  background: #222c38;
+  padding: 2rem 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 2px 24px #0006;
+  color: #fff;
+  min-width: 340px;
+  max-width: 90vw;
+}
+.voucher-card h2 {
+  margin-bottom: 1rem;
+}
+.voucher-card button {
+  margin-top: 1.5rem;
+  padding: 0.5rem 2rem;
+  border-radius: 1rem;
+  background: #3a7c85;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
 @media (min-width: 701px) {
   .login-card {
     width: 100%;

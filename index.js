@@ -1,3 +1,47 @@
+// Voucher Status Check Handler
+function showVoucherDetailsModal(details) {
+  document.getElementById('voucherDetailsModal').style.display = 'flex';
+  document.getElementById('voucherId').textContent = details.id || '';
+  document.getElementById('voucherStatus').innerHTML = details.statusHtml || '';
+  document.getElementById('voucherUsage').textContent = details.usage || '';
+  document.getElementById('voucherTotal').textContent = details.total || '';
+  document.getElementById('voucherStart').textContent = details.start || '';
+  document.getElementById('voucherEnd').textContent = details.end || '';
+}
+
+function fetchVoucherStatus(voucherCode) {
+  // Replace with actual Omada API endpoint for voucher status
+  var url = withPortalBase('/portal/voucher/status');
+  var payload = JSON.stringify({ voucherCode: voucherCode });
+  Ajax.post(url, payload, function(res) {
+    var data = {};
+    try { data = JSON.parse(res); } catch(e) {}
+    // Example response mapping, adjust to actual API
+    var details = {
+      id: data.result?.voucherId || voucherCode,
+      statusHtml: (data.result?.expired ? '<span style="color:#e74c3c;font-weight:bold;">Imeisha (Expired)</span>' : '<span style="color:#27ae60;font-weight:bold;">Hai Expired (Active)</span>'),
+      usage: (data.result?.used + ' / ' + data.result?.total + ' GB (' + Math.round((data.result?.used/data.result?.total)*100) + '%)') || '',
+      total: (data.result?.total + ' GB') || '',
+      start: data.result?.startTime || '',
+      end: data.result?.endTime || ''
+    };
+    showVoucherDetailsModal(details);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var voucherBtn = document.getElementById('button-voucher-status');
+  if (voucherBtn) {
+    voucherBtn.addEventListener('click', function() {
+      var voucherCode = document.getElementById('voucherCode').value.trim();
+      if (!voucherCode) {
+        alert('Tafadhali jaza vocha kwanza!');
+        return;
+      }
+      fetchVoucherStatus(voucherCode);
+    });
+  }
+});
 var NO_AUTH = 0,
     SIMPLE_PASSWORD = 1,
     EXTERNAL_RADIUS = 2,
