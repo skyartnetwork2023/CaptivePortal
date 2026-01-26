@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const https = require('https');
 
-const OMADA_API = 'https://192.168.0.12:443';
+const OMADA_API = 'https://dominical-unbrazen-janetta.ngrok-free.dev';
 const OMADA_ID = 'd660ecc8e7ea60b1e60fb07b26e2f598';
 const OMADA_SITE_ID = '6741bf3314c67d319d0e644b';
 const CLIENT_ID = '1dcc674ba6a44ebbb16654ad8a865ddd';
